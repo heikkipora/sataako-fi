@@ -1,0 +1,7 @@
+module.exports = {
+  WFS_FEATURE_URL: 'http://data.fmi.fi/fmi-apikey/' + process.env.FMI_KEY + '/wfs',
+  EPSG_3857_BOUNDS: '1137189.3964862407, 7709459.565190111, 4160194.0259960056, 11485434.685198486',
+  EPSG_3857_SRS: 'EPSG:3857',
+  WIDTH: 850,
+  HEIGHT: 1345
+};

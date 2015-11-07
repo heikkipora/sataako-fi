@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "bluebird": "2.9.33",
+    "express": "4.12.4",
+    "gifencoder": "git://github.com/heikkipora/gifencoder",
+    "lodash": "3.10.0",
+    "moment": "2.10.3",
+    "node-png": "0.4.3",
+    "request-promise": "0.4.2",
+    "xml2js": "0.4.9"
+  },
+  "devDependencies": {
+    "proj4": "2.3.6"
+  }
+}
