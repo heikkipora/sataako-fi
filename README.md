@@ -41,3 +41,7 @@ With a (modest) amount of concurrent users the service runs almost for free:
 * 7€ - Heroku
 * 1-3€ - AWS CloudFront (CDN) & Route53 (DNS)
 * 1€ - FI domain
+
+Credits
+-------
+The front-end CSS and javascript are loosely based on the work of [Sampsa Kuronen](https://github.com/sampsakuronen) and others from [sporat.fi](http://sporat.fi)
