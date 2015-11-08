@@ -19,9 +19,15 @@ app.get('/frames.json', (req, res) => {
     }
   }
 
-  fetchRadarImageUrls().then((urls) => {
-    res.json(urls.map(toPublicUrl))
-  })
+  fetchRadarImageUrls()
+    .then((urls) => {
+      res.json(urls.map(toPublicUrl))
+    })
+    .catch((err) => {
+      console.error(err)
+      res.status(500).json([])
+    })
+
 })
 
 app.get('/wms/frames.json', (req, res) => res.redirect('/frames.json'))
@@ -30,10 +36,15 @@ app.get('/frame/:timestamp', (req, res) => {
   fetchRadarImageUrls().then((urls) => {
     const fmiRadarImage = _.find(urls, {timestamp: req.params.timestamp})
     if (fmiRadarImage) {
-      fetchPostProcessedRadarFrameAsGif(fmiRadarImage.url).then(function (gif) {
-        res.set('Content-Type', 'image/gif')
-        res.send(gif)
-      })
+      fetchPostProcessedRadarFrameAsGif(fmiRadarImage.url)
+        .then((gif) => {
+          res.set('Content-Type', 'image/gif')
+          res.send(gif)
+        })
+        .catch((err) => {
+          console.error(err)
+          res.status(500).send('Failed fetching radar image')
+        })
     } else {
       res.status(404).send('Sorry, no radar image found for that timestamp')
     }
