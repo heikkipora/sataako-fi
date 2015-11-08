@@ -1,43 +1,45 @@
-var _ = require('lodash');
-var express = require('express');
-var app = express();
-var fetchRadarImageUrls = require('./fmi-radar-frames');
-var fetchPostProcessedRadarFrameAsGif = require('./fmi-radar-images');
+import _ from 'lodash'
+import express from 'express'
+import compression from 'compression'
+import {fetchRadarImageUrls} from './fmi-radar-frames'
+import {fetchPostProcessedRadarFrameAsGif} from './fmi-radar-images'
 
-var PUBLIC_FRAMES_ROOT = process.env.CLOUDFRONT_URL || 'http://localhost:3000/frame/';
+const PORT = process.env.PORT || 3000
+const PUBLIC_FRAMES_ROOT = process.env.CLOUDFRONT_URL || `http://localhost:${PORT}/frame/`
 
-function toPublicUrl(radarUrl) {
+const app = express()
+app.use(compression())
+app.use(express.static('public'))
 
-  return {
-    image: PUBLIC_FRAMES_ROOT + radarUrl.timestamp,
-    timestamp: radarUrl.timestamp
-  };
+app.get('/frames.json', (req, res) => {
+  function toPublicUrl(radarUrl) {
+    return {
+      image: PUBLIC_FRAMES_ROOT + radarUrl.timestamp,
+      timestamp: radarUrl.timestamp
+    }
+  }
 
-}
-app.use(express.static('public'));
+  fetchRadarImageUrls().then((urls) => {
+    res.json(urls.map(toPublicUrl))
+  })
+})
 
-app.get('/frames.json', function (req, res) {
-  fetchRadarImageUrls().then(function (urls) {
-    res.json(urls.map(toPublicUrl));
-  });
-});
+app.get('/wms/frames.json', (req, res) => res.redirect('/frames.json'))
 
-app.get('/wms/frames.json', function(req, res) {
-  res.redirect('/frames.json');
-});
-
-app.get('/frame/:timestamp', function (req, res) {
-  fetchRadarImageUrls().then(function (urls) {
-    var fmiRadarImage = _.find(urls, {timestamp: req.params.timestamp});
+app.get('/frame/:timestamp', (req, res) => {
+  fetchRadarImageUrls().then((urls) => {
+    const fmiRadarImage = _.find(urls, {timestamp: req.params.timestamp})
     if (fmiRadarImage) {
       fetchPostProcessedRadarFrameAsGif(fmiRadarImage.url).then(function (gif) {
-        res.set('Content-Type', 'image/gif');
-        res.send(gif);
+        res.set('Content-Type', 'image/gif')
+        res.send(gif)
       })
     } else {
-      res.status(404).send('Sorry, no radar image found for that timestamp');
+      res.status(404).send('Sorry, no radar image found for that timestamp')
     }
   })
-});
+})
 
-module.exports = app;
+const server = app.listen(PORT, () => {
+  console.log(`Server listening on port ${server.address().port}`)
+})
