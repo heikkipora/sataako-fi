@@ -1,6 +1,8 @@
 Sataako.fi
 ==========
 
+![screenshot](https://raw.github.com/heikkipora/sataako-fi/master/work/screenshot.jpg)
+
 Introduction
 ------------
 I wanted to create a mobile-friendly weather service for Finland which has the simplest possible user interface.
