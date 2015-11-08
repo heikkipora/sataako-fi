@@ -6,7 +6,7 @@ import GIFEncoder from 'gifencoder'
 import FMI from './fmi-constants'
 
 let MASK_DATA = []
-fs.createReadStream('radar-mask.png').pipe(new PNG()).on('parsed', (data) => MASK_DATA = data)
+fs.createReadStream(`${__dirname}/radar-mask.png`).pipe(new PNG()).on('parsed', (data) => MASK_DATA = data)
 
 function removeRadarBordersFromFrame(frameData) {
     for (let index = 0; index < frameData.length; index += 4) {
