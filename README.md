@@ -5,7 +5,7 @@ Sataako.fi
 
 Introduction
 ------------
-I wanted to create a mobile-friendly weather service for Finland which has the simplest possible user interface.
+I wanted to create a mobile-friendly weather service for Finland which has the simplest possible user interface (in Finnish).
 
 [Sataako.fi](http://www.sataako.fi) fetches weather radar images from [Finnish Meteorological Institute](http://en.ilmatieteenlaitos.fi)'s [Open Data APIs](http://en.ilmatieteenlaitos.fi/open-data-manual) and shows them as Google Maps layers after some post-processing.
 The movement of rain clouds is shown as a short animation covering the last hour.
