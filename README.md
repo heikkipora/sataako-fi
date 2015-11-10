@@ -22,7 +22,7 @@ It's responsible for
 To be able to serve a decent amount of concurrent users without exceeding the FMI API request rate, the following steps are done:
 
 * radar frame list is cached internally for one minute before a re-fetch from FMI
-* radar frame images are cached by an AWS Cloudfront distribution sitting in front of the Heroku app (at cdn.sataako.fi)
+* radar frame images are cached 1) locally for about one hour and 2) by an AWS Cloudfront distribution sitting in front of the Heroku app (at cdn.sataako.fi) for 24 hours
 
 Radar frame post-processing
 ---------------------------
