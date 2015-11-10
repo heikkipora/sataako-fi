@@ -1,4 +1,5 @@
 import fs from 'fs'
+import _ from 'lodash'
 import request from 'request-promise'
 import Promise from 'bluebird'
 import {PNG} from 'node-png'
@@ -39,9 +40,32 @@ function fetchDecodedRadarImage(url) {
   })
 }
 
-function fetchPostProcessedRadarFrameAsGif(frameUrl) {
-  console.log(`Fetching radar image from FMI: ${frameUrl}`)
-  return fetchDecodedRadarImage(frameUrl).then(removeRadarBordersFromFrame).then(encodeAsGif)
+const GIF_CACHE = []
+
+function now() {
+  return new Date().getTime()
+}
+
+function cleanupExpiredGifsFromCache() {
+  _.remove(GIF_CACHE, (cachedGif) => {
+    return now() - cachedGif.timestamp > 70 * 60 * 1000
+  })
+}
+
+function fetchPostProcessedRadarFrameAsGif(fmiRadarImage) {
+  cleanupExpiredGifsFromCache()
+  const cachedGif = _.find(GIF_CACHE, {url: fmiRadarImage.url})
+  if (cachedGif) {
+    console.log(`Using cached radar image: ${fmiRadarImage.timestamp}`)
+    return Promise.resolve(cachedGif.gif)
+  }
+
+  console.log(`Fetching radar image from FMI: ${fmiRadarImage.timestamp}`)
+  return fetchDecodedRadarImage(fmiRadarImage.url).then(removeRadarBordersFromFrame).then(encodeAsGif)
+    .then((gif) => {
+      GIF_CACHE.push({url: fmiRadarImage.url, gif: gif, timestamp: now()})
+      return gif
+    })
 }
 
 export {

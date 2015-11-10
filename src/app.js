@@ -42,7 +42,7 @@ app.get('/frame/:timestamp', (req, res) => {
       const fmiRadarImage = _.find(urls, {timestamp: req.params.timestamp})
       if (fmiRadarImage) {
         imageQueue.add(() => {
-          return fetchPostProcessedRadarFrameAsGif(fmiRadarImage.url).then((gif) => {
+          return fetchPostProcessedRadarFrameAsGif(fmiRadarImage).then((gif) => {
             res.set('Content-Type', 'image/gif')
             res.send(gif)
           })
