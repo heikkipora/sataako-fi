@@ -4,11 +4,13 @@ import compression from 'compression'
 import Queue from 'promise-queue'
 import {fetchRadarImageUrls} from './fmi-radar-frames'
 import {fetchPostProcessedRadarFrameAsGif} from './fmi-radar-images'
+import enforce from 'express-sslify'
 
 const PORT = process.env.PORT || 3000
 const PUBLIC_FRAMES_ROOT = process.env.CLOUDFRONT_URL || `http://localhost:${PORT}/frame/`
 
 const app = express()
+app.use(enforce.HTTPS({ trustProtoHeader: true}))
 app.use(compression())
 app.use(express.static('public'))
 

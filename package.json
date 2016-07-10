@@ -9,6 +9,7 @@
     "bluebird": "3.4.1",
     "compression": "1.6.2",
     "express": "4.14.0",
+    "express-sslify": "1.1.0",
     "gifencoder": "git://github.com/heikkipora/gifencoder",
     "lodash": "4.13.1",
     "node-png": "0.4.3",
