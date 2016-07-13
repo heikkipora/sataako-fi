@@ -56,7 +56,6 @@ function fetchPostProcessedRadarFrameAsGif(fmiRadarImage) {
   cleanupExpiredGifsFromCache()
   const cachedGif = _.find(GIF_CACHE, {url: fmiRadarImage.url})
   if (cachedGif) {
-    console.log(`Using cached radar image: ${fmiRadarImage.timestamp}`)
     return Promise.resolve(cachedGif.gif)
   }
 
