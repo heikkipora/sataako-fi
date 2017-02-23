@@ -94,7 +94,7 @@ WmsOverlay.prototype.onRemove = function () {
 var defaultUserSettings = {
   lat: Number(localStorage.getItem('sataako-fi-lat')) || 60.17297214455122,
   lng: Number(localStorage.getItem('sataako-fi-lng')) || 24.93999467670711,
-  zoom: Number(localStorage.getItem('sataako-fi-zoom')) || 10
+  zoom: Number(localStorage.getItem('sataako-fi-zoom')) || 7
 };
 
 var map = null;

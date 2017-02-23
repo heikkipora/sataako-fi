@@ -10,6 +10,28 @@ const PORT = process.env.PORT || 3000
 const PUBLIC_FRAMES_ROOT = process.env.CLOUDFRONT_URL || `http://localhost:${PORT}/frame/`
 
 const app = express()
+
+app.get('/frame/:timestamp', (req, res) => {
+  listQueue.add(fetchRadarImageUrls)
+    .then((urls) => {
+      const fmiRadarImage = _.find(urls, {timestamp: req.params.timestamp})
+      if (fmiRadarImage) {
+        imageQueue.add(() => {
+          return fetchPostProcessedRadarFrameAsGif(fmiRadarImage).then((gif) => {
+            res.set('Content-Type', 'image/gif')
+            res.send(gif)
+          })
+        })
+          .catch((err) => {
+            console.error(err)
+            res.status(500).send('Failed fetching radar image')
+          })
+      } else {
+        res.status(404).send('Sorry, no radar image found for that timestamp')
+      }
+    })
+})
+
 app.use(enforce.HTTPS({ trustProtoHeader: true}))
 app.use(compression())
 app.use(express.static('public'))
@@ -34,29 +56,6 @@ app.get('/frames.json', (req, res) => {
       res.status(500).json([])
     })
 
-})
-
-app.get('/wms/frames.json', (req, res) => res.redirect('/frames.json'))
-
-app.get('/frame/:timestamp', (req, res) => {
-  listQueue.add(fetchRadarImageUrls)
-    .then((urls) => {
-      const fmiRadarImage = _.find(urls, {timestamp: req.params.timestamp})
-      if (fmiRadarImage) {
-        imageQueue.add(() => {
-          return fetchPostProcessedRadarFrameAsGif(fmiRadarImage).then((gif) => {
-            res.set('Content-Type', 'image/gif')
-            res.send(gif)
-          })
-        })
-          .catch((err) => {
-            console.error(err)
-            res.status(500).send('Failed fetching radar image')
-          })
-      } else {
-        res.status(404).send('Sorry, no radar image found for that timestamp')
-      }
-    })
 })
 
 const server = app.listen(PORT, () => {
