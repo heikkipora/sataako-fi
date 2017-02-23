@@ -1,10 +1,10 @@
-import fs from 'fs'
-import _ from 'lodash'
-import request from 'request-promise'
-import Promise from 'bluebird'
-import {PNG} from 'node-png'
-import GIFEncoder from 'gifencoder'
-import FMI from './fmi-constants'
+const fs = require('fs')
+const _ = require('lodash')
+const request = require('request-promise')
+const Promise = require('bluebird')
+const {PNG} = require('node-png')
+const GIFEncoder = require('gifencoder')
+const FMI = require('./fmi-constants')
 
 let MASK_DATA = []
 fs.createReadStream(`${__dirname}/radar-mask.png`).pipe(new PNG()).on('parsed', (data) => MASK_DATA = data)
@@ -67,6 +67,6 @@ function fetchPostProcessedRadarFrameAsGif(fmiRadarImage) {
     })
 }
 
-export {
+module.exports = {
   fetchPostProcessedRadarFrameAsGif
 }

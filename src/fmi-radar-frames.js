@@ -1,11 +1,11 @@
-import _ from 'lodash';
-import url from 'url'
-import request from 'request-promise'
-import errors from 'request-promise/errors'
-import Promise from 'bluebird'
-import {parseString} from 'xml2js'
-import processors from 'xml2js/lib/processors'
-import FMI from './fmi-constants'
+const _ = require('lodash')
+const url = require('url')
+const request = require('request-promise')
+const errors = require('request-promise/errors')
+const Promise = require('bluebird')
+const {parseString} = require('xml2js')
+const processors = require('xml2js/lib/processors')
+const FMI = require('./fmi-constants')
 
 const parseXml = Promise.promisify(parseString)
 
@@ -83,6 +83,6 @@ function fetchRadarImageUrls() {
     })
 }
 
-export {
+module.exports = {
   fetchRadarImageUrls
 }
