@@ -1,10 +1,10 @@
-import _ from 'lodash'
-import url from 'url'
-import proj4 from 'proj4'
-import request from 'request-promise'
-import Promise from 'bluebird'
-import {parseString} from 'xml2js'
-import processors from 'xml2js/lib/processors'
+const _ = require('lodash')
+const {parseString} = require('xml2js')
+const processors = require('xml2js/lib/processors')
+const proj4 = require('proj4')
+const Promise = require('bluebird')
+const request = require('request-promise')
+const url = require('url')
 
 const parseXml = Promise.promisify(parseString)
 
@@ -33,7 +33,7 @@ request(url.format(capabilitiesUrl))
     const topright = proj4('EPSG:3857').forward([wsg84Bounds.maxX, wsg84Bounds.maxY])
     const epsg3857Bounds = bottomleft.concat(topright).join(', ')
 
-    console.log('const wsg84Bounds = { minX: ' + wsg84Bounds.minX + ', minY: ' + wsg84Bounds.minY + ', maxX: ' + wsg84Bounds.maxX + ', maxY: ' + wsg84Bounds.maxY + ' }');
-    console.log('const epsg3857Bounds = [' + epsg3857Bounds + ']');
+    console.log('const wsg84Bounds = { minX: ' + wsg84Bounds.minX + ', minY: ' + wsg84Bounds.minY + ', maxX: ' + wsg84Bounds.maxX + ', maxY: ' + wsg84Bounds.maxY + ' }')
+    console.log('const epsg3857Bounds = [' + epsg3857Bounds + ']')
   })
-  .catch(console.error);
+  .catch(console.error)
