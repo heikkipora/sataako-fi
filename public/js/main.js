@@ -19,7 +19,7 @@ WmsOverlay.prototype.onAdd = function () {
   div.style.borderStyle = 'none';
   div.style.borderWidth = '0px';
   div.style.position = 'absolute';
-  div.style.opacity = '0.9';
+  div.style.opacity = '0.8';
 
   var img = document.createElement('img');
   img.id = 'radar-image';
