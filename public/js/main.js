@@ -94,7 +94,7 @@ WmsOverlay.prototype.onRemove = function () {
 var defaultUserSettings = {
   lat: 60.17297214455122,
   lng: 24.93999467670711,
-  zoom: 10
+  zoom: 7
 };
 
 var map = null;
