@@ -1,10 +1,10 @@
 const _ = require('lodash')
-const express = require('express')
 const compression = require('compression')
-const Queue = require('promise-queue')
-const {fetchRadarImageUrls} = require('./fmi-radar-frames')
-const {fetchPostProcessedRadarFrameAsGif} = require('./fmi-radar-images')
 const enforce = require('express-sslify')
+const express = require('express')
+const {fetchPostProcessedRadarFrameAsGif} = require('./fmi-radar-images')
+const {fetchRadarImageUrls} = require('./fmi-radar-frames')
+const Queue = require('promise-queue')
 
 const PORT = process.env.PORT || 3000
 const PUBLIC_FRAMES_ROOT = process.env.CLOUDFRONT_URL || `http://localhost:${PORT}/frame/`

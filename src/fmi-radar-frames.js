@@ -1,11 +1,11 @@
 const _ = require('lodash')
-const url = require('url')
-const request = require('request-promise')
 const errors = require('request-promise/errors')
-const Promise = require('bluebird')
+const FMI = require('./fmi-constants')
 const {parseString} = require('xml2js')
 const processors = require('xml2js/lib/processors')
-const FMI = require('./fmi-constants')
+const Promise = require('bluebird')
+const request = require('request-promise')
+const url = require('url')
 
 const parseXml = Promise.promisify(parseString)
 

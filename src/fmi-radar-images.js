@@ -1,10 +1,10 @@
-const fs = require('fs')
 const _ = require('lodash')
-const request = require('request-promise')
-const Promise = require('bluebird')
-const {PNG} = require('node-png')
-const GIFEncoder = require('gifencoder')
 const FMI = require('./fmi-constants')
+const fs = require('fs')
+const GIFEncoder = require('gifencoder')
+const {PNG} = require('node-png')
+const Promise = require('bluebird')
+const request = require('request-promise')
 
 let MASK_DATA = []
 fs.createReadStream(`${__dirname}/radar-mask.png`).pipe(new PNG()).on('parsed', (data) => MASK_DATA = data)
