@@ -92,12 +92,19 @@ WmsOverlay.prototype.onRemove = function () {
 // ----
 
 var defaultUserSettings = {
-  lat: 60.17297214455122,
-  lng: 24.93999467670711,
-  zoom: 7
+  lat: Number(localStorage.getItem('sataako-fi-lat')) || 60.17297214455122,
+  lng: Number(localStorage.getItem('sataako-fi-lng')) || 24.93999467670711,
+  zoom: Number(localStorage.getItem('sataako-fi-zoom')) || 7
 };
 
 var map = null;
+
+var saveDefaults = function () {
+  var latLng = map.getCenter();
+  localStorage.setItem('sataako-fi-lat', latLng.lat());
+  localStorage.setItem('sataako-fi-lng', latLng.lng());
+  localStorage.setItem('sataako-fi-zoom', map.getZoom());
+};
 
 var initializeGoogleMaps = function () {
   var styles = [
@@ -378,6 +385,7 @@ var initializeGoogleMaps = function () {
   };
 
   map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+  map.addListener('bounds_changed', saveDefaults);
 
   var wsg84Bounds = {
     minX: 10.215546158022443,
