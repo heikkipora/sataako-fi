@@ -6,7 +6,8 @@
   <title>Sataako kohta? - Sataako.fi</title>
 
   <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet" type="text/css">
-  <link href="css/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="//cdn.leafletjs.com/leaflet/v1.0.3/leaflet.css"/>
+  <link rel="stylesheet" href="/client.css"/>
 
   <meta name="description" content="Live-sadetilanne kätevästi Suomessa ja lähialueilla. Milloin lähteä lenkille, uimarannalle, piknikille tai kalaan? Katso, missä lähin sadepilvi luuraa! Unohda hankalat täsmäsääpalvelut ja tuntiennusteet." />
   <meta name="rating" content="Safe For Kids" />
@@ -55,26 +56,9 @@
 </head>
 
 <body>
-  <!--
+  <div id="app"></div>
 
-     torReaktorReaktorRe                                                                          rReakto
-     torReaktorReaktorReak                                                  orReakt               rReakto
-     torReaktorReaktorReakto                                                orReakt               rReakto
-     torReakt       orReakto     torReaktorReakt     ktorReaktorReakt       orReakt               rReaktorReakt      torReaktorRea                   ea
-     torReakt       orReakto   aktorReaktorReakto    ktorReaktorReaktorR    orReakt     ktorRea   rReaktorReakt   eaktorReaktorReakto     torRea  orRea
-     torReakt      torReak   ReaktorR     rReaktor              ReaktorR    orReakt    aktorR     rReakto       rReaktorReaktorReaktorR   torReaktorRea
-     torReaktorReaktorRe     ReaktorReaktorReaktor              ReaktorR    orReakt  Reakto       rReakto       rReaktorR      ReaktorRe  torReakto
-     torReaktorReaktorRe     ReaktorReaktorReakto    ktorReaktorReaktorR    orReaktorReaktor      rReakto       rReaktorR      ReaktorRe  torReak
-     torReak      ktorRea    Reaktor                aktorReaktorReaktorR    orReaktorReaktorR     rReakto       rReaktorR      ReaktorRe  torReak
-     torReak       torReak   ReaktorRe              aktorRea    ReaktorR    orReaktorR aktorRe    rReaktorReak   ReaktorReaktorReaktor    torReak
-     torReak        orReakto  eaktorReaktorReaktor  aktorReaktorReaktorRea  orReakto    ktorRea   rReaktorReakt    aktorReaktorReakt      torReak
-     torReak          Reakto     torReaktorReak       torReakt    aktorRea  orReakt      torReakt     ktorReakt      torReaktorRe         torReak
-                                                                                          orReakto
-                                                                                           rReaktor
-
-                                        We are hiring people like you. People who like to see how things work.
-                          http://reaktor.fi/careers/?utm_source=sataako&utm_medium=referral&utm_campaign=sataako_2015
-  -->
+  <script src="/js/client.js"></script>
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -86,36 +70,5 @@
     ga('require', 'linkid', 'linkid.js');
     ga('send', 'pageview');
   </script>
-
-  <div id="map-canvas"></div>
-  <div id="preload-frames"></div>
-  <div class="radar-timestamp"></div>
-  <div class="zoom-control-buttons">
-    <button id="zoomin" class="zoom-button">+</button>
-    <button id="zoomout" class="zoom-button">-</button>
-  </div>
-  <div id="side-info-panel-open">
-    &lt;
-  </div>
-  <div class="side-info-panel">
-    <button id="close-side-info">Sulje</button>
-    <div class="logo-container">
-      <img src="/img/sataako-logo-white.png" alt="Sataako kohta logo - sataako.fi" title="Sataako kohta logo - sataako.fi" />
-    </div>
-    <div class="description-container">
-      <h1>Sataako<br/>kohta?</h1>
-      <div class="fb-share-button" data-layout="button_count"></div>
-      <p>Live-sadetilanne kätevästi Suomessa ja lähialueilla. Milloin lähteä lenkille, uimarannalle, piknikille tai kalaan? Katso, missä lähin sadepilvi luuraa! Unohda hankalat täsmäsääpalvelut ja tuntiennusteet.</p>
-      <p>Tutkakuva päivittyy automaattisesti ja jatkuvasti, viiden minuutin välein. Mitä lähempänä väri on punaista, sitä enemmän sataa.</p>
-      <p>Tämän palvelun on tehnyt vapaa-ajallaan <a href="https://twitter.com/p0ra" target="_blank" title="Heikki Pora Twitter">Heikki&nbsp;Pora</a>, jonka sade pääsi yllättämään.</p>
-      <p>Kartalla esitetään <a href="https://ilmatieteenlaitos.fi/avoin-data/" target="_blank" title="Ilmatieteenlaitos Avoin Data">Ilmatieteen laitoksen</a> toimittamia tietoaineistoja. Tiedot ovat kaikille avointa tietoa eli <a href="http://www.hri.fi/fi/mita-on-avoin-data/" target="_blank" title="Helsinki Region Infoshare: Mitä on avoin data?">open dataa</a>.</p>
-    </div>
-  </div>
-
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
-  <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyCSSB_wzoN5hjHo3t_W9WWaW978BDg7AUc&amp;sensor=false&amp;libraries=geometry"></script>
-  <script src="js/main.js"></script>
 </body>
 </html>

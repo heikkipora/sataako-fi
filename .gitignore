@@ -2,7 +2,4 @@
 *.pid
 node_modules
 .DS_Store
-.idea
-*.iml
-
-
+public/client.css

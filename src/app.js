@@ -1,9 +1,11 @@
 const _ = require('lodash')
+const browserify = require('browserify-middleware')
 const compression = require('compression')
 const enforce = require('express-sslify')
 const express = require('express')
 const {fetchPostProcessedRadarFrameAsGif} = require('./fmi-radar-images')
 const {fetchRadarImageUrls} = require('./fmi-radar-frames')
+const lessMiddleware = require('less-middleware')
 const Queue = require('promise-queue')
 
 const PORT = process.env.PORT || 3000
@@ -32,9 +34,14 @@ app.get('/frame/:timestamp', (req, res) => {
     })
 })
 
-app.use(enforce.HTTPS({ trustProtoHeader: true}))
+app.disable('x-powered-by')
+if (process.env.NODE_ENV == 'production') {
+  app.use(enforce.HTTPS({ trustProtoHeader: true}))  
+}
 app.use(compression())
+app.use(lessMiddleware(`${__dirname}/../public`))
 app.use(express.static('public'))
+app.get('/js/client.js', browserify(__dirname + '/client/index.js'))
 
 const listQueue = new Queue(1, Infinity);
 const imageQueue = new Queue(4, Infinity);

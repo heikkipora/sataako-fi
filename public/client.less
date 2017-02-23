@@ -1,49 +1,41 @@
+@import "normalize-5.0.0.css";
+
 html, body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
   font-family: "Roboto Condensed", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
 }
 
+#map {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
 .radar-timestamp {
   position: fixed;
-  top: 8px;
-  left: 8px;
+  top: 12px;
+  left: 54px;
   padding: 0px 4px;
   background-color: rgba(255,255,255,0.8);
 }
 
-.zoom-control-buttons {
-  position: fixed;
-  bottom: 30px;
-  left: 10px;
-  width: 104px;
+.leaflet-overlay-pane {
+  .leaflet-image-layer {
+    image-rendering: optimizeSpeed !important;
+    image-rendering: -moz-crisp-edges !important;
+    image-rendering: -o-crisp-edges !important;
+    image-rendering: -webkit-optimize-contrast !important;
+    image-rendering: pixelated !important;
+    -ms-interpolation-mode: nearest-neighbor !important;
+  }
 }
 
-.zoom-button {
-  cursor: pointer;
-  border: 3px solid #4a4a4a;
-  color: #4a4a4a;
-  background: transparent;
-  font-size: 32px;
-  font-weight: bold;
-  width: 50px;
-  height: 50px;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  -webkit-transition: background 0.1s;
-          transition: background 0.1s;
-}
-.zoom-button:active {
-  background: rgba(74,74,74, 0.6);
-}
-.zoom-control-buttons.side-panel-hidden {
-  right: 110px;
+#preload-frames {
+  display: none;
 }
 
 #side-info-panel-open, .side-info-panel {
@@ -112,28 +104,6 @@ html, body {
 }
 .description-container a, .description-container a:visited {
   color: white;
-}
-
-#map-canvas{
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: inherit;
-}
-
-#preload-frames {
-  display: none;
-}
-
-#radar-image {
-  image-rendering: optimizeSpeed;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: -o-crisp-edges;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: pixelated;
-  -ms-interpolation-mode: nearest-neighbor;
 }
 
 @media screen and (min-height: 800px) {
