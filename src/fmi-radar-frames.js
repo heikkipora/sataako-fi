@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import url from 'url'
 import request from 'request-promise'
+import errors from 'request-promise/errors'
 import Promise from 'bluebird'
 import {parseString} from 'xml2js'
 import processors from 'xml2js/lib/processors'
@@ -70,7 +71,16 @@ function fetchRadarImageUrls() {
     return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
   }
   console.log('Updating radar frame list from FMI')
-  return request(fmiRadarFramesRequest).then(xmlToObject).then(extractFrameReferences).then(setProjectionAndCleanupUrls).then(updateCache)
+  return request(fmiRadarFramesRequest)
+    .then(xmlToObject)
+    .then(extractFrameReferences)
+    .then(setProjectionAndCleanupUrls)
+    .then(updateCache)
+    .catch(errors.StatusCodeError, reason => {
+      // Sometimes the FMI API returns a HTTP error - in which case we use the cached list as fallback
+      console.error(`Radar frames API returned HTTP status ${reason.statusCode}, using cached frame list`)
+      return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
+    })
 }
 
 export {
