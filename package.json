@@ -17,7 +17,6 @@
     "express-sslify": "1.2.0",
     "gifencoder": "git://github.com/heikkipora/gifencoder",
     "jquery": "3.2.1",
-    "leaflet": "1.1.0",
     "less-middleware": "2.2.0",
     "lodash": "4.17.4",
     "node-png": "0.4.3",
@@ -32,7 +31,7 @@
     "proj4": "2.4.3"
   },
   "engines": {
-    "node": "6.10.0"
+    "node": "6.10.3"
   },
   "browserify": {
     "transform": [

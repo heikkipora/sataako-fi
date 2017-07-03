@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import $ from 'jquery'
 import dateFns from 'date-fns'
-import Leaflet from 'leaflet'
+import InfoPanel from './info-panel'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {createMap, createOverlay} from './map'
+import {createMap, panTo, showRadarFrame} from './map'
 
 const FRAME_DELAY_MS = 500
 const FRAME_LOOP_DELAY_MS = 5000
@@ -25,7 +25,6 @@ const SataakoApp = React.createClass({
   },
   componentDidMount() {
     this.map = createMap(defaultSettings)
-    this.overlay = createOverlay(this.map)
     this.reloadFramesList()
     this.animateRadar()
     if (navigator.geolocation) {
@@ -40,6 +39,7 @@ const SataakoApp = React.createClass({
         <div id="map"></div>
         <div id="preload-frames">{this.renderFrameImages()}</div>
         <div className="radar-timestamp"><span>{radarFrameTimestamp}</span></div>
+        <InfoPanel/>
       </div>
     )
   },
@@ -59,7 +59,7 @@ const SataakoApp = React.createClass({
         delayMs = FRAME_LOOP_DELAY_MS
       } else {
         const currentFrame = this.state.frames[this.state.currentFrameIndex];
-        this.overlay.setUrl(currentFrame.image)
+        showRadarFrame(this.map, currentFrame.image)
         this.setState({currentFrame, currentFrameIndex: this.state.currentFrameIndex + 1})
       }
     }
@@ -67,8 +67,7 @@ const SataakoApp = React.createClass({
     window.setTimeout(this.animateRadar, delayMs)
   },
   onLocation(geolocationResponse) {
-    const location = [geolocationResponse.coords.latitude, geolocationResponse.coords.longitude]
-    this.map.panTo(location)
+    panTo(this.map, [geolocationResponse.coords.longitude, geolocationResponse.coords.latitude])
   }
 })
 
