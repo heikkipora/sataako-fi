@@ -33,9 +33,7 @@ function createMap(settings) {
   })
 
   // OpenLayers leaves the map distorted on some mobile browsers after screen orientation change
-  window.addEventListener('orientationchange', () => {
-    location.reload()
-  })
+  window.addEventListener('orientationchange', () => location.reload())
 
   return map
 }
