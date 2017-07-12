@@ -7,13 +7,14 @@ const ACCESS_TOKEN = 'pk.eyJ1IjoiZHJpbGxzb2Z0IiwiYSI6ImNpamhheThmMDAwMWJ2bGx3cTd
 const {ol} = window
 
 function createMap(settings) {
-  const center = ol.proj.fromLonLat([settings.lon, settings.lat])
+  const {x, y, zoom} = settings
+  const center = [x, y]
   const view = new ol.View({
     center,
     minZoom: 5,
     maxZoom: 13,
     projection,
-    zoom: settings.zoom
+    zoom
   })
 
   const map = new ol.Map({

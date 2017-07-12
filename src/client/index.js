@@ -8,24 +8,25 @@ import {createMap, panTo, showRadarFrame} from './map'
 const FRAME_DELAY_MS = 500
 const FRAME_LOOP_DELAY_MS = 5000
 
-const defaultSettings = {
-  lat: Number(localStorage.getItem('sataako-fi-lat')) || 60.17297214455122,
-  lon: Number(localStorage.getItem('sataako-fi-lng')) || 24.93999467670711,
-  zoom: Number(localStorage.getItem('sataako-fi-zoom')) || 7
-}
-
 class SataakoApp extends React.Component {
   constructor() {
     super()
     this.state = {
       currentFrame: null,
       currentFrameIndex: 0,
-      frames: []
+      frames: [],
+      mapSettings: {
+        x: Number(localStorage.getItem('sataako-fi-x')) || 2776307.5078,
+        y: Number(localStorage.getItem('sataako-fi-y')) || 8438349.32742,
+        zoom: Number(localStorage.getItem('sataako-fi-zoom')) || 7
+      }
     }
   }
 
   componentDidMount() {
-    this.map = createMap(defaultSettings)
+    this.map = createMap(this.state.mapSettings)
+    this.map.on('moveend', this.onMapMove.bind(this, null))
+
     this.reloadFramesList()
     this.animateRadar()
     if (navigator.geolocation) {
@@ -74,6 +75,15 @@ class SataakoApp extends React.Component {
 
   onLocation(geolocationResponse) {
     panTo(this.map, [geolocationResponse.coords.longitude, geolocationResponse.coords.latitude])
+  }
+
+  onMapMove() {
+    const [x,y] = this.map.getView().getCenter()
+    const zoom = this.map.getView().getZoom()
+
+    localStorage.setItem('sataako-fi-x', x)
+    localStorage.setItem('sataako-fi-y', y)
+    localStorage.setItem('sataako-fi-zoom', zoom)
   }
 }
 
