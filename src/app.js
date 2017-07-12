@@ -25,6 +25,7 @@ app.get('/frame/:timestamp', (req, res) => {
           })
         })
           .catch((err) => {
+            // eslint-disable-next-line no-console
             console.error(err)
             res.status(500).send('Failed fetching radar image')
           })
@@ -36,7 +37,7 @@ app.get('/frame/:timestamp', (req, res) => {
 
 app.disable('x-powered-by')
 if (process.env.NODE_ENV == 'production') {
-  app.use(enforce.HTTPS({ trustProtoHeader: true}))  
+  app.use(enforce.HTTPS({trustProtoHeader: true}))
 }
 app.use(compression())
 app.use(lessMiddleware(`${__dirname}/../public`))
@@ -59,6 +60,7 @@ app.get('/frames.json', (req, res) => {
       res.json(urls.map(toPublicUrl))
     })
     .catch((err) => {
+      // eslint-disable-next-line no-console
       console.error(err)
       res.status(500).json([])
     })
@@ -66,5 +68,6 @@ app.get('/frames.json', (req, res) => {
 })
 
 const server = app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`Server listening on port ${server.address().port}`)
 })

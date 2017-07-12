@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const errors = require('request-promise/errors')
 const FMI = require('./fmi-constants')
 const {parseString} = require('xml2js')
@@ -9,12 +8,14 @@ const url = require('url')
 
 const parseXml = Promise.promisify(parseString)
 
-let featureUrl = url.parse(FMI.WFS_FEATURE_URL)
+const featureUrl = url.parse(FMI.WFS_FEATURE_URL)
 featureUrl.query = {
   request: 'getFeature',
+  // eslint-disable-next-line camelcase
   storedquery_id: 'fmi::radar::composite::rr'
 }
 const fmiRadarFramesRequest = url.format(featureUrl)
+// eslint-disable-next-line no-console
 console.log(`Configured radar frames URL: ${fmiRadarFramesRequest}`)
 
 function xmlToObject(featureQueryResultXml) {
@@ -32,14 +33,14 @@ function extractFrameReferences(featureQueryResult) {
 
 function setProjectionAndCleanupUrls(frameReferences) {
   function cleanupUrl(frameReference) {
-    let radarUrl = url.parse(frameReference.url, true)
+    const radarUrl = url.parse(frameReference.url, true)
     radarUrl.query.format = 'image/png'
     radarUrl.query.width = FMI.WIDTH
     radarUrl.query.height = FMI.HEIGHT
     radarUrl.query.bbox = FMI.EPSG_3857_BOUNDS
     radarUrl.query.srs = FMI.EPSG_3857_SRS
-    delete radarUrl.query.styles
-    delete radarUrl.search
+    Reflect.deleteProperty(radarUrl.query, 'styles')
+    Reflect.deleteProperty(radarUrl, 'search')
     return {
       url: url.format(radarUrl),
       timestamp: frameReference.timestamp
@@ -63,13 +64,15 @@ function updateCache(radarImageUrls) {
 }
 
 function isCacheValid() {
-  return ((now() - CACHE_TIMESTAMP) < 60 * 1000) && CACHED_RADAR_IMAGE_URLS.length > 0
+  const cacheAge = now() - CACHE_TIMESTAMP
+  return cacheAge < 60 * 1000 && CACHED_RADAR_IMAGE_URLS.length > 0
 }
 
 function fetchRadarImageUrls() {
   if (isCacheValid()) {
     return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
   }
+  // eslint-disable-next-line no-console
   console.log('Updating radar frame list from FMI')
   return request(fmiRadarFramesRequest)
     .then(xmlToObject)
@@ -78,6 +81,7 @@ function fetchRadarImageUrls() {
     .then(updateCache)
     .catch(errors.StatusCodeError, reason => {
       // Sometimes the FMI API returns a HTTP error - in which case we use the cached list as fallback
+      // eslint-disable-next-line no-console
       console.error(`Radar frames API returned HTTP status ${reason.statusCode}, using cached frame list`)
       return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
     })

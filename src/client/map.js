@@ -4,6 +4,8 @@ const EPSG_3857_BOUNDS = [1137189.3964862407, 7709459.565190111, 4160194.0259960
 const MAP_ID = 'mapbox.light'
 const ACCESS_TOKEN = 'pk.eyJ1IjoiZHJpbGxzb2Z0IiwiYSI6ImNpamhheThmMDAwMWJ2bGx3cTdnc2pqN3YifQ.T03pA9q2dnHo4lLHHMmrYA'
 
+const {ol} = window
+
 function createMap(settings) {
   const center = ol.proj.fromLonLat([settings.lon, settings.lat])
   const view = new ol.View({

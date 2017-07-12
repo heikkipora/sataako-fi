@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import $ from 'jquery'
 import dateFns from 'date-fns'
 import InfoPanel from './info-panel'
@@ -15,22 +14,25 @@ const defaultSettings = {
   zoom: Number(localStorage.getItem('sataako-fi-zoom')) || 7
 }
 
-const SataakoApp = React.createClass({
-  getInitialState() {
-    return {
+class SataakoApp extends React.Component {
+  constructor() {
+    super()
+    this.state = {
       currentFrame: null,
       currentFrameIndex: 0,
       frames: []
     }
-  },
+  }
+
   componentDidMount() {
     this.map = createMap(defaultSettings)
     this.reloadFramesList()
     this.animateRadar()
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this.onLocation)
+      navigator.geolocation.getCurrentPosition(this.onLocation.bind(this))
     }
-  },
+  }
+
   render() {
     const radarFrameTimestamp = this.state.currentFrame ? dateFns.format(this.state.currentFrame.timestamp, 'D.M. HH:mm') : ''
 
@@ -42,14 +44,17 @@ const SataakoApp = React.createClass({
         <InfoPanel/>
       </div>
     )
-  },
+  }
+
   renderFrameImages() {
     return this.state.frames.map(frame => <img key={frame.image} src={frame.image}/>)
-  },
+  }
+
   reloadFramesList() {
-    $.get('/frames.json', frames =>this.setState({frames}))
+    $.get('/frames.json', frames => this.setState({frames}))
     window.setTimeout(this.reloadFramesList, 60 * 1000)
-  },
+  }
+
   animateRadar() {
     let delayMs = FRAME_DELAY_MS
 
@@ -64,11 +69,12 @@ const SataakoApp = React.createClass({
       }
     }
 
-    window.setTimeout(this.animateRadar, delayMs)
-  },
+    window.setTimeout(this.animateRadar.bind(this, null), delayMs)
+  }
+
   onLocation(geolocationResponse) {
     panTo(this.map, [geolocationResponse.coords.longitude, geolocationResponse.coords.latitude])
   }
-})
+}
 
 ReactDOM.render(<SataakoApp />, document.getElementById('app'))
