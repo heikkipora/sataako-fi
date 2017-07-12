@@ -3,6 +3,7 @@ import dateFns from 'date-fns'
 import InfoPanel from './info-panel'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import {addPete, isKohtaSataa} from './pete'
 import {createMap, panTo, showRadarFrame} from './map'
 
 const FRAME_DELAY_MS = 500
@@ -32,6 +33,10 @@ class SataakoApp extends React.Component {
     this.animateRadar()
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(this.onLocation.bind(this))
+    }
+
+    if (isKohtaSataa()) {
+      addPete(this.map)
     }
   }
 

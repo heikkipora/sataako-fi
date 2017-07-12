@@ -5,6 +5,7 @@ const enforce = require('express-sslify')
 const express = require('express')
 const {fetchPostProcessedRadarFrameAsGif} = require('./fmi-radar-images')
 const {fetchRadarImageUrls} = require('./fmi-radar-frames')
+const {gigsList} = require('./pete')
 const lessMiddleware = require('less-middleware')
 const Queue = require('promise-queue')
 
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 3000
 const PUBLIC_FRAMES_ROOT = process.env.CLOUDFRONT_URL || `http://localhost:${PORT}/frame/`
 
 const app = express()
+app.disable('x-powered-by')
 
 app.get('/frame/:timestamp', (req, res) => {
   listQueue.add(fetchRadarImageUrls)
@@ -35,12 +37,19 @@ app.get('/frame/:timestamp', (req, res) => {
     })
 })
 
-app.disable('x-powered-by')
 if (process.env.NODE_ENV == 'production') {
   app.use(enforce.HTTPS({trustProtoHeader: true}))
 }
 app.use(compression())
 app.use(lessMiddleware(`${__dirname}/../public`))
+
+app.get('/', (req, res, next) => {
+  if (req.hostname.indexOf('kohtasataa') >= 0) {
+    res.sendFile(`${__dirname}/pete.html`)
+  } else {
+    next()
+  }
+})
 app.use(express.static('public'))
 app.get('/js/client.js', browserify(__dirname + '/client/index.js'))
 
@@ -65,6 +74,10 @@ app.get('/frames.json', (req, res) => {
       res.status(500).json([])
     })
 
+})
+
+app.get('/pete.json', (req, res) => {
+  res.json(gigsList())
 })
 
 const server = app.listen(PORT, () => {
