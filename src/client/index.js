@@ -78,7 +78,7 @@ class SataakoApp extends React.Component {
   }
 
   onMapMove() {
-    const [x,y] = this.map.getView().getCenter()
+    const [x, y] = this.map.getView().getCenter()
     const zoom = this.map.getView().getZoom()
 
     localStorage.setItem('sataako-fi-x', x)
