@@ -10,6 +10,8 @@ I wanted to create a mobile-friendly weather service for Finland which has the s
 [Sataako.fi](http://www.sataako.fi) fetches weather radar images from [Finnish Meteorological Institute](http://en.ilmatieteenlaitos.fi)'s [Open Data APIs](http://en.ilmatieteenlaitos.fi/open-data-manual) and shows them as Google Maps layers after some post-processing.
 The movement of rain clouds is shown as a short animation covering the last hour.
 
+[![build status](https://travis-ci.org/heikkipora/sataako.svg?branch=master)](https://travis-ci.org/heikkipora/sataako)
+
 Runtime environment
 -------------------
 The node.js application runs in [Heroku](http://heroku.com) with a single [Hobby dyno](https://devcenter.heroku.com/articles/dyno-types).
@@ -44,4 +46,3 @@ With a (modest) amount of concurrent users the service runs almost for free:
 * 7€ - Heroku
 * 1-3€ - AWS CloudFront (CDN) & Route53 (DNS)
 * 1€ - FI domain
-
