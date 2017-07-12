@@ -10,11 +10,11 @@ class InfoPanel extends React.Component {
 
   render() {
     if (this.state.collapsed) {
-      return <div id="side-info-panel-open" onClick={this.expand}>&lt;</div>
+      return <div id="side-info-panel-open" onClick={this.expand.bind(this)}>&lt;</div>
     }
 
     return <div className="side-info-panel">
-      <button id="close-side-info" onClick={this.collapse}>Sulje</button>
+      <button id="close-side-info" onClick={this.collapse.bind(this)}>Sulje</button>
       <div className="logo-container">
         <img src="/img/sataako-logo-white.png" alt="Sataako kohta logo - sataako.fi" title="Sataako kohta logo - sataako.fi" />
       </div>
