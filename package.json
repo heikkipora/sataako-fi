@@ -35,8 +35,8 @@
     "eslint-plugin-react": "7.3.0"
   },
   "engines": {
-    "node": "8.1.4",
-    "npm": "5.2.0"
+    "node": "8.4.0",
+    "npm": "5.4.1"
   },
   "browserify": {
     "transform": [
