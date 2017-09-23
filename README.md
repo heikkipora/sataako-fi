@@ -40,4 +40,4 @@ To be able to use those images on top of Google Maps the following steps are tak
 
 Thanks to
 --------
-Production environment costs kindly covered by <a href="https://www.reaktor.com">Reaktor</a>.
+Runtime environment costs kindly covered by <a href="https://www.reaktor.com">Reaktor</a>.
