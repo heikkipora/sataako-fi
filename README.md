@@ -37,3 +37,7 @@ To be able to use those images on top of Google Maps the following steps are tak
 * change a solid gray background (0xf7f7f7) to fully transparent
 * use a [mask-image](src/radar-mask.png) to change a solid orange border area (related to changing the projection obviously) to fully transparent
 * encode image as GIF maintaining transparency
+
+Thanks to
+--------
+Production environment costs kindly covered by <a href="https://www.reaktor.com">Reaktor</a>.
