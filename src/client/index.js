@@ -48,7 +48,7 @@ class SataakoApp extends React.Component {
         <div id="map"></div>
         <div id="preload-frames">{this.renderFrameImages()}</div>
         <div className="radar-timestamp"><span>{radarFrameTimestamp}</span></div>
-        <a className="sponsor" href="https://www.reaktor.com" target="_blank"></a>
+        <a className="sponsor" href="https://www.reaktor.com" target="_blank" rel="noopener noreferrer"></a>
         <InfoPanel/>
       </div>
     )
