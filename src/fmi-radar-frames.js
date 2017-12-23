@@ -18,17 +18,36 @@ const fmiRadarFramesRequest = url.format(featureUrl)
 // eslint-disable-next-line no-console
 console.log(`Configured radar frames URL: ${fmiRadarFramesRequest}`)
 
+function fetchRadarImageUrls() {
+  if (isCacheValid()) {
+    return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
+  }
+  // eslint-disable-next-line no-console
+  console.log('Updating radar frame list from FMI')
+  return request(fmiRadarFramesRequest)
+    .then(xmlToObject)
+    .then(extractFrameReferences)
+    .then(setProjectionAndCleanupUrls)
+    .then(updateCache)
+    .catch(errors.StatusCodeError, reason => {
+      // Sometimes the FMI API returns a HTTP error - in which case we use the cached list as fallback
+      // eslint-disable-next-line no-console
+      console.error(`Radar frames API returned HTTP status ${reason.statusCode}, using cached frame list`)
+      return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
+    })
+}
+
 function xmlToObject(featureQueryResultXml) {
   return parseXml(featureQueryResultXml, {tagNameProcessors: [processors.stripPrefix, processors.firstCharLowerCase]})
 }
 
 function extractFrameReferences(featureQueryResult) {
-  return featureQueryResult.featureCollection.member.map((member) => {
-    return {
+  return featureQueryResult.featureCollection.member.map(member =>
+    ({
       url: member.gridSeriesObservation[0].result[0].rectifiedGridCoverage[0].rangeSet[0].file[0].fileReference[0],
       timestamp: member.gridSeriesObservation[0].phenomenonTime[0].timeInstant[0].timePosition[0]
-    }
-  })
+    })
+  )
 }
 
 function setProjectionAndCleanupUrls(frameReferences) {
@@ -50,12 +69,13 @@ function setProjectionAndCleanupUrls(frameReferences) {
   return frameReferences.map(cleanupUrl)
 }
 
-function now() {
-  return new Date().getTime()
-}
-
 let CACHED_RADAR_IMAGE_URLS = []
 let CACHE_TIMESTAMP = now()
+
+function isCacheValid() {
+  const cacheAge = now() - CACHE_TIMESTAMP
+  return cacheAge < 60 * 1000 && CACHED_RADAR_IMAGE_URLS.length > 0
+}
 
 function updateCache(radarImageUrls) {
   CACHED_RADAR_IMAGE_URLS = radarImageUrls
@@ -63,28 +83,8 @@ function updateCache(radarImageUrls) {
   return radarImageUrls
 }
 
-function isCacheValid() {
-  const cacheAge = now() - CACHE_TIMESTAMP
-  return cacheAge < 60 * 1000 && CACHED_RADAR_IMAGE_URLS.length > 0
-}
-
-function fetchRadarImageUrls() {
-  if (isCacheValid()) {
-    return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
-  }
-  // eslint-disable-next-line no-console
-  console.log('Updating radar frame list from FMI')
-  return request(fmiRadarFramesRequest)
-    .then(xmlToObject)
-    .then(extractFrameReferences)
-    .then(setProjectionAndCleanupUrls)
-    .then(updateCache)
-    .catch(errors.StatusCodeError, reason => {
-      // Sometimes the FMI API returns a HTTP error - in which case we use the cached list as fallback
-      // eslint-disable-next-line no-console
-      console.error(`Radar frames API returned HTTP status ${reason.statusCode}, using cached frame list`)
-      return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
-    })
+function now() {
+  return new Date().getTime()
 }
 
 module.exports = {

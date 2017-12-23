@@ -7,9 +7,33 @@ const Promise = require('bluebird')
 const request = require('request-promise')
 
 let MASK_DATA = []
-fs.createReadStream(`${__dirname}/radar-mask.png`).pipe(new PNG()).on('parsed', (data) => {
-  MASK_DATA = data
-})
+fs.createReadStream(`${__dirname}/radar-mask.png`)
+  .pipe(new PNG())
+  .on('parsed', data => {
+    MASK_DATA = data
+  })
+
+function fetchPostProcessedRadarFrameAsGif(fmiRadarImage) {
+  const gif = cachedGifByUrl(fmiRadarImage.url)
+  if (gif) {
+    return Promise.resolve(gif)
+  }
+
+  // eslint-disable-next-line no-console
+  console.log(`Fetching radar image from FMI: ${fmiRadarImage.timestamp}`)
+  return fetchDecodedRadarImage(fmiRadarImage.url)
+    .then(removeRadarBordersFromFrame)
+    .then(encodeAsGif)
+    .then(cacheGif(fmiRadarImage.url))
+}
+
+function fetchDecodedRadarImage(url) {
+  const png = request(url).pipe(new PNG())
+  return new Promise((resolve, reject) => {
+    png.on('parsed', resolve)
+    png.on('error', reject)
+  })
+}
 
 function removeRadarBordersFromFrame(frameData) {
   for (let index = 0; index < frameData.length; index += 4) {
@@ -35,40 +59,29 @@ function encodeAsGif(frameData) {
   return new Buffer(encoder.out.getData())
 }
 
-function fetchDecodedRadarImage(url) {
-  const png = request(url).pipe(new PNG())
-  return new Promise((resolve, reject) => {
-    png.on('parsed', resolve)
-    png.on('error', reject)
-  })
-}
-
 const GIF_CACHE = []
 
-function now() {
-  return new Date().getTime()
+function cacheGif(url) {
+  return gif => {
+    GIF_CACHE.push({url, gif, timestamp: now()})
+    return gif
+  }
+}
+
+function cachedGifByUrl(url) {
+  cleanupExpiredGifsFromCache()
+  const cachedGif = _.find(GIF_CACHE, {url})
+  return cachedGif && cachedGif.gif
 }
 
 function cleanupExpiredGifsFromCache() {
-  _.remove(GIF_CACHE, (cachedGif) => {
+  _.remove(GIF_CACHE, cachedGif => {
     return now() - cachedGif.timestamp > 70 * 60 * 1000
   })
 }
 
-function fetchPostProcessedRadarFrameAsGif(fmiRadarImage) {
-  cleanupExpiredGifsFromCache()
-  const cachedGif = _.find(GIF_CACHE, {url: fmiRadarImage.url})
-  if (cachedGif) {
-    return Promise.resolve(cachedGif.gif)
-  }
-
-  // eslint-disable-next-line no-console
-  console.log(`Fetching radar image from FMI: ${fmiRadarImage.timestamp}`)
-  return fetchDecodedRadarImage(fmiRadarImage.url).then(removeRadarBordersFromFrame).then(encodeAsGif)
-    .then((gif) => {
-      GIF_CACHE.push({url: fmiRadarImage.url, gif: gif, timestamp: now()})
-      return gif
-    })
+function now() {
+  return new Date().getTime()
 }
 
 module.exports = {

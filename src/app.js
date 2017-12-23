@@ -17,19 +17,20 @@ app.disable('x-powered-by')
 
 app.get('/frame/:timestamp', (req, res) => {
   listQueue.add(fetchRadarImageUrls)
-    .then((urls) => {
+    .then(urls => {
       const fmiRadarImage = _.find(urls, {timestamp: req.params.timestamp})
       if (fmiRadarImage) {
         imageQueue.add(() => {
-          return fetchPostProcessedRadarFrameAsGif(fmiRadarImage).then((gif) => {
-            res.set('Content-Type', 'image/gif')
-            res.send(gif)
-          })
-        })
-          .catch((err) => {
-            // eslint-disable-next-line no-console
-            console.error(err)
-            res.status(500).send('Failed fetching radar image')
+          return fetchPostProcessedRadarFrameAsGif(fmiRadarImage)
+            .then(gif => {
+              res.set('Content-Type', 'image/gif')
+              res.send(gif)
+            })
+            .catch(err => {
+              // eslint-disable-next-line no-console
+              console.error(err)
+              res.status(500).send('Failed fetching radar image')
+            })
           })
       } else {
         res.status(404).send('Sorry, no radar image found for that timestamp')
@@ -65,10 +66,8 @@ app.get('/frames.json', (req, res) => {
   }
 
   listQueue.add(fetchRadarImageUrls)
-    .then((urls) => {
-      res.json(urls.map(toPublicUrl))
-    })
-    .catch((err) => {
+    .then(urls => res.json(urls.map(toPublicUrl)))
+    .catch(err => {
       // eslint-disable-next-line no-console
       console.error(err)
       res.status(500).json([])
