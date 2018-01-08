@@ -18,7 +18,7 @@
     "date-fns": "1.29.0",
     "express": "4.16.2",
     "express-sslify": "1.2.0",
-    "gifencoder": "git://github.com/heikkipora/gifencoder",
+    "gifencoder": "1.1.0",
     "jquery": "3.2.1",
     "less-middleware": "2.2.1",
     "lodash": "4.17.4",
