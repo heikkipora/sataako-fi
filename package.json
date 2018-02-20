@@ -11,20 +11,20 @@
     "babel-preset-react": "6.24.1",
     "babelify": "8.0.0",
     "bluebird": "3.5.1",
-    "browserify": "14.5.0",
+    "browserify": "16.1.0",
     "browserify-middleware": "8.0.0",
     "cheerio": "1.0.0-rc.2",
-    "compression": "1.7.1",
+    "compression": "1.7.2",
     "date-fns": "1.29.0",
     "express": "4.16.2",
     "express-sslify": "1.2.0",
     "gifencoder": "1.1.0",
-    "jquery": "3.2.1",
+    "jquery": "3.3.1",
     "less-middleware": "2.2.1",
-    "lodash": "4.17.4",
+    "lodash": "4.17.5",
     "node-png": "0.4.3",
     "proj4": "2.4.4",
-    "promise-queue": "2.2.3",
+    "promise-queue": "2.2.5",
     "react": "16.2.0",
     "react-dom": "16.2.0",
     "request": "2.83.0",
@@ -32,8 +32,8 @@
     "xml2js": "0.4.19"
   },
   "devDependencies": {
-    "eslint": "4.14.0",
-    "eslint-plugin-react": "7.5.1"
+    "eslint": "4.18.0",
+    "eslint-plugin-react": "7.7.0"
   },
   "engines": {
     "node": "9.3.0",
