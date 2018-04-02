@@ -1,7 +1,6 @@
 import $ from 'jquery'
 import _ from 'lodash'
-
-const {ol} = window
+import ol from 'openlayers'
 
 function addPete(map) {
   loadGigs().then(createPeteLayer).then(layer => map.addLayer(layer))
