@@ -27,12 +27,12 @@
     "openlayers": "4.6.5",
     "proj4": "2.4.4",
     "promise-queue": "2.2.5",
-    "react": "16.2.0",
-    "react-dom": "16.2.0",
+    "react": "16.3.0",
+    "react-dom": "16.3.0",
     "xml2js": "0.4.19"
   },
   "devDependencies": {
-    "eslint": "4.19.0",
+    "eslint": "4.19.1",
     "eslint-plugin-react": "7.7.0"
   },
   "engines": {
