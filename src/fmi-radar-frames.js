@@ -54,8 +54,8 @@ function setProjectionAndCleanupUrls(frameReferences) {
     radarUrl.query.format = 'image/png'
     radarUrl.query.width = FMI.WIDTH
     radarUrl.query.height = FMI.HEIGHT
-    radarUrl.query.bbox = FMI.EPSG_3857_BOUNDS
-    radarUrl.query.srs = FMI.EPSG_3857_SRS
+    radarUrl.query.bbox = FMI.EPSG_3067_BOUNDS
+    radarUrl.query.srs = FMI.EPSG_3067_SRS
     Reflect.deleteProperty(radarUrl.query, 'styles')
     Reflect.deleteProperty(radarUrl, 'search')
     return {

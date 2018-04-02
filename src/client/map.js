@@ -1,10 +1,13 @@
-const projection = 'EPSG:3857'
-const EPSG_3857_BOUNDS = [1137189.3964862407, 7709459.565190111, 4160194.0259960056, 11485434.685198486]
+import proj4 from 'proj4'
+
+proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
+const {ol} = window
+ol.proj.setProj4(proj4)
+const imageProjection = new ol.proj.Projection({code: 'EPSG:3067'})
+const imageExtent = [-118331.366, 6335621.167, 875567.732, 7907751.537]
 
 const MAP_ID = 'mapbox.light'
 const ACCESS_TOKEN = 'pk.eyJ1IjoiZHJpbGxzb2Z0IiwiYSI6ImNpamhheThmMDAwMWJ2bGx3cTdnc2pqN3YifQ.T03pA9q2dnHo4lLHHMmrYA'
-
-const {ol} = window
 
 function createMap(settings) {
   const {x, y, zoom} = settings
@@ -13,7 +16,7 @@ function createMap(settings) {
     center,
     minZoom: 5,
     maxZoom: 13,
-    projection,
+    projection: 'EPSG:3857',
     zoom
   })
 
@@ -77,8 +80,8 @@ function showRadarFrame(map, url) {
 
 function createImageSource(url) {
   return new ol.source.ImageStatic({
-    imageExtent: EPSG_3857_BOUNDS,
-    projection,
+    imageExtent,
+    projection: imageProjection,
     url
   })
 }
