@@ -27,14 +27,6 @@ function createMap(settings) {
     view
   })
 
-  // Disable smoothing of radar image layer
-  map.on('precompose', event => {
-    event.context.imageSmoothingEnabled = false
-    event.context.webkitImageSmoothingEnabled = false
-    event.context.mozImageSmoothingEnabled = false
-    event.context.msImageSmoothingEnabled = false
-  })
-
   // OpenLayers leaves the map distorted on some mobile browsers after screen orientation change
   window.addEventListener('orientationchange', () => location.reload())
 
