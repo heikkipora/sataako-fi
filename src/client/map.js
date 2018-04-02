@@ -1,7 +1,7 @@
+import ol from 'openlayers'
 import proj4 from 'proj4'
 
 proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
-const {ol} = window
 ol.proj.setProj4(proj4)
 const imageProjection = new ol.proj.Projection({code: 'EPSG:3067'})
 const imageExtent = [-118331.366, 6335621.167, 875567.732, 7907751.537]
