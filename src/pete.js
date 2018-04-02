@@ -1,13 +1,12 @@
 const _ = require('lodash')
+const axios = require('axios')
 const cheerio = require('cheerio')
-const errors = require('request-promise/errors')
 const municipalities = require('./kunnat.json')
 const proj4 = require('proj4')
-const request = require('request-promise')
 
 let GIGS_CACHE = []
 
-request('http://warnermusiclive.fi/artistit/pete-parkkonen/')
+axios.get('http://warnermusiclive.fi/artistit/pete-parkkonen/')
   .then(parseHtml)
   .then(includeLocation)
   .then(uniqueByMunicipality)
@@ -16,13 +15,13 @@ request('http://warnermusiclive.fi/artistit/pete-parkkonen/')
     // eslint-disable-next-line no-console
     console.log('Loaded gigs list', gigs)
   })
-  .catch(errors.StatusCodeError, reason => {
+  .catch(error => {
     // eslint-disable-next-line no-console
-    console.error(`Failed to load gigs. Server returned HTTP status ${reason.statusCode}`)
+    console.error(`Failed to load gigs: ${error.message}`)
   })
 
-function parseHtml(html) {
-  const $ = cheerio.load(html)
+function parseHtml(response) {
+  const $ = cheerio.load(response.data)
   return $('#gigList > ul.gigs > li').map((index, element) => {
     const date = $(element).find('b.date').text().trim()
     const venue = $(element).find('li.venue').text().trim()

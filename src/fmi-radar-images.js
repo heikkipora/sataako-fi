@@ -1,10 +1,9 @@
 const _ = require('lodash')
+const axios = require('axios')
 const FMI = require('./fmi-constants')
 const fs = require('fs')
 const GIFEncoder = require('gifencoder')
 const {PNG} = require('node-png')
-const Promise = require('bluebird')
-const request = require('request-promise')
 
 let MASK_DATA = []
 fs.createReadStream(`${__dirname}/radar-mask.png`)
@@ -28,11 +27,14 @@ function fetchPostProcessedRadarFrameAsGif(fmiRadarImage) {
 }
 
 function fetchDecodedRadarImage(url) {
-  const png = request(url).pipe(new PNG())
-  return new Promise((resolve, reject) => {
-    png.on('parsed', resolve)
-    png.on('error', reject)
-  })
+  return axios({url, method:'get', responseType:'stream'})
+    .then(response => {
+      const png = response.data.pipe(new PNG())
+      return new Promise((resolve, reject) => {
+        png.on('parsed', resolve)
+        png.on('error', reject)
+      })
+    })
 }
 
 function removeRadarBordersFromFrame(frameData) {

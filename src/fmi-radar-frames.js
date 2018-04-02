@@ -1,9 +1,8 @@
-const errors = require('request-promise/errors')
+const axios = require('axios')
 const FMI = require('./fmi-constants')
 const {parseString} = require('xml2js')
 const processors = require('xml2js/lib/processors')
 const Promise = require('bluebird')
-const request = require('request-promise')
 const url = require('url')
 
 const parseXml = Promise.promisify(parseString)
@@ -14,9 +13,9 @@ featureUrl.query = {
   // eslint-disable-next-line camelcase
   storedquery_id: 'fmi::radar::composite::rr'
 }
-const fmiRadarFramesRequest = url.format(featureUrl)
+const fmiRadarFramesRequestUrl = url.format(featureUrl)
 // eslint-disable-next-line no-console
-console.log(`Configured radar frames URL: ${fmiRadarFramesRequest}`)
+console.log(`Configured radar frames URL: ${fmiRadarFramesRequestUrl}`)
 
 function fetchRadarImageUrls() {
   if (isCacheValid()) {
@@ -24,21 +23,21 @@ function fetchRadarImageUrls() {
   }
   // eslint-disable-next-line no-console
   console.log('Updating radar frame list from FMI')
-  return request(fmiRadarFramesRequest)
+  return axios.get(fmiRadarFramesRequestUrl)
     .then(xmlToObject)
     .then(extractFrameReferences)
     .then(setProjectionAndCleanupUrls)
     .then(updateCache)
-    .catch(errors.StatusCodeError, reason => {
+    .catch(error => {
       // Sometimes the FMI API returns a HTTP error - in which case we use the cached list as fallback
       // eslint-disable-next-line no-console
-      console.error(`Radar frames API returned HTTP status ${reason.statusCode}, using cached frame list`)
+      console.error(`Failed to communicate with FMI API: ${error.message}, using cached frame list`)
       return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
     })
 }
 
-function xmlToObject(featureQueryResultXml) {
-  return parseXml(featureQueryResultXml, {tagNameProcessors: [processors.stripPrefix, processors.firstCharLowerCase]})
+function xmlToObject(response) {
+  return parseXml(response.data, {tagNameProcessors: [processors.stripPrefix, processors.firstCharLowerCase]})
 }
 
 function extractFrameReferences(featureQueryResult) {
