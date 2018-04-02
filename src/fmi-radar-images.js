@@ -19,7 +19,7 @@ async function fetchPostProcessedRadarFrameAsGif(fmiRadarImage) {
 }
 
 async function fetchDecodedRadarImage(url) {
-  const response = await axios({url, method:'get', responseType:'stream'})
+  const response = await axios({url, method: 'get', responseType: 'stream'})
   return decodePngStream(response.data)
 }
 

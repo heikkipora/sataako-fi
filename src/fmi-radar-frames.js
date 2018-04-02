@@ -16,6 +16,7 @@ featureUrl.query = {
 const fmiRadarFramesRequestUrl = url.format(featureUrl)
 console.log(`Configured radar frames URL: ${fmiRadarFramesRequestUrl}`)
 
+// eslint-disable-next-line max-statements
 async function fetchRadarImageUrls() {
   if (isCacheValid()) {
     return CACHED_RADAR_IMAGE_URLS
@@ -27,7 +28,7 @@ async function fetchRadarImageUrls() {
     const wfsResponse = await xmlToObject(response.data)
     const frameReferences = await extractFrameReferences(wfsResponse)
     const frameUrls = setProjectionAndCleanupUrls(frameReferences)
-    return updateCache(frameUrls)  
+    return updateCache(frameUrls)
   } catch (error) {
     // Sometimes the FMI API returns a HTTP error - in which case we use the cached list as fallback
     console.error(`Failed to communicate with FMI API: ${error.message}, using cached frame list`)

@@ -3,7 +3,7 @@
   "scripts": {
     "bounds": "node work/fmi-bounds.js",
     "start": "node src/app.js",
-    "test": "./node_modules/.bin/eslint src"
+    "test": "./node_modules/.bin/eslint src --fix"
   },
   "dependencies": {
     "axios": "0.18.0",
