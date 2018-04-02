@@ -17,27 +17,27 @@ const fmiRadarFramesRequestUrl = url.format(featureUrl)
 // eslint-disable-next-line no-console
 console.log(`Configured radar frames URL: ${fmiRadarFramesRequestUrl}`)
 
-function fetchRadarImageUrls() {
+async function fetchRadarImageUrls() {
   if (isCacheValid()) {
-    return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
+    return CACHED_RADAR_IMAGE_URLS
   }
   // eslint-disable-next-line no-console
   console.log('Updating radar frame list from FMI')
-  return axios.get(fmiRadarFramesRequestUrl)
-    .then(xmlToObject)
-    .then(extractFrameReferences)
-    .then(setProjectionAndCleanupUrls)
-    .then(updateCache)
-    .catch(error => {
-      // Sometimes the FMI API returns a HTTP error - in which case we use the cached list as fallback
-      // eslint-disable-next-line no-console
-      console.error(`Failed to communicate with FMI API: ${error.message}, using cached frame list`)
-      return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
-    })
+  try {
+    const response = await axios.get(fmiRadarFramesRequestUrl)
+    const wfsResponse = await xmlToObject(response.data)
+    const frameReferences = await extractFrameReferences(wfsResponse)
+    const frameUrls = setProjectionAndCleanupUrls(frameReferences)
+    return updateCache(frameUrls)  
+  } catch (error) {
+    // Sometimes the FMI API returns a HTTP error - in which case we use the cached list as fallback
+    console.error(`Failed to communicate with FMI API: ${error.message}, using cached frame list`)
+    return Promise.resolve(CACHED_RADAR_IMAGE_URLS)
+  }
 }
 
-function xmlToObject(response) {
-  return parseXml(response.data, {tagNameProcessors: [processors.stripPrefix, processors.firstCharLowerCase]})
+function xmlToObject(xml) {
+  return parseXml(xml, {tagNameProcessors: [processors.stripPrefix, processors.firstCharLowerCase]})
 }
 
 function extractFrameReferences(featureQueryResult) {

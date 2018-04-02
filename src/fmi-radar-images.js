@@ -5,43 +5,30 @@ const fs = require('fs')
 const GIFEncoder = require('gifencoder')
 const {PNG} = require('node-png')
 
-let MASK_DATA = []
-fs.createReadStream(`${__dirname}/radar-mask.png`)
-  .pipe(new PNG())
-  .on('parsed', data => {
-    MASK_DATA = data
-  })
-
-function fetchPostProcessedRadarFrameAsGif(fmiRadarImage) {
+async function fetchPostProcessedRadarFrameAsGif(fmiRadarImage) {
   const gif = cachedGifByUrl(fmiRadarImage.url)
   if (gif) {
-    return Promise.resolve(gif)
+    return gif
   }
 
   // eslint-disable-next-line no-console
   console.log(`Fetching radar image from FMI: ${fmiRadarImage.timestamp}`)
-  return fetchDecodedRadarImage(fmiRadarImage.url)
-    .then(removeRadarBordersFromFrame)
-    .then(encodeAsGif)
-    .then(cacheGif(fmiRadarImage.url))
+  const frame = await fetchDecodedRadarImage(fmiRadarImage.url)
+  const mask = await loadRadarMask()
+  const frameNoBorders = removeRadarBordersFromFrame(frame, mask)
+  return cacheGif(fmiRadarImage.url, encodeAsGif(frameNoBorders))
 }
 
-function fetchDecodedRadarImage(url) {
-  return axios({url, method:'get', responseType:'stream'})
-    .then(response => {
-      const png = response.data.pipe(new PNG())
-      return new Promise((resolve, reject) => {
-        png.on('parsed', resolve)
-        png.on('error', reject)
-      })
-    })
+async function fetchDecodedRadarImage(url) {
+  const response = await axios({url, method:'get', responseType:'stream'})
+  return decodePngStream(response.data)
 }
 
-function removeRadarBordersFromFrame(frameData) {
+function removeRadarBordersFromFrame(frameData, frameMask) {
   for (let index = 0; index < frameData.length; index += 4) {
     // eslint-disable-next-line no-bitwise, no-mixed-operators
     const color = frameData[index] << 16 | frameData[index + 1] << 8 | frameData[index + 2]
-    if (color === 0xffffff || color === 0xf7f7f7 || MASK_DATA[index + 3] !== 0) {
+    if (color === 0xffffff || color === 0xf7f7f7 || frameMask[index + 3] !== 0) {
       frameData[index] = 0xff
       frameData[index + 1] = 0xff
       frameData[index + 2] = 0xff
@@ -63,11 +50,9 @@ function encodeAsGif(frameData) {
 
 const GIF_CACHE = []
 
-function cacheGif(url) {
-  return gif => {
-    GIF_CACHE.push({url, gif, timestamp: now()})
-    return gif
-  }
+function cacheGif(url, gif) {
+  GIF_CACHE.push({url, gif, timestamp: now()})
+  return gif
 }
 
 function cachedGifByUrl(url) {
@@ -84,6 +69,24 @@ function cleanupExpiredGifsFromCache() {
 
 function now() {
   return new Date().getTime()
+}
+
+let FRAME_MASK_CACHE = null
+
+async function loadRadarMask() {
+  if (!FRAME_MASK_CACHE) {
+    const pngStream = fs.createReadStream(`${__dirname}/radar-mask.png`)
+    FRAME_MASK_CACHE = await decodePngStream(pngStream)
+  }
+  return FRAME_MASK_CACHE
+}
+
+function decodePngStream(stream) {
+  const png = stream.pipe(new PNG())
+  return new Promise((resolve, reject) => {
+    png.on('parsed', resolve)
+    png.on('error', reject)
+  })
 }
 
 module.exports = {
