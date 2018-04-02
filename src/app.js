@@ -27,7 +27,6 @@ app.get('/frame/:timestamp', (req, res) => {
               res.send(gif)
             })
             .catch(err => {
-              // eslint-disable-next-line no-console
               console.error(err)
               res.status(500).send('Failed fetching radar image')
             })
@@ -68,7 +67,6 @@ app.get('/frames.json', (req, res) => {
   listQueue.add(fetchRadarImageUrls)
     .then(urls => res.json(urls.map(toPublicUrl)))
     .catch(err => {
-      // eslint-disable-next-line no-console
       console.error(err)
       res.status(500).json([])
     })
@@ -80,6 +78,5 @@ app.get('/pete.json', (req, res) => {
 })
 
 const server = app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`Server listening on port ${server.address().port}`)
 })

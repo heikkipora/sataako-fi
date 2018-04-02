@@ -14,14 +14,13 @@ featureUrl.query = {
   storedquery_id: 'fmi::radar::composite::rr'
 }
 const fmiRadarFramesRequestUrl = url.format(featureUrl)
-// eslint-disable-next-line no-console
 console.log(`Configured radar frames URL: ${fmiRadarFramesRequestUrl}`)
 
 async function fetchRadarImageUrls() {
   if (isCacheValid()) {
     return CACHED_RADAR_IMAGE_URLS
   }
-  // eslint-disable-next-line no-console
+
   console.log('Updating radar frame list from FMI')
   try {
     const response = await axios.get(fmiRadarFramesRequestUrl)

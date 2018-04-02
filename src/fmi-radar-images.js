@@ -11,7 +11,6 @@ async function fetchPostProcessedRadarFrameAsGif(fmiRadarImage) {
     return gif
   }
 
-  // eslint-disable-next-line no-console
   console.log(`Fetching radar image from FMI: ${fmiRadarImage.timestamp}`)
   const frame = await fetchDecodedRadarImage(fmiRadarImage.url)
   const mask = await loadRadarMask()

@@ -12,11 +12,9 @@ axios.get('http://warnermusiclive.fi/artistit/pete-parkkonen/')
   .then(uniqueByMunicipality)
   .then(gigs => {
     GIGS_CACHE = gigs
-    // eslint-disable-next-line no-console
     console.log('Loaded gigs list', gigs)
   })
   .catch(error => {
-    // eslint-disable-next-line no-console
     console.error(`Failed to load gigs: ${error.message}`)
   })
 
