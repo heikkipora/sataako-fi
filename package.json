@@ -21,7 +21,7 @@
     "express-sslify": "1.2.0",
     "gifencoder": "1.1.0",
     "jquery": "3.3.1",
-    "less-middleware": "2.2.1",
+    "less-middleware": "3.0.0",
     "lodash": "4.17.5",
     "node-png": "0.4.3",
     "openlayers": "4.6.5",
