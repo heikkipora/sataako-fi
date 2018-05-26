@@ -7,12 +7,12 @@
   },
   "dependencies": {
     "axios": "0.18.0",
-    "babel-core": "6.26.0",
-    "babel-preset-env": "1.6.1",
+    "babel-core": "6.26.3",
+    "babel-preset-env": "1.7.0",
     "babel-preset-react": "6.24.1",
     "babelify": "8.0.0",
     "bluebird": "3.5.1",
-    "browserify": "16.1.1",
+    "browserify": "16.2.2",
     "browserify-middleware": "8.1.0",
     "cheerio": "1.0.0-rc.2",
     "compression": "1.7.2",
@@ -21,19 +21,19 @@
     "express-sslify": "1.2.0",
     "gifencoder": "1.1.0",
     "jquery": "3.3.1",
-    "less-middleware": "2.2.1",
-    "lodash": "4.17.5",
+    "less-middleware": "3.0.0",
+    "lodash": "4.17.10",
     "node-png": "0.4.3",
     "openlayers": "4.6.5",
     "proj4": "2.4.4",
     "promise-queue": "2.2.5",
-    "react": "16.3.0",
-    "react-dom": "16.3.0",
+    "react": "16.4.0",
+    "react-dom": "16.4.0",
     "xml2js": "0.4.19"
   },
   "devDependencies": {
     "eslint": "4.19.1",
-    "eslint-plugin-react": "7.7.0"
+    "eslint-plugin-react": "7.8.2"
   },
   "engines": {
     "node": "9.10.1",
