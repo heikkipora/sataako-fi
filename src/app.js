@@ -5,7 +5,6 @@ const enforce = require('express-sslify')
 const express = require('express')
 const {fetchPostProcessedRadarFrameAsGif} = require('./fmi-radar-images')
 const {fetchRadarImageUrls} = require('./fmi-radar-frames')
-const {gigsList} = require('./pete')
 const lessMiddleware = require('less-middleware')
 const Queue = require('promise-queue')
 
@@ -42,14 +41,6 @@ if (process.env.NODE_ENV == 'production') {
 }
 app.use(compression())
 app.use(lessMiddleware(`${__dirname}/../public`))
-
-app.get('/', (req, res, next) => {
-  if (req.hostname.indexOf('kohtasataa') >= 0) {
-    res.sendFile(`${__dirname}/pete.html`)
-  } else {
-    next()
-  }
-})
 app.use(express.static('public'))
 app.get('/js/client.js', browserify(__dirname + '/client/index.js'))
 
@@ -71,10 +62,6 @@ app.get('/frames.json', (req, res) => {
       res.status(500).json([])
     })
 
-})
-
-app.get('/pete.json', (req, res) => {
-  res.json(gigsList())
 })
 
 const server = app.listen(PORT, () => {
