@@ -1,10 +1,11 @@
 const _ = require('lodash')
-const browserify = require('browserify-middleware')
+const browserify = require('browserify')
 const compression = require('compression')
 const enforce = require('express-sslify')
 const express = require('express')
 const {fetchPostProcessedRadarFrameAsGif} = require('./fmi-radar-images')
 const {fetchRadarImageUrls} = require('./fmi-radar-frames')
+const fs = require('fs')
 const lessMiddleware = require('less-middleware')
 const Queue = require('promise-queue')
 
@@ -42,7 +43,6 @@ if (process.env.NODE_ENV == 'production') {
 app.use(compression())
 app.use(lessMiddleware(`${__dirname}/../public`))
 app.use(express.static('public'))
-app.get('/js/client.js', browserify(__dirname + '/client/index.js'))
 
 const listQueue = new Queue(1, Infinity);
 const imageQueue = new Queue(4, Infinity);
@@ -64,6 +64,17 @@ app.get('/frames.json', (req, res) => {
 
 })
 
-const server = app.listen(PORT, () => {
-  console.log(`Server listening on port ${server.address().port}`)
-})
+console.log('Building client.js...')
+browserify(`${__dirname}/client/index.js`)
+  .transform('babelify', {
+    global: true,
+    ignore: /\/node_modules\/(?!ol\/)/,
+    presets: ['env', 'react']
+  })
+  .bundle()
+  .pipe(fs.createWriteStream(`${__dirname}/../public/client.js`))
+  .on('finish', () => {
+    const server = app.listen(PORT, () => {
+      console.log(`Server listening on port ${server.address().port}`)
+    })   
+  })

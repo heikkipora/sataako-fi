@@ -15,6 +15,7 @@ class InfoPanel extends React.Component {
 
     return <div className="side-info-panel">
       <button id="close-side-info" onClick={this.collapse.bind(this)}>Sulje</button>
+      {this.renderContent()}
     </div>
   }
 
