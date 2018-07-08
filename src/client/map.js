@@ -1,9 +1,23 @@
-import ol from 'ol'
+import Feature from 'ol/Feature'
+import {register} from 'ol/proj/proj4'
+import Icon from 'ol/style/Icon'
+import Image from 'ol/layer/Image'
+import ImageStatic from 'ol/source/ImageStatic'
+import Map from 'ol/Map'
+import Point from 'ol/geom/Point'
 import proj4 from 'proj4'
+import Projection from 'ol/proj/Projection'
+import Style from 'ol/style/Style'
+import Tile from 'ol/layer/Tile'
+import VectorLayer from 'ol/layer/Vector'
+import View from 'ol/View'
+import XYZ from 'ol/source/XYZ'
+import {fromLonLat} from 'ol/proj'
+import VectorSource from 'ol/source/Vector'
 
 proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
-ol.proj.setProj4(proj4)
-const imageProjection = new ol.proj.Projection({code: 'EPSG:3067'})
+register(proj4)
+const imageProjection = new Projection({code: 'EPSG:3067'})
 const imageExtent = [-118331.366, 6335621.167, 875567.732, 7907751.537]
 
 const MAP_ID = 'mapbox.light'
@@ -12,7 +26,7 @@ const ACCESS_TOKEN = 'pk.eyJ1IjoiZHJpbGxzb2Z0IiwiYSI6ImNpamhheThmMDAwMWJ2bGx3cTd
 function createMap(settings) {
   const {x, y, zoom} = settings
   const center = [x, y]
-  const view = new ol.View({
+  const view = new View({
     center,
     minZoom: 5,
     maxZoom: 13,
@@ -20,7 +34,7 @@ function createMap(settings) {
     zoom
   })
 
-  const map = new ol.Map({
+  const map = new Map({
     layers: [createMapLayer(), createRadarLayer(), createIconLayer(center)],
     logo: false,
     target: 'map',
@@ -34,17 +48,17 @@ function createMap(settings) {
 }
 
 function createMapLayer() {
-  const source = new ol.source.XYZ({url: `https://api.tiles.mapbox.com/v4/${MAP_ID}/{z}/{x}/{y}.png?access_token=${ACCESS_TOKEN}`})
-  return new ol.layer.Tile({source})
+  const source = new XYZ({url: `https://api.tiles.mapbox.com/v4/${MAP_ID}/{z}/{x}/{y}.png?access_token=${ACCESS_TOKEN}`})
+  return new Tile({source})
 }
 
 function createRadarLayer() {
-  return new ol.layer.Image({opacity: 0.8})
+  return new Image({opacity: 0.8})
 }
 
 function createIconLayer(position) {
-  const style = new ol.style.Style({
-    image: new ol.style.Icon({
+  const style = new Style({
+    image: new Icon({
       anchor: [0.5, 1.0],
       anchorXUnits: 'fraction',
       anchorYUnits: 'fraction',
@@ -53,13 +67,13 @@ function createIconLayer(position) {
     })
   })
 
-  const iconFeature = new ol.Feature({
-    geometry: new ol.geom.Point(position)
+  const iconFeature = new Feature({
+    geometry: new Point(position)
   })
   iconFeature.setStyle(style)
 
-  const source = new ol.source.Vector({features: [iconFeature]})
-  return new ol.layer.Vector({source})
+  const source = new VectorSource({features: [iconFeature]})
+  return new VectorLayer({source})
 }
 
 const radarImageSourcesCache = {}
@@ -71,7 +85,7 @@ function showRadarFrame(map, url) {
 }
 
 function createImageSource(url) {
-  return new ol.source.ImageStatic({
+  return new ImageStatic({
     imageExtent,
     projection: imageProjection,
     url
@@ -79,10 +93,10 @@ function createImageSource(url) {
 }
 
 function panTo(map, lonLat) {
-  const center = ol.proj.fromLonLat(lonLat);
+  const center = fromLonLat(lonLat);
   const vectorLayer = map.getLayers().getArray()[2]
   const vectorFeature = vectorLayer.getSource().getFeatures()[0]
-  vectorFeature.setGeometry(new ol.geom.Point(center))
+  vectorFeature.setGeometry(new Point(center))
   map.getView().animate({center, duration: 1000})
 }
 
