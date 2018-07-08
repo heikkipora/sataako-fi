@@ -13,26 +13,26 @@
     "babelify": "8.0.0",
     "bluebird": "3.5.1",
     "browserify": "16.2.2",
-    "browserify-middleware": "8.1.0",
+    "browserify-middleware": "8.1.1",
     "compression": "1.7.2",
     "date-fns": "1.29.0",
     "express": "4.16.3",
     "express-sslify": "1.2.0",
     "gifencoder": "1.1.0",
     "jquery": "3.3.1",
-    "less-middleware": "3.0.0",
+    "less-middleware": "3.0.1",
     "lodash": "4.17.10",
     "node-png": "0.4.3",
-    "openlayers": "4.6.5",
+    "ol": "5.0.2",
     "proj4": "2.4.4",
     "promise-queue": "2.2.5",
-    "react": "16.4.0",
-    "react-dom": "16.4.0",
+    "react": "16.4.1",
+    "react-dom": "16.4.1",
     "xml2js": "0.4.19"
   },
   "devDependencies": {
-    "eslint": "4.19.1",
-    "eslint-plugin-react": "7.8.2"
+    "eslint": "5.0.1",
+    "eslint-plugin-react": "7.10.0"
   },
   "engines": {
     "node": "10.5.0",
