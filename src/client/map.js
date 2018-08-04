@@ -53,8 +53,9 @@ function createMap(settings) {
 
 function createMapLayer() {
   const attributions = [
-    '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a>',
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> | ',
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | ',
+    '<a href="https://www.mapbox.com/map-feedback/" target="_blank"><strong>Improve this map</strong></a>'
   ]
   const source = new XYZ({url: `https://api.tiles.mapbox.com/v4/${MAP_ID}/{z}/{x}/{y}.png?access_token=${ACCESS_TOKEN}`, attributions})
   return new Tile({source})

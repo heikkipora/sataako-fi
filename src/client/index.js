@@ -43,6 +43,7 @@ class SataakoApp extends React.Component {
         <div id="map"></div>
         <div id="preload-frames">{this.renderFrameImages()}</div>
         <div className="radar-timestamp"><span>{radarFrameTimestamp}</span></div>
+        <a href="http://mapbox.com/about/maps" className="mapbox-wordmark" target="_blank" rel="noopener noreferrer">Mapbox</a>
         <InfoPanel/>
       </div>
     )
