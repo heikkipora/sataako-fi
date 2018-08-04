@@ -14,6 +14,7 @@ import View from 'ol/View'
 import XYZ from 'ol/source/XYZ'
 import {fromLonLat} from 'ol/proj'
 import VectorSource from 'ol/source/Vector'
+import {defaults as defaultControls, Attribution} from 'ol/control'
 
 proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
 register(proj4)
@@ -34,9 +35,12 @@ function createMap(settings) {
     zoom
   })
 
+  const attribution = new Attribution({
+    collapsible: false
+  })
   const map = new Map({
+    controls: defaultControls({attribution: false}).extend([attribution]),
     layers: [createMapLayer(), createRadarLayer(), createIconLayer(center)],
-    logo: false,
     target: 'map',
     view
   })
@@ -48,7 +52,11 @@ function createMap(settings) {
 }
 
 function createMapLayer() {
-  const source = new XYZ({url: `https://api.tiles.mapbox.com/v4/${MAP_ID}/{z}/{x}/{y}.png?access_token=${ACCESS_TOKEN}`})
+  const attributions = [
+    '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a>',
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  ]
+  const source = new XYZ({url: `https://api.tiles.mapbox.com/v4/${MAP_ID}/{z}/{x}/{y}.png?access_token=${ACCESS_TOKEN}`, attributions})
   return new Tile({source})
 }
 
@@ -85,10 +93,12 @@ function showRadarFrame(map, url) {
 }
 
 function createImageSource(url) {
+  const attributions = ['&copy; <a href="https://en.ilmatieteenlaitos.fi/open-data">FMI</a>']
   return new ImageStatic({
     imageExtent,
     projection: imageProjection,
-    url
+    url,
+    attributions
   })
 }
 
