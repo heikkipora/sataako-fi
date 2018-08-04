@@ -94,12 +94,10 @@ function showRadarFrame(map, url) {
 }
 
 function createImageSource(url) {
-  const attributions = ['&copy; <a href="https://en.ilmatieteenlaitos.fi/open-data">FMI</a>']
   return new ImageStatic({
     imageExtent,
     projection: imageProjection,
-    url,
-    attributions
+    url
   })
 }
 
