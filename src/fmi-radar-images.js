@@ -14,7 +14,8 @@ async function fetchPostProcessedRadarFrameAsGif(fmiRadarImage) {
   console.log(`Fetching radar image from FMI: ${fmiRadarImage.timestamp}`)
   const frame = await fetchDecodedRadarImage(fmiRadarImage.url)
   const mask = await loadRadarMask()
-  const frameNoBorders = removeRadarBordersFromFrame(frame, mask)
+  const edges = await loadRadarEdges()
+  const frameNoBorders = applyRadarMaskAndEdges(frame, mask, edges)
   return cacheGif(fmiRadarImage.url, encodeAsGif(frameNoBorders))
 }
 
@@ -23,7 +24,8 @@ async function fetchDecodedRadarImage(url) {
   return decodePngStream(response.data)
 }
 
-function removeRadarBordersFromFrame(frameData, frameMask) {
+// eslint-disable-next-line max-statements
+function applyRadarMaskAndEdges(frameData, frameMask, radarEdges) {
   for (let index = 0; index < frameData.length; index += 4) {
     // eslint-disable-next-line no-bitwise, no-mixed-operators
     const color = frameData[index] << 16 | frameData[index + 1] << 8 | frameData[index + 2]
@@ -32,6 +34,12 @@ function removeRadarBordersFromFrame(frameData, frameMask) {
       frameData[index + 1] = 0xff
       frameData[index + 2] = 0xff
       frameData[index + 3] = 0
+    }
+    if (radarEdges[index + 3] !== 0) {
+      frameData[index] = 0x69
+      frameData[index + 1] = 0xe5
+      frameData[index + 2] = 0xe5
+      frameData[index + 3] = 0xff
     }
   }
   return frameData
@@ -71,6 +79,7 @@ function now() {
 }
 
 let FRAME_MASK_CACHE = null
+let RADAR_EDGES_CACHE = null
 
 async function loadRadarMask() {
   if (!FRAME_MASK_CACHE) {
@@ -78,6 +87,14 @@ async function loadRadarMask() {
     FRAME_MASK_CACHE = await decodePngStream(pngStream)
   }
   return FRAME_MASK_CACHE
+}
+
+async function loadRadarEdges() {
+  if (!RADAR_EDGES_CACHE) {
+    const pngStream = fs.createReadStream(`${__dirname}/radar-edges.png`)
+    RADAR_EDGES_CACHE = await decodePngStream(pngStream)
+  }
+  return RADAR_EDGES_CACHE
 }
 
 function decodePngStream(stream) {
