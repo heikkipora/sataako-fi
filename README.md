@@ -24,7 +24,7 @@ To be able to serve a decent amount of concurrent users without exceeding the FM
 
 * requests to FMI API go through a task queue which limits concurrency
 * radar frame list is cached internally for one minute before a re-fetch from FMI
-* radar frame images are cached 1) locally for about one hour and 2) by an AWS Cloudfront distribution sitting in front of the Heroku app (at cdn.sataako.fi) for 24 hours
+* radar frame images are cached 1) locally for about one hour and 2) by an AWS Cloudfront distribution sitting in front of the Heroku app (at d2ot8aujc2hu2d.cloudfront.net) for 24 hours
 
 Radar frame post-processing
 ---------------------------
@@ -34,7 +34,8 @@ To be able to use those images on top of the Mapbox map the following steps are 
 * request a PNG image in [EPSG:3067 projection](http://spatialreference.org/ref/epsg/3067/) which is native for FMI's radar images
 * decode PNG into raw 32bit pixel data
 * change a solid gray background (0xf7f7f7) to fully transparent
-* use a [mask-image](src/radar-mask.png) to change a solid orange border area (related to changing the projection obviously) to fully transparent
+* use a [mask-image](src/radar-mask.png) to change a solid orange area outside the radars' range to fully transparent
+* use an [overlay-image](src/radar-edges.png) to draw the edge of the radars' range
 * encode image as GIF maintaining transparency
 
 Openlayers will then reproject those images on the fly to [EPSG:3857 projection](http://spatialreference.org/ref/sr-org/7483/) aka WGS84 Web Mercator which is used by the Mapbox tiles.
