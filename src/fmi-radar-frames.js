@@ -52,6 +52,7 @@ function extractFrameReferences(featureQueryResult) {
 function setProjectionAndCleanupUrls(frameReferences) {
   function cleanupUrl(frameReference) {
     const radarUrl = url.parse(frameReference.url, true)
+    radarUrl.host = FMI.WMS_HOST
     radarUrl.query.format = 'image/png'
     radarUrl.query.width = FMI.WIDTH
     radarUrl.query.height = FMI.HEIGHT
