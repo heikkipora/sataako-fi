@@ -26,7 +26,7 @@ app.get('/frame/:timestamp', (req, res) => {
               res.send(gif)
             })
             .catch(err => {
-              console.error(err)
+              console.error(err.message)
               res.status(500).send('Failed fetching radar image')
             })
           })
