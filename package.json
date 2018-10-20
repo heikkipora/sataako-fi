@@ -19,7 +19,6 @@
     "express": "4.16.4",
     "express-sslify": "1.2.0",
     "gifencoder": "1.1.0",
-    "jquery": "3.3.1",
     "less-middleware": "3.0.1",
     "lodash": "4.17.11",
     "node-png": "0.4.3",

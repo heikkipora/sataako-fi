@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import axios from 'axios'
 import dateFns from 'date-fns'
 import InfoPanel from './info-panel'
 import React from 'react'
@@ -54,7 +54,7 @@ class SataakoApp extends React.Component {
   }
 
   reloadFramesList() {
-    $.get('/frames.json', frames => this.setState({frames}))
+    axios.get('/frames.json').then(({data: frames}) => this.setState({frames}))
     window.setTimeout(this.reloadFramesList.bind(this, null), FRAME_LIST_RELOAD_MS)
   }
 
