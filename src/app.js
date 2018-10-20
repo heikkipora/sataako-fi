@@ -1,11 +1,9 @@
 const _ = require('lodash')
-const browserify = require('browserify-middleware')
 const compression = require('compression')
 const enforce = require('express-sslify')
 const express = require('express')
 const {fetchPostProcessedRadarFrameAsGif} = require('./fmi-radar-images')
 const {fetchRadarImageUrls} = require('./fmi-radar-frames')
-const lessMiddleware = require('less-middleware')
 const Queue = require('promise-queue')
 
 const PORT = process.env.PORT || 3000
@@ -13,6 +11,15 @@ const PUBLIC_FRAMES_ROOT = process.env.CLOUDFRONT_URL || `http://localhost:${POR
 
 const app = express()
 app.disable('x-powered-by')
+if (process.env.NODE_ENV == 'production') {
+  app.use(enforce.HTTPS({trustProtoHeader: true}))
+} else {
+  // eslint-disable-next-line global-require
+  const {bindDevAssets} = require('./dev-assets')
+  bindDevAssets(app)
+}
+app.use(compression())
+app.use(express.static(`${__dirname}/../public`))
 
 app.get('/frame/:timestamp', (req, res) => {
   listQueue.add(fetchRadarImageUrls)
@@ -35,20 +42,6 @@ app.get('/frame/:timestamp', (req, res) => {
       }
     })
 })
-
-if (process.env.NODE_ENV == 'production') {
-  app.use(enforce.HTTPS({trustProtoHeader: true}))
-}
-app.use(compression())
-app.use(lessMiddleware(`${__dirname}/../public`))
-app.use(express.static('public'))
-app.get('/js/client.js', browserify(`${__dirname}/client/index.js`, {
-  transform: [['babelify', {
-    global: true,
-    ignore: [/\/node_modules\/(?!ol\/)/],
-    presets: ["@babel/env", "@babel/react"]
-  }]]
-}))
 
 const listQueue = new Queue(1, Infinity);
 const imageQueue = new Queue(4, Infinity);

@@ -2,5 +2,6 @@
 *.pid
 node_modules
 .DS_Store
+build
 public/client.css
 public/client.js

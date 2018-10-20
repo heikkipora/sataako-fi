@@ -1,37 +1,39 @@
 {
   "private": true,
   "scripts": {
-    "bounds": "node work/fmi-bounds.js",
-    "start": "node src/app.js",
-    "test": "./node_modules/.bin/eslint src --fix"
+    "start": "node $NODE_OPTS src/app.js",
+    "test": "eslint src --fix",
+    "postinstall": "./production-build"
   },
   "dependencies": {
     "axios": "0.18.0",
-    "@babel/core": "7.0.0",
-    "@babel/preset-env": "7.0.0",
-    "@babel/preset-react": "7.0.0",
-    "babelify": "10.0.0",
     "bluebird": "3.5.2",
-    "browserify": "16.2.3",
-    "browserify-middleware": "8.1.1",
     "compression": "1.7.3",
     "date-fns": "1.29.0",
     "express": "4.16.4",
     "express-sslify": "1.2.0",
     "gifencoder": "1.1.0",
-    "less-middleware": "3.0.1",
     "lodash": "4.17.11",
     "node-png": "0.4.3",
-    "ol": "5.2.0",
     "proj4": "2.5.0",
     "promise-queue": "2.2.5",
-    "react": "16.5.2",
-    "react-dom": "16.5.2",
     "xml2js": "0.4.19"
   },
   "devDependencies": {
+    "@babel/core": "7.1.2",
+    "@babel/preset-env": "7.1.0",
+    "@babel/preset-react": "7.0.0",
+    "babel-eslint": "10.0.1",
+    "babelify": "10.0.0",
+    "browserify": "16.2.3",
+    "browserify-middleware": "8.1.1",
     "eslint": "5.7.0",
-    "eslint-plugin-react": "7.11.1"
+    "eslint-plugin-react": "7.11.1",
+    "less-middleware": "3.0.1",
+    "ol": "5.2.0",
+    "react": "16.5.2",
+    "react-dom": "16.5.2",
+    "uglify-js": "3.4.9"
   },
   "engines": {
     "node": "10.12.0",

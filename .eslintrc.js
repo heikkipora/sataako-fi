@@ -5,14 +5,20 @@ module.exports = {
         "node": true
     },
     "extends": ["eslint:recommended", "plugin:react/recommended"],
+    "settings": {
+        "react": {
+            "version": "16.5",
+        }
+    },
     "parserOptions": {
         "ecmaFeatures": {
             "experimentalObjectRestSpread": true,
             "jsx": true
         },
         "sourceType": "module",
-        "ecmaVersion": 8
+        "ecmaVersion": 2017
     },
+    "parser": "babel-eslint",
     "plugins": [
         "react"
     ],
