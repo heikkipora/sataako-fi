@@ -4,6 +4,6 @@ if [ "$NODE_ENV" == "production" ]; then
   echo "Transpiling and minifying client JS"
   browserify -g [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] src/client/index.js | node_modules/.bin/uglifyjs --compress --mangle > public/client.js
 
-  echo "Compiling LESS to CSS"
-  lessc --include-path=public public/client.less public/client.css
+  echo "Compiling LESS to minified CSS"
+  lessc --include-path=public public/client.less | cleancss -o public/client.css
 fi
