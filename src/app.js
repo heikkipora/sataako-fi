@@ -45,8 +45,8 @@ app.use(express.static('public'))
 app.get('/js/client.js', browserify(`${__dirname}/client/index.js`, {
   transform: [['babelify', {
     global: true,
-    ignore: /\/node_modules\/(?!ol\/)/,
-    presets: ['env', 'react']
+    ignore: [/\/node_modules\/(?!ol\/)/],
+    presets: ["@babel/env", "@babel/react"]
   }]]
 }))
 
