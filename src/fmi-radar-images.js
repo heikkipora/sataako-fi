@@ -29,13 +29,13 @@ function applyRadarMaskAndEdges(frameData, frameMask, radarEdges) {
   for (let index = 0; index < frameData.length; index += 4) {
     // eslint-disable-next-line no-bitwise, no-mixed-operators
     const color = frameData[index] << 16 | frameData[index + 1] << 8 | frameData[index + 2]
-    if (color === 0xffffff || color === 0xf7f7f7 || frameMask[index + 3] !== 0) {
+    if (color === 0xffffff || color === 0xf7f7f7 || frameMask[index / 4] !== 0) {
       frameData[index] = 0xff
       frameData[index + 1] = 0xff
       frameData[index + 2] = 0xff
       frameData[index + 3] = 0
     }
-    if (radarEdges[index + 3] !== 0) {
+    if (radarEdges[index / 4] !== 0) {
       frameData[index] = 0x69
       frameData[index + 1] = 0xe5
       frameData[index + 2] = 0xe5
@@ -84,7 +84,8 @@ let RADAR_EDGES_CACHE = null
 async function loadRadarMask() {
   if (!FRAME_MASK_CACHE) {
     const pngStream = fs.createReadStream(`${__dirname}/radar-mask.png`)
-    FRAME_MASK_CACHE = await decodePngStream(pngStream)
+    const rgba = await decodePngStream(pngStream)
+    FRAME_MASK_CACHE = rgbaTo8bit(rgba)
   }
   return FRAME_MASK_CACHE
 }
@@ -92,7 +93,8 @@ async function loadRadarMask() {
 async function loadRadarEdges() {
   if (!RADAR_EDGES_CACHE) {
     const pngStream = fs.createReadStream(`${__dirname}/radar-edges.png`)
-    RADAR_EDGES_CACHE = await decodePngStream(pngStream)
+    const rgba = await decodePngStream(pngStream)
+    RADAR_EDGES_CACHE = rgbaTo8bit(rgba)
   }
   return RADAR_EDGES_CACHE
 }
@@ -103,6 +105,16 @@ function decodePngStream(stream) {
     png.on('parsed', resolve)
     png.on('error', reject)
   })
+}
+
+function rgbaTo8bit(frameData) {
+  const pixels = frameData.length / 4
+  const buf = new Uint8Array(pixels);
+  for (let index = 0; index < pixels; index += 1) {
+    // eslint-disable-next-line no-mixed-operators
+    buf[index] = frameData[index * 4 + 3]
+  }
+  return buf
 }
 
 module.exports = {
