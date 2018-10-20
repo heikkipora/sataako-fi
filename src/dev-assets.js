@@ -1,7 +1,5 @@
 const browserify = require('browserify-middleware')
-const express = require('express')
 const lessMiddleware = require('less-middleware')
-const os = require('os')
 const path = require('path')
 
 function bindDevAssets(app) {
