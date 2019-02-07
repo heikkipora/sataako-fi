@@ -3,9 +3,9 @@ const sharp = require('sharp')
 
 sharp.cache(false)
 
-async function fetchPostProcessedRadarFrame(url) {
+async function fetchPostProcessedRadarFrame(url, targetFilename) {
   const data = await fetchRadarImage(url)
-  return processImage(data)
+  return processImage(data, targetFilename)
 }
 
 async function fetchRadarImage(url) {
@@ -13,7 +13,7 @@ async function fetchRadarImage(url) {
   return Buffer.from(response.data)
 }
 
-async function processImage(input) {
+async function processImage(input, targetFilename) {
   const {data, info} = await sharp(input)
     .ensureAlpha()
     .raw()
@@ -24,9 +24,10 @@ async function processImage(input) {
   const {width, height, channels} = info
   const pipeline = sharp(data, {raw: {width, height, channels}})
     .overlayWith(`${__dirname}/radar-edges.png`)
-  const png = await pipeline.clone().png().toBuffer()
-  const webp = await pipeline.clone().webp({nearLossless: true}).toBuffer()
-  return {png, webp}
+  const pngFile = `${targetFilename}.png`
+  const webpFile = `${targetFilename}.webp`
+  await pipeline.clone().png().toFile(pngFile)
+  await pipeline.clone().webp({nearLossless: true}).toFile(webpFile)
 }
 
 function applyAlphaChannel(data) {
