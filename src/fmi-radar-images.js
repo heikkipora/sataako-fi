@@ -1,6 +1,8 @@
 const axios = require('axios')
 const sharp = require('sharp')
 
+sharp.cache(false)
+
 async function fetchPostProcessedRadarFrame(url) {
   const data = await fetchRadarImage(url)
   return processImage(data)
