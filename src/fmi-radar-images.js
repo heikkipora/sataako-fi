@@ -1,9 +1,9 @@
 const axios = require('axios')
 const sharp = require('sharp')
 
-async function fetchPostProcessedRadarFrameAsPng(url) {
+async function fetchPostProcessedRadarFrame(url) {
   const data = await fetchRadarImage(url)
-  return processPng(data)
+  return processImage(data)
 }
 
 async function fetchRadarImage(url) {
@@ -11,7 +11,7 @@ async function fetchRadarImage(url) {
   return Buffer.from(response.data)
 }
 
-async function processPng(input) {
+async function processImage(input) {
   const {data, info} = await sharp(input)
     .ensureAlpha()
     .raw()
@@ -20,10 +20,11 @@ async function processPng(input) {
   applyAlphaChannel(data)
 
   const {width, height, channels} = info
-  return sharp(data, {raw: {width, height, channels}})
+  const pipeline = sharp(data, {raw: {width, height, channels}})
     .overlayWith(`${__dirname}/radar-edges.png`)
-    .png()
-    .toBuffer()
+  const png = await pipeline.clone().png().toBuffer()
+  const webp = await pipeline.clone().webp({nearLossless: true}).toBuffer()
+  return {png, webp}
 }
 
 function applyAlphaChannel(data) {
@@ -37,5 +38,5 @@ function applyAlphaChannel(data) {
 }
 
 module.exports = {
-  fetchPostProcessedRadarFrameAsPng
+  fetchPostProcessedRadarFrame
 }

@@ -20,11 +20,16 @@ app.use(compression())
 app.use(express.static(`${__dirname}/../public`))
 
 app.get('/frame/:timestamp', (req, res) => {
-  const png = imageForTimestamp(req.params.timestamp)
-  if (png) {
+  const image = imageForTimestamp(req.params.timestamp)
+  if (image) {
     res.set('Cache-Control', 'public, max-age=86400');
-    res.set('Content-Type', 'image/png')
-    res.send(png)
+    if (req.accepts('webp')) {
+      res.set('Content-Type', 'image/webp')
+      res.send(image.webp)  
+    } else {
+      res.set('Content-Type', 'image/png')
+      res.send(image.png)  
+    }
   } else {
     res.status(404).send('Sorry, no radar image found for that timestamp')
   }
