@@ -23,13 +23,16 @@ app.get('/frame/:timestamp', (req, res) => {
   const image = imageFileForTimestamp(req.params.timestamp)
   if (image) {
     res.set('Cache-Control', 'public, max-age=86400');
-    if (req.accepts('webp')) {
-      res.set('Content-Type', 'image/webp')
-      res.sendFile(image.webp)
-    } else {
-      res.set('Content-Type', 'image/png')
-      res.sendFile(image.png)
-    }
+    res.format({
+      'image/png': () => {
+        res.set('Content-Type', 'image/png')
+        res.sendFile(image.png)
+      },
+      'image/webp': () => {
+        res.set('Content-Type', 'image/webp')
+        res.sendFile(image.webp)
+      }
+    })
   } else {
     res.status(404).send('Sorry, no radar image found for that timestamp')
   }
