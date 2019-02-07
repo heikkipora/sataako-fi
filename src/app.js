@@ -22,6 +22,7 @@ app.use(express.static(`${__dirname}/../public`))
 app.get('/frame/:timestamp', (req, res) => {
   const png = imageForTimestamp(req.params.timestamp)
   if (png) {
+    res.set('Cache-Control', 'public, max-age=86400');
     res.set('Content-Type', 'image/png')
     res.send(png)
   } else {
@@ -31,6 +32,7 @@ app.get('/frame/:timestamp', (req, res) => {
 
 app.get('/frames.json', (req, res) => {
   const publicRootUrl = `${req.protocol}://${req.hostname}${PUBLIC_URL_PORT}/frame/`
+  res.set('Cache-Control', 'public, max-age=60');
   res.json(framesList(publicRootUrl))
 })
 
