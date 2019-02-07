@@ -2,6 +2,7 @@ const axios = require('axios')
 const sharp = require('sharp')
 
 sharp.cache(false)
+sharp.concurrency(1)
 
 async function fetchPostProcessedRadarFrame(url, targetFilename) {
   const data = await fetchRadarImage(url)
