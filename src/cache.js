@@ -43,10 +43,13 @@ function imageForTimestamp(timestamp) {
 }
 
 function framesList(publicFramesRootUrl) {
-  return PNG_CACHE.map(({timestamp}) => ({
+  return _(PNG_CACHE)
+  .map(({timestamp}) => ({
     image: publicFramesRootUrl + timestamp,
     timestamp
   }))
+  .sortBy(['timestamp'])
+  .value()
 }
 
 module.exports = {
