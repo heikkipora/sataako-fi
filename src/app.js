@@ -2,7 +2,7 @@ const _ = require('lodash')
 const compression = require('compression')
 const enforce = require('express-sslify')
 const express = require('express')
-const {fetchPostProcessedRadarFrameAsGif} = require('./fmi-radar-images')
+const {fetchPostProcessedRadarFrameAsPng} = require('./fmi-radar-images')
 const {fetchRadarImageUrls} = require('./fmi-radar-frames')
 const Queue = require('promise-queue')
 
@@ -27,10 +27,10 @@ app.get('/frame/:timestamp', (req, res) => {
       const fmiRadarImage = _.find(urls, {timestamp: req.params.timestamp})
       if (fmiRadarImage) {
         imageQueue.add(() => {
-          return fetchPostProcessedRadarFrameAsGif(fmiRadarImage)
-            .then(gif => {
-              res.set('Content-Type', 'image/gif')
-              res.send(gif)
+          return fetchPostProcessedRadarFrameAsPng(fmiRadarImage)
+            .then(png => {
+              res.set('Content-Type', 'image/png')
+              res.send(png)
             })
             .catch(err => {
               console.error(err.message)
