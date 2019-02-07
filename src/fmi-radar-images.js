@@ -1,19 +1,9 @@
-const _ = require('lodash')
 const axios = require('axios')
 const sharp = require('sharp')
 
-const CACHE_TIME_2_HOURS = 2 * 60 * 60 * 1000
-
-async function fetchPostProcessedRadarFrameAsPng(fmiRadarImage) {
-  const png = cachedPngByUrl(fmiRadarImage.url)
-  if (png) {
-    return png
-  }
-
-  console.log(`Fetching radar image from FMI: ${fmiRadarImage.timestamp}`)
-  const data = await fetchRadarImage(fmiRadarImage.url)
-  const newPng = await processPng(data)
-  return cachePng(fmiRadarImage.url, newPng)
+async function fetchPostProcessedRadarFrameAsPng(url) {
+  const data = await fetchRadarImage(url)
+  return processPng(data)
 }
 
 async function fetchRadarImage(url) {
@@ -44,29 +34,6 @@ function applyAlphaChannel(data) {
       data[i + 3] = 0
     }
   }
-}
-
-const PNG_CACHE = []
-
-function cachePng(url, png) {
-  PNG_CACHE.push({url, png, timestamp: now()})
-  return png
-}
-
-function cachedPngByUrl(url) {
-  cleanupExpiredPngsFromCache()
-  const cached = _.find(PNG_CACHE, {url})
-  return cached && cached.png
-}
-
-function cleanupExpiredPngsFromCache() {
-  _.remove(PNG_CACHE, cached => {
-    return now() - cached.timestamp > CACHE_TIME_2_HOURS
-  })
-}
-
-function now() {
-  return new Date().getTime()
 }
 
 module.exports = {
