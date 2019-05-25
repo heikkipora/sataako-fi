@@ -2,6 +2,7 @@
 const _ = require('lodash')
 const {fetchPostProcessedRadarFrame} = require('./fmi-radar-images')
 const {fetchRadarImageUrls} = require('./fmi-radar-frames')
+const {fetchLightnings} = require('./fmi-lightnings')
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
@@ -12,22 +13,38 @@ const CACHE_FOLDER = fs.mkdtempSync(path.join(os.tmpdir(), 'sataako-frames-'))
 console.log(`Radar frames cached at ${CACHE_FOLDER}`)
 
 const IMAGE_CACHE = []
+let LIGHTNING_CACHE = []
 const REFRESH_ONE_MINUTE = 60 * 1000
 
 refreshCache()
 
 async function refreshCache() {
-  try {
-    const radarImageUrls = await fetchRadarImageUrls()
-    const newImageUrls = radarImageUrls.filter(({url}) => !_.find(IMAGE_CACHE, {url}))
-    await fetchAndCacheImages(newImageUrls)
-    await pruneCache(radarImageUrls)
-  } catch (err) {
-    console.error(`Failed to fetch radar frames list from FMI API: ${err.message}`)
-  }
+  await Promise.all([
+    refreshRadarCache(),
+    refreshLightningCache()
+  ])
 
   setTimeout(refreshCache, REFRESH_ONE_MINUTE)
+
+  async function refreshRadarCache() {
+    try {
+      const radarImageUrls = await fetchRadarImageUrls();
+      const newImageUrls = radarImageUrls.filter(({url}) => !_.find(IMAGE_CACHE, {url}));
+      await fetchAndCacheImages(newImageUrls);
+      await pruneCache(radarImageUrls);
+    } catch (err) {
+      console.error(`Failed to fetch radar frames list from FMI API: ${err.message}`);
+    }
+  }
+  async function refreshLightningCache() {
+    try {
+      LIGHTNING_CACHE = await fetchLightnings()
+    } catch (err) {
+      console.error(`Failed to fetch lightning list from FMI API: ${err.message}`);
+    }
+  }
 }
+
 
 async function fetchAndCacheImages(imageUrls) {
   for (const {url, timestamp} of imageUrls) {
