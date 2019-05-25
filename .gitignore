@@ -6,3 +6,4 @@ build
 public/client.css
 public/client.js
 .vscode
+src/lightnings.xml
