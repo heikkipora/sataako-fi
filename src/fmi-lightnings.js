@@ -29,13 +29,22 @@ function xmlToObject(xml) {
 }
 
 function extractLocationsAndTimes(queryResult) {
-  if(!queryResult.featureCollection.hasOwnProperty('member')) return [] // No lightnings atm
+  if(!queryResult.featureCollection.hasOwnProperty('member')) { return [] } // No lightnings atm
   return queryResult.featureCollection.member.map(({bsWfsElement}) =>
     ({
       location: bsWfsElement[0].location[0].point[0].pos[0].trim(),
-      timestamp: bsWfsElement[0].time[0]
+      timestamp: roundToFiveMinutes(bsWfsElement[0].time[0])
     })
   )
+}
+
+function roundToFiveMinutes(timestamp) {
+  const fiveMin = 1000 * 60 * 5
+  const twoAndHalfMin = 1000 * 60 * 2.5
+  const date = new Date(timestamp)
+  const roundedDate = new Date(Math.round((date.getTime() + twoAndHalfMin) / fiveMin) * fiveMin)
+  return roundedDate.toISOString()
+
 }
 
 module.exports = {
