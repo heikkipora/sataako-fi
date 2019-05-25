@@ -4,6 +4,7 @@ const {parseString} = require('xml2js')
 const processors = require('xml2js/lib/processors')
 const Promise = require('bluebird')
 const url = require('url')
+const fs = require('fs')
 
 const parseXml = Promise.promisify(parseString)
 
@@ -17,7 +18,8 @@ const fmiLightningsRequestUrl = url.format(featureUrl)
 console.log(`Configured lightning URL: ${fmiLightningsRequestUrl}`)
 
 async function fetchLightnings() {
-  const {data} = await axios.get(fmiLightningsRequestUrl)
+  // const {data} = await axios.get(fmiLightningsRequestUrl)
+  const data = fs.readFileSync('src/lightnings.xml') // Mock data for developing
   const wfsResponse = await xmlToObject(data)
   return extractLocationsAndTimes(wfsResponse)
 }
