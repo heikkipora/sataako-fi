@@ -13,6 +13,10 @@ featureUrl.query = {
   // eslint-disable-next-line camelcase
   storedquery_id: 'fmi::radar::composite::rr'
 }
+if (process.env.NODE_ENV === 'fixeddate') {
+  featureUrl.query.starttime = '2019-05-22T20:00:00Z'
+  featureUrl.query.endtime = '2019-05-22T20:55:00Z'
+}
 const fmiRadarFramesRequestUrl = url.format(featureUrl)
 console.log(`Configured radar frames URL: ${fmiRadarFramesRequestUrl}`)
 
