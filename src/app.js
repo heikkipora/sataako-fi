@@ -1,7 +1,7 @@
 const compression = require('compression')
 const enforce = require('express-sslify')
 const express = require('express')
-const {imageFileForTimestamp, framesList, lightningsForTimestampAsGeojson} = require('./cache')
+const {imageFileForTimestamp, framesList} = require('./cache')
 
 const PORT = process.env.PORT || 3000
 const PUBLIC_URL_PORT = process.env.NODE_ENV === 'production' ? '' : `:${PORT}`
@@ -39,18 +39,9 @@ app.get('/frame/:timestamp', (req, res) => {
 })
 
 app.get('/frames.json', (req, res) => {
-  const publicRootUrl = `${req.protocol}://${req.hostname}${PUBLIC_URL_PORT}/`
+  const publicRootUrl = `${req.protocol}://${req.hostname}${PUBLIC_URL_PORT}/frame/`
   res.set('Cache-Control', 'public, max-age=60');
-  res.json(framesList(publicRootUrl + 'frame/', publicRootUrl + 'lightnings/'))
-})
-
-app.get('/lightnings/:timestamp', (req, res) => {
-  res.set('Cache-Control', 'public, max-age=86400');
-  try {
-    res.json(lightningsForTimestampAsGeojson(req.params.timestamp))
-  } catch (err) {
-    res.status(404).send('Sorry, no lightning data found for that timestamp')
-  }
+  res.json(framesList(publicRootUrl))
 })
 
 const server = app.listen(PORT, () => {

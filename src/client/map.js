@@ -94,8 +94,14 @@ function showRadarFrame(map, url, lightnings) {
   radarLayer.setSource(radarImageSource)
   if(lightnings) {
     const lightningLayer = map.getLayers().getArray()[3]
-    lightnings.geometry.coordinates = lightnings.geometry.coordinates.map(coord => fromLonLat(coord))
-    const lightningFeature = (new GeoJSON()).readFeature(lightnings)
+    const featureObj = {
+      type: 'Feature',
+      geometry: {
+        type: 'MultiPoint',
+        coordinates: lightnings.map(coord => fromLonLat(coord))
+      }
+    }
+    const lightningFeature = (new GeoJSON()).readFeature(featureObj)
       lightningLayer.setSource(new VectorSource({
         features: [lightningFeature]
       }

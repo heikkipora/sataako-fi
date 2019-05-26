@@ -69,9 +69,7 @@ class SataakoApp extends React.Component {
       } else {
         const currentFrame = this.state.frames[this.state.currentFrameIndex];
         if(this.state.displayLightnings) {
-          axios.get(currentFrame.lightnings)
-            .catch(err => showRadarFrame(this.map, currentFrame.image))
-            .then(({data}) => showRadarFrame(this.map, currentFrame.image, data))
+          showRadarFrame(this.map, currentFrame.image, currentFrame.lightnings)
         } else {
           showRadarFrame(this.map, currentFrame.image)
         }

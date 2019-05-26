@@ -80,11 +80,11 @@ function imageFileForTimestamp(timestamp) {
   }
 }
 
-function framesList(publicFramesRootUrl, publicLightningsRootUrl) {
+function framesList(publicFramesRootUrl) {
   return _(IMAGE_CACHE)
   .map(({timestamp}) => ({
     image: publicFramesRootUrl + timestamp,
-    lightnings: publicLightningsRootUrl + timestamp,
+    lightnings: coordinatesForLightnings(timestamp),
     timestamp
   }))
   .sortBy(['timestamp'])
@@ -99,23 +99,14 @@ function getFrameTimestampsAsDates() {
     .value()
 }
 
-function lightningsForTimestampAsGeojson(timestamp) {
-  const {locations} = _.find(LIGHTNING_CACHE, {timestamp})
-  return {
-    type: 'Feature',
-    geometry: {
-      type: 'MultiPoint',
-      coordinates: locations.map(([x, y]) => [y, x]) // GeoJSON uses lon, lat coordinates
-    },
-    properties: {
-      timestamp
-    }
-  }
+function coordinatesForLightnings(timestamp) {
+  const lightnings = _.find(LIGHTNING_CACHE, {timestamp})
+  if(!lightnings) { return [] }
+  return lightnings.locations.map(([x, y]) => [y, x]) // GeoJSON uses lon, lat coordinates
 }
   
 
 module.exports = {
   imageFileForTimestamp,
-  lightningsForTimestampAsGeojson,
   framesList
 }
