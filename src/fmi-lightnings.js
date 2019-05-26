@@ -44,7 +44,7 @@ function extractLocationsAndTimes(queryResult) {
 } // No lightnings atm
   return _(queryResult.featureCollection.member).map(({bsWfsElement}) =>
     ({
-      location: bsWfsElement[0].location[0].point[0].pos[0].trim().split(' '),
+      location: bsWfsElement[0].location[0].point[0].pos[0].trim().split(' ').map(parseFloat),
       time: new Date(bsWfsElement[0].time[0])
     }))
     .uniqWith(_.isEqual)
