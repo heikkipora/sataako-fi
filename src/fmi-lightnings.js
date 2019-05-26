@@ -59,14 +59,6 @@ function snapLightningsToFrames(lightnings, frameDates) {
     })
 )}
 
-function roundToFiveMinutes(timestamp) {
-  const fiveMin = 1000 * 60 * 5
-  const twoAndHalfMin = 1000 * 60 * 2.5
-  const date = new Date(timestamp)
-  const roundedDate = new Date(Math.round((date.getTime() + twoAndHalfMin) / fiveMin) * fiveMin)
-  return roundedDate.toISOString()
-}
-
 module.exports = {
   fetchLightnings
 }
