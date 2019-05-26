@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class InfoPanel extends React.Component {
   constructor() {
@@ -48,4 +49,8 @@ class InfoPanel extends React.Component {
 
 }
 
+InfoPanel.propTypes = {
+  toggleLightnings: PropTypes.func,
+  displayLightnings: PropTypes.bool
+}
 module.exports = InfoPanel

@@ -68,11 +68,7 @@ class SataakoApp extends React.Component {
         delayMs = FRAME_LOOP_DELAY_MS
       } else {
         const currentFrame = this.state.frames[this.state.currentFrameIndex];
-        if(this.state.displayLightnings) {
-          showRadarFrame(this.map, currentFrame.image, currentFrame.lightnings)
-        } else {
-          showRadarFrame(this.map, currentFrame.image)
-        }
+        showRadarFrame(this.map, currentFrame, this.state.displayLightnings)
         this.setState({currentFrame, currentFrameIndex: this.state.currentFrameIndex + 1})
       }
     }
@@ -94,7 +90,7 @@ class SataakoApp extends React.Component {
   }
 
   toggleLightnings() {
-    if(this.state.displayLightnings) {
+    if (this.state.displayLightnings) {
       this.setState({displayLightnings: false})
       localStorage.setItem('sataako-fi-lightnings', 'false')
     } else {

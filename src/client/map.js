@@ -88,11 +88,11 @@ function createIconLayer(position) {
 
 const radarImageSourcesCache = {}
 
-function showRadarFrame(map, url, lightnings) {
-  const radarImageSource = radarImageSourcesCache[url] || (radarImageSourcesCache[url] = createImageSource(url))
+function showRadarFrame(map, {image, lightnings}, displayLightnings) {
+  const radarImageSource = radarImageSourcesCache[image] || (radarImageSourcesCache[image] = createImageSource(image))
   const radarLayer = map.getLayers().getArray()[1]
   radarLayer.setSource(radarImageSource)
-  if(lightnings) {
+  if (displayLightnings && lightnings) {
     const lightningLayer = map.getLayers().getArray()[3]
     const featureObj = {
       type: 'Feature',

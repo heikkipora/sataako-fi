@@ -26,9 +26,10 @@ async function fetchLightnings(frameDates) {
 
 function constructLightningsUrl(frameDates) {
   const frameInterval = frameDates[1].getTime() - _.first(frameDates).getTime()
-  const starttime = new Date(_.first(frameDates).getTime() - frameInterval) // Fetch lightnings before first frame
+  // Fetch lightnings before first frame
+  const starttime = new Date(_.first(frameDates).getTime() - frameInterval)
   const endtime = _.last(frameDates)
-  const lightningsUrl = { ...FEATURE_URL }
+  const lightningsUrl = {...FEATURE_URL}
   lightningsUrl.query.starttime = starttime.toISOString()
   lightningsUrl.query.endtime = endtime.toISOString()
   return url.format(lightningsUrl)
@@ -39,9 +40,10 @@ function xmlToObject(xml) {
 }
 
 function extractLocationsAndTimes(queryResult) {
-  if (!queryResult.featureCollection.hasOwnProperty('member')) {
- return []
-} // No lightnings atm
+  // No lightnings atm
+  if (!_.has(queryResult.featureCollection, 'member')) {
+    return []
+  }
   return _(queryResult.featureCollection.member).map(({bsWfsElement}) =>
     ({
       location: bsWfsElement[0].location[0].point[0].pos[0].trim().split(' ').map(parseFloat),
@@ -57,7 +59,8 @@ function snapLightningsToFrames(lightnings, frameDates) {
       timestamp: frame.toISOString(),
       locations: _.remove(lightnings, ({time}) => time < frame).map(({location}) => location)
     })
-)}
+)
+}
 
 module.exports = {
   fetchLightnings
