@@ -32,7 +32,7 @@ function extractLocationsAndTimes(queryResult) {
   if(!queryResult.featureCollection.hasOwnProperty('member')) { return [] } // No lightnings atm
   return queryResult.featureCollection.member.map(({bsWfsElement}) =>
     ({
-      location: bsWfsElement[0].location[0].point[0].pos[0].trim(),
+      location: bsWfsElement[0].location[0].point[0].pos[0].trim().split(' '),
       timestamp: roundToFiveMinutes(bsWfsElement[0].time[0])
     })
   )
