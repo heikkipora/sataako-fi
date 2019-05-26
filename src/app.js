@@ -39,9 +39,9 @@ app.get('/frame/:timestamp', (req, res) => {
 })
 
 app.get('/frames.json', (req, res) => {
-  const publicRootUrl = `${req.protocol}://${req.hostname}${PUBLIC_URL_PORT}/frame/`
+  const publicRootUrl = `${req.protocol}://${req.hostname}${PUBLIC_URL_PORT}/`
   res.set('Cache-Control', 'public, max-age=60');
-  res.json(framesList(publicRootUrl))
+  res.json(framesList(publicRootUrl + 'frame/', publicRootUrl + 'lightnings/'))
 })
 
 app.get('/lightnings/:timestamp', (req, res) => {

@@ -80,10 +80,11 @@ function imageFileForTimestamp(timestamp) {
   }
 }
 
-function framesList(publicFramesRootUrl) {
+function framesList(publicFramesRootUrl, publicLightningsRootUrl) {
   return _(IMAGE_CACHE)
   .map(({timestamp}) => ({
     image: publicFramesRootUrl + timestamp,
+    lightnings: publicLightningsRootUrl + timestamp,
     timestamp
   }))
   .sortBy(['timestamp'])
