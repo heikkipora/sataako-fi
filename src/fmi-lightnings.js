@@ -4,24 +4,34 @@ const {parseString} = require('xml2js')
 const processors = require('xml2js/lib/processors')
 const Promise = require('bluebird')
 const url = require('url')
-const fs = require('fs')
+const _ = require('lodash')
 
 const parseXml = Promise.promisify(parseString)
 
-const featureUrl = url.parse(FMI.WFS_FEATURE_URL)
-featureUrl.query = {
+const FEATURE_URL = url.parse(FMI.WFS_FEATURE_URL)
+FEATURE_URL.query = {
   request: 'getFeature',
   // eslint-disable-next-line camelcase
   storedquery_id: 'fmi::observations::lightning::simple'
 }
-const fmiLightningsRequestUrl = url.format(featureUrl)
-console.log(`Configured lightning URL: ${fmiLightningsRequestUrl}`)
+console.log(`Configured lightning URL stem: ${url.format(FEATURE_URL)}`)
 
-async function fetchLightnings() {
-  // const {data} = await axios.get(fmiLightningsRequestUrl)
-  const data = fs.readFileSync('src/lightnings.xml') // Mock data for developing
+async function fetchLightnings(frameDates) {
+  const lightningsUrl = constructLightningsUrl(frameDates)
+  const {data} = await axios.get(lightningsUrl)
   const wfsResponse = await xmlToObject(data)
-  return extractLocationsAndTimes(wfsResponse)
+  const lightnings = extractLocationsAndTimes(wfsResponse)
+  return snapLightningsToFrames(lightnings, frameDates)
+}
+
+function constructLightningsUrl(frameDates) {
+  const frameInterval = frameDates[1].getTime() - _.first(frameDates).getTime()
+  const starttime = new Date(_.first(frameDates).getTime() - frameInterval) // Fetch lightnings before first frame
+  const endtime = _.last(frameDates)
+  const lightningsUrl = { ...FEATURE_URL }
+  lightningsUrl.query.starttime = starttime.toISOString()
+  lightningsUrl.query.endtime = endtime.toISOString()
+  return url.format(lightningsUrl)
 }
 
 function xmlToObject(xml) {
@@ -29,14 +39,25 @@ function xmlToObject(xml) {
 }
 
 function extractLocationsAndTimes(queryResult) {
-  if(!queryResult.featureCollection.hasOwnProperty('member')) { return [] } // No lightnings atm
-  return queryResult.featureCollection.member.map(({bsWfsElement}) =>
+  if (!queryResult.featureCollection.hasOwnProperty('member')) {
+ return []
+} // No lightnings atm
+  return _(queryResult.featureCollection.member).map(({bsWfsElement}) =>
     ({
       location: bsWfsElement[0].location[0].point[0].pos[0].trim().split(' '),
-      timestamp: roundToFiveMinutes(bsWfsElement[0].time[0])
-    })
-  )
+      time: new Date(bsWfsElement[0].time[0])
+    }))
+    .uniqWith(_.isEqual)
+    .sortBy(['timestamp'])
+    .value()
 }
+
+function snapLightningsToFrames(lightnings, frameDates) {
+  return frameDates.map((frame) => ({
+      timestamp: frame.toISOString(),
+      locations: _.remove(lightnings, ({time}) => time < frame).map(({location}) => location)
+    })
+)}
 
 function roundToFiveMinutes(timestamp) {
   const fiveMin = 1000 * 60 * 5
@@ -44,7 +65,6 @@ function roundToFiveMinutes(timestamp) {
   const date = new Date(timestamp)
   const roundedDate = new Date(Math.round((date.getTime() + twoAndHalfMin) / fiveMin) * fiveMin)
   return roundedDate.toISOString()
-
 }
 
 module.exports = {

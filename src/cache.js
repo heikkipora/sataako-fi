@@ -19,10 +19,8 @@ const REFRESH_ONE_MINUTE = 60 * 1000
 refreshCache()
 
 async function refreshCache() {
-  await Promise.all([
-    refreshRadarCache(),
-    refreshLightningCache()
-  ])
+  await refreshRadarCache()
+  await refreshLightningCache(getFrameTimestampsAsDates())
 
   setTimeout(refreshCache, REFRESH_ONE_MINUTE)
 
@@ -36,9 +34,9 @@ async function refreshCache() {
       console.error(`Failed to fetch radar frames list from FMI API: ${err.message}`);
     }
   }
-  async function refreshLightningCache() {
+  async function refreshLightningCache(frameTimestamps) {
     try {
-      LIGHTNING_CACHE = await fetchLightnings()
+      LIGHTNING_CACHE = await fetchLightnings(frameTimestamps)
     } catch (err) {
       console.error(`Failed to fetch lightning list from FMI API: ${err.message}`);
     }
@@ -85,6 +83,14 @@ function framesList(publicFramesRootUrl) {
   }))
   .sortBy(['timestamp'])
   .value()
+}
+
+function getFrameTimestampsAsDates() {
+  return _(IMAGE_CACHE)
+    .map('timestamp')
+    .sort()
+    .map(ts => new Date(ts))
+    .value()
 }
 
 module.exports = {
