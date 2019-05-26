@@ -34,6 +34,7 @@ async function refreshCache() {
       console.error(`Failed to fetch radar frames list from FMI API: ${err.message}`);
     }
   }
+
   async function refreshLightningCache(frameTimestamps) {
     try {
       const cacheSize = LIGHTNING_CACHE.length
@@ -107,7 +108,6 @@ function coordinatesForLightnings(timestamp) {
   // GeoJSON uses lon, lat coordinates
   return lightnings.locations.map(([x, y]) => [y, x])
 }
-
 
 module.exports = {
   imageFileForTimestamp,

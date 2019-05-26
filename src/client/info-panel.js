@@ -46,7 +46,6 @@ class InfoPanel extends React.Component {
     this.setState({collapsed: false})
     localStorage.setItem('sataako-fi-collapsed', 'false')
   }
-
 }
 
 InfoPanel.propTypes = {
