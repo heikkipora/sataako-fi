@@ -13,7 +13,7 @@ const CACHE_FOLDER = fs.mkdtempSync(path.join(os.tmpdir(), 'sataako-frames-'))
 console.log(`Radar frames cached at ${CACHE_FOLDER}`)
 
 const IMAGE_CACHE = []
-let LIGHTNING_CACHE = []
+const LIGHTNING_CACHE = []
 const REFRESH_ONE_MINUTE = 60 * 1000
 
 refreshCache()
@@ -36,7 +36,12 @@ async function refreshCache() {
   }
   async function refreshLightningCache(frameTimestamps) {
     try {
-      LIGHTNING_CACHE = await fetchLightnings(frameTimestamps)
+      const cacheSize = LIGHTNING_CACHE.length
+      const lightnings = await fetchLightnings(frameTimestamps)
+      for (const lightning of lightnings) {
+        LIGHTNING_CACHE.push(lightning)
+      }
+      LIGHTNING_CACHE.splice(0, cacheSize)
     } catch (err) {
       console.error(`Failed to fetch lightning list from FMI API: ${err.message}`);
     }
@@ -93,7 +98,23 @@ function getFrameTimestampsAsDates() {
     .value()
 }
 
+function lightningsForTimestampAsGeojson(timestamp) {
+  const {locations} = _.find(LIGHTNING_CACHE, {timestamp})
+  return {
+    type: 'Feature',
+    geometry: {
+      type: 'MultiPoint',
+      coordinates: locations.map(([x, y]) => [y, x]) // GeoJSON uses lon, lat coordinates
+    },
+    properties: {
+      timestamp
+    }
+  }
+}
+  
+
 module.exports = {
   imageFileForTimestamp,
+  lightningsForTimestampAsGeojson,
   framesList
 }
