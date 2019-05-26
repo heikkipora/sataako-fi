@@ -67,7 +67,9 @@ class SataakoApp extends React.Component {
         delayMs = FRAME_LOOP_DELAY_MS
       } else {
         const currentFrame = this.state.frames[this.state.currentFrameIndex];
-        showRadarFrame(this.map, currentFrame.image)
+        axios.get(currentFrame.lightnings)
+          .catch(err => showRadarFrame(this.map, currentFrame.image))
+          .then(({data}) => showRadarFrame(this.map, currentFrame.image, data))
         this.setState({currentFrame, currentFrameIndex: this.state.currentFrameIndex + 1})
       }
     }

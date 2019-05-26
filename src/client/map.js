@@ -15,6 +15,7 @@ import XYZ from 'ol/source/XYZ'
 import {fromLonLat} from 'ol/proj'
 import VectorSource from 'ol/source/Vector'
 import {defaults as defaultControls, Attribution} from 'ol/control'
+import GeoJSON from 'ol/format/GeoJSON'
 
 proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
 register(proj4)
@@ -40,7 +41,7 @@ function createMap(settings) {
   })
   const map = new Map({
     controls: defaultControls({attribution: false}).extend([attribution]),
-    layers: [createMapLayer(), createRadarLayer(), createIconLayer(center)],
+    layers: [createMapLayer(), createRadarLayer(), createIconLayer(center), createLightningLayer()],
     target: 'map',
     view
   })
@@ -87,10 +88,32 @@ function createIconLayer(position) {
 
 const radarImageSourcesCache = {}
 
-function showRadarFrame(map, url) {
+function showRadarFrame(map, url, lightnings) {
   const radarImageSource = radarImageSourcesCache[url] || (radarImageSourcesCache[url] = createImageSource(url))
   const radarLayer = map.getLayers().getArray()[1]
   radarLayer.setSource(radarImageSource)
+  if(lightnings) {
+    const lightningLayer = map.getLayers().getArray()[3]
+    lightnings.geometry.coordinates = lightnings.geometry.coordinates.map(coord => fromLonLat(coord))
+    const lightningFeature = (new GeoJSON()).readFeature(lightnings)
+      lightningLayer.setSource(new VectorSource({
+        features: [lightningFeature]
+      }
+    ))
+  }
+}
+
+function createLightningLayer() {
+  const source = new VectorSource()
+  return new VectorLayer({
+    source,
+    style: new Style({
+        image: new Icon({
+          scale: 0.15,
+          src: '/img/lightning.png'
+        })
+      })
+  })
 }
 
 function createImageSource(url) {
