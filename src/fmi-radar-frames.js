@@ -13,6 +13,10 @@ featureUrl.query = {
   // eslint-disable-next-line camelcase
   storedquery_id: 'fmi::radar::composite::rr'
 }
+if (process.env.NODE_ENV === 'fixeddate') {
+  featureUrl.query.starttime = '2019-05-22T20:00:00Z'
+  featureUrl.query.endtime = '2019-05-22T20:55:00Z'
+}
 const fmiRadarFramesRequestUrl = url.format(featureUrl)
 console.log(`Configured radar frames URL: ${fmiRadarFramesRequestUrl}`)
 
@@ -31,7 +35,7 @@ function extractFrameReferences(featureQueryResult) {
   return featureQueryResult.featureCollection.member.map(member =>
     ({
       url: member.gridSeriesObservation[0].result[0].rectifiedGridCoverage[0].rangeSet[0].file[0].fileReference[0],
-      timestamp: member.gridSeriesObservation[0].phenomenonTime[0].timeInstant[0].timePosition[0]
+      timestamp: (new Date(member.gridSeriesObservation[0].phenomenonTime[0].timeInstant[0].timePosition[0])).toISOString()
     })
   )
 }

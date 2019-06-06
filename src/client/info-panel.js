@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class InfoPanel extends React.Component {
   constructor() {
@@ -28,6 +29,7 @@ class InfoPanel extends React.Component {
         <h1>Sataako<br/>kohta?</h1>
         <p>Live-sadetilanne kätevästi Suomessa ja lähialueilla. Milloin lähteä lenkille, uimarannalle, piknikille tai kalaan? Katso, missä lähin sadepilvi luuraa! Unohda hankalat täsmäsääpalvelut ja tuntiennusteet.</p>
         <p>Tutkakuva päivittyy automaattisesti ja jatkuvasti, viiden minuutin välein. Mitä lähempänä väri on punaista, sitä enemmän sataa.</p>
+        <p><input type="checkbox" id="toggle-lightnings" onChange={this.props.toggleLightnings} checked={this.props.displayLightnings}></input> <label htmlFor="toggle-lightnings">Näytä salamat</label></p>
         <p>Tämän palvelun on tehnyt vapaa-ajallaan <a href="https://twitter.com/p0ra" target="_blank" rel="noopener noreferrer" title="Heikki Pora Twitter">Heikki&nbsp;Pora</a>, jonka sade pääsi yllättämään.</p>
         <p>Kartalla esitetään <a href="https://ilmatieteenlaitos.fi/avoin-data/" target="_blank" rel="noopener noreferrer" title="Ilmatieteenlaitos Avoin Data">Ilmatieteen laitoksen</a> toimittamia tietoaineistoja. Tiedot ovat kaikille avointa tietoa eli <a href="http://www.hri.fi/fi/mita-on-avoin-data/" target="_blank" rel="noopener noreferrer" title="Helsinki Region Infoshare: Mitä on avoin data?">open dataa</a>.</p>
         <a className="sponsor" href="https://www.reaktor.com" target="_blank" rel="noopener noreferrer"></a>
@@ -46,4 +48,8 @@ class InfoPanel extends React.Component {
   }
 }
 
+InfoPanel.propTypes = {
+  toggleLightnings: PropTypes.func,
+  displayLightnings: PropTypes.bool
+}
 module.exports = InfoPanel
