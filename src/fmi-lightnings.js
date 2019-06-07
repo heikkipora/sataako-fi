@@ -5,6 +5,7 @@ const processors = require('xml2js/lib/processors')
 const Promise = require('bluebird')
 const url = require('url')
 const _ = require('lodash')
+const fs = require('fs')
 
 const parseXml = Promise.promisify(parseString)
 
@@ -12,13 +13,21 @@ const FEATURE_URL = url.parse(FMI.WFS_FEATURE_URL)
 FEATURE_URL.query = {
   request: 'getFeature',
   // eslint-disable-next-line camelcase
-  storedquery_id: 'fmi::observations::lightning::simple'
+  storedquery_id: 'fmi::observations::lightning::multipointcoverage'
 }
 console.log(`Configured lightning URL stem: ${url.format(FEATURE_URL)}`)
 
 async function fetchLightnings(frameDates) {
-  const lightningsUrl = constructLightningsUrl(frameDates)
-  const {data} = await axios.get(lightningsUrl)
+  let data
+  if(process.env.NODE_ENV == 'local') {
+    const lightningPath = 'resources/multipointcoverage.xml'
+    console.log(`Loading lightnings locally from: ${lightningPath}`)
+    data = fs.readFileSync(lightningPath)
+  } else {
+    const lightningsUrl = constructLightningsUrl(frameDates)
+    if(process.env.NODE_ENV != 'production') { console.log(`Fetching lightnings from: ${lightningsUrl}`) } 
+    data = (await axios.get(lightningsUrl)).data
+  }
   const wfsResponse = await xmlToObject(data)
   const lightnings = extractLocationsAndTimes(wfsResponse)
   return snapLightningsToFrames(lightnings, frameDates)
