@@ -53,6 +53,10 @@ function xmlToObject(xml) {
 }
 
 function extractLocationsAndTimes(queryResult) {
+  // No lightnings atm
+  if (!_.has(queryResult.featureCollection, 'member')) {
+    return []
+  }
   return _(queryResult.featureCollection.member[0].gridSeriesObservation[0]
     .result[0].multiPointCoverage[0].domainSet[0].simpleMultiPoint[0].positions[0]
     .split('\n')
