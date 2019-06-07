@@ -94,6 +94,7 @@ function showRadarFrame(map, {image, lightnings}, displayLightnings) {
   radarLayer.setSource(radarImageSource)
   if (displayLightnings && lightnings) {
     const lightningLayer = map.getLayers().getArray()[3]
+    lightningLayer.setVisible(true)
     const featureObj = {
       type: 'Feature',
       geometry: {
@@ -122,6 +123,14 @@ function createLightningLayer() {
   })
 }
 
+function showLightnings(map) {
+  map.getLayers().getArray()[3].setVisible(true)
+}
+
+function hideLightnings(map) {
+  map.getLayers().getArray()[3].setVisible(false)
+}
+
 function createImageSource(url) {
   return new ImageStatic({
     imageExtent,
@@ -141,5 +150,7 @@ function panTo(map, lonLat) {
 export {
   createMap,
   panTo,
-  showRadarFrame
+  showRadarFrame,
+  showLightnings,
+  hideLightnings
 }
