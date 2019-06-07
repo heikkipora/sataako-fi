@@ -18,19 +18,23 @@ FEATURE_URL.query = {
 console.log(`Configured lightning URL stem: ${url.format(FEATURE_URL)}`)
 
 async function fetchLightnings(frameDates) {
-  let data
-  if(process.env.NODE_ENV == 'local') {
-    const lightningPath = 'resources/multipointcoverage.xml'
-    console.log(`Loading lightnings locally from: ${lightningPath}`)
-    data = fs.readFileSync(lightningPath)
-  } else {
-    const lightningsUrl = constructLightningsUrl(frameDates)
-    if(process.env.NODE_ENV != 'production') { console.log(`Fetching lightnings from: ${lightningsUrl}`) } 
-    data = (await axios.get(lightningsUrl)).data
-  }
+  const data = await loadData(frameDates)
   const wfsResponse = await xmlToObject(data)
   const lightnings = extractLocationsAndTimes(wfsResponse)
   return snapLightningsToFrames(lightnings, frameDates)
+}
+
+async function loadData(frameDates) {
+  if (process.env.NODE_ENV == 'local') {
+    const lightningPath = 'resources/multipointcoverage.xml'
+    console.log(`Loading lightnings locally from: ${lightningPath}`)
+    return fs.readFileSync(lightningPath)
+  }
+  const lightningsUrl = constructLightningsUrl(frameDates)
+  if (process.env.NODE_ENV != 'production') {
+    console.log(`Fetching lightnings from: ${lightningsUrl}`)
+  }
+  return (await axios.get(lightningsUrl)).data
 }
 
 function constructLightningsUrl(frameDates) {
@@ -49,17 +53,16 @@ function xmlToObject(xml) {
 }
 
 function extractLocationsAndTimes(queryResult) {
-  // No lightnings atm
-  if (!_.has(queryResult.featureCollection, 'member')) {
-    return []
-  }
-  return _(queryResult.featureCollection.member).map(({bsWfsElement}) =>
+  return _(queryResult.featureCollection.member[0].gridSeriesObservation[0]
+    .result[0].multiPointCoverage[0].domainSet[0].simpleMultiPoint[0].positions[0]
+    .split('\n')
+    .map(_.trim))
+    .map(pos =>
     ({
-      location: bsWfsElement[0].location[0].point[0].pos[0].trim().split(' ').map(parseFloat),
-      time: new Date(bsWfsElement[0].time[0])
+      location: pos.split(' ').slice(0, 2).map(parseFloat),
+      time: new Date(parseInt(pos.split(' ')[2], 10) * 1000)
     }))
     .uniqWith(_.isEqual)
-    .sortBy(['timestamp'])
     .value()
 }
 
