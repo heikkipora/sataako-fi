@@ -3,7 +3,7 @@ import dateFns from 'date-fns'
 import InfoPanel from './info-panel'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {createMap, panTo, showRadarFrame} from './map'
+import {createMap, panTo, showRadarFrame, showLightnings, hideLightnings} from './map'
 
 const FRAME_DELAY_MS = 500
 const FRAME_LOOP_DELAY_MS = 5000
@@ -91,9 +91,11 @@ class SataakoApp extends React.Component {
 
   toggleLightnings() {
     if (this.state.displayLightnings) {
+      hideLightnings(this.map)
       this.setState({displayLightnings: false})
       localStorage.setItem('sataako-fi-lightnings', 'false')
     } else {
+      showLightnings(this.map)
       this.setState({displayLightnings: true})
       localStorage.setItem('sataako-fi-lightnings', 'true')
     }
