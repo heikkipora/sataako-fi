@@ -24,7 +24,8 @@ async function processImage(input, targetFilename) {
 
   const {width, height, channels} = info
   const pipeline = sharp(data, {raw: {width, height, channels}})
-    .overlayWith(`${__dirname}/radar-edges.png`)
+    .resize({width: 1280})
+    .composite([{input: `${__dirname}/radar-edges.png`}])
   const pngFile = `${targetFilename}.png`
   const webpFile = `${targetFilename}.webp`
   await pipeline.clone().png().toFile(pngFile)
