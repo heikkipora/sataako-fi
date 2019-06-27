@@ -1,0 +1,50 @@
+- name: create application group
+  group:
+    name: sataako
+    state: present
+
+- name: create application user
+  user:
+    name: sataako
+    group: sataako
+    state: present
+
+- name: copy application
+  synchronize:
+    src: ../build/
+    dest: /home/sataako/app
+    delete: yes
+    recursive: yes
+  notify:
+   - restart sataako
+
+- name: set file ownership
+  file:
+    path: /home/sataako/app
+    recurse: yes
+    owner: sataako
+    group: sataako
+
+- name: install node modules
+  shell: cd /home/sataako/app && npm i --production
+  become: yes
+  become_user: sataako
+  notify:
+   - restart sataako
+
+- name: create environment file
+  template: src=sataako.env.j2 dest=/etc/sysconfig/sataako
+  notify:
+   - restart sataako
+
+- name: create unit file
+  template:
+    src: sataako.service.j2
+    dest: /etc/systemd/system/sataako.service
+    mode: 644
+  notify:
+    - reload systemctl
+    - restart sataako
+
+- name: start service
+  service: name=sataako state=started enabled=yes

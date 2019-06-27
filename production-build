@@ -1,9 +1,21 @@
 #!/bin/bash
 
-if [ "$NODE_ENV" == "production" ]; then
-  echo "Transpiling and minifying client JS"
-  browserify -g [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] src/client/index.js | node_modules/.bin/uglifyjs --compress --mangle > public/client.js
+rm -fr build
+mkdir -p build/src
 
-  echo "Compiling LESS to minified CSS"
-  lessc --include-path=public public/client.less | cleancss -o public/client.css
-fi
+# Copy static resources
+cp -r public build
+
+# Copy server sources
+cp -r src build
+rm -fr build/src/client
+
+# Copy manifests
+cp package*json build
+
+# Bundle and minify client JS
+npx browserify -g [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] src/client/index.js | npx uglifyjs --compress --mangle > build/public/client.js
+
+# Compile LESS to minified CSS"
+npx lessc --include-path=public public/client.less | npx cleancss -o build/public/client.css
+

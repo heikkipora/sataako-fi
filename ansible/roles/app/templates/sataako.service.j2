@@ -1,0 +1,16 @@
+[Unit]
+Description=Sataako.fi node.js app
+Requires=network.target
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/sysconfig/sataako
+ExecStart=/bin/npm start
+Restart=always
+RestartSec=10
+User=sataako
+Group=sataako
+WorkingDirectory=/home/sataako/app
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+- name: install packages
+  package:
+    name: "{{ item }}"
+    state: latest
+    lock_timeout: 180
+  with_items:
+    - gcc-c++
+    - make
+    - nodejs

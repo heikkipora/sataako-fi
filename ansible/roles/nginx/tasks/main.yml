@@ -1,0 +1,29 @@
+- name: install packages
+  package:
+    name: "{{ item }}"
+    state: latest
+    lock_timeout: 180
+  with_items:
+    - nginx
+    - certbot
+    - python2-certbot-nginx
+
+- name: copy nginx site configuration
+  copy:
+    src: default.conf
+    dest: /etc/nginx/conf.d/default.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - restart nginx
+
+- name: create cron job for renewing the SSL certificate
+  cron:
+    name: "certbot renew"
+    minute: "0"
+    hour: "0,12"
+    job: "python -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew"
+
+- name: ensure nginx is running (and enable it at boot)
+  service: name=nginx state=started enabled=yes

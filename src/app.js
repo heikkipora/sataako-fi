@@ -1,5 +1,4 @@
 const compression = require('compression')
-const enforce = require('express-sslify')
 const express = require('express')
 const {imageFileForTimestamp, framesList} = require('./cache')
 
@@ -10,7 +9,6 @@ const app = express()
 app.disable('x-powered-by')
 if (process.env.NODE_ENV == 'production') {
   app.enable('trust proxy')
-  app.use(enforce.HTTPS({trustProtoHeader: true}))
 } else {
   // eslint-disable-next-line global-require
   const {bindDevAssets} = require('./dev-assets')

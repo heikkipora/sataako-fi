@@ -1,0 +1,2 @@
+[sataakofi]
+new.sataako.fi ansible_user=ec2-user ansible_become=true

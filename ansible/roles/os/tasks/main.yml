@@ -1,0 +1,29 @@
+- name: add epel-release rpm repository
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+    lock_timeout: 180
+
+- name: add node.js v10 rpm repository
+  yum:
+    name: https://rpm.nodesource.com/pub_10.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm
+    state: present
+    lock_timeout: 180
+
+- name: add nginx rpm repository
+  yum_repository:
+    name: nginx-stable
+    description: nginx stable
+    baseurl: http://nginx.org/packages/mainline/centos/7/$basearch/
+    gpgkey: https://nginx.org/keys/nginx_signing.key
+    gpgcheck: yes
+
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+    lock_timeout: 180
+
+- name: set timezone
+  timezone:
+    name: Europe/Helsinki

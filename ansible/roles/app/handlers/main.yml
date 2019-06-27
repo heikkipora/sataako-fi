@@ -1,0 +1,5 @@
+- name: reload systemctl
+  command: systemctl daemon-reload
+
+- name: restart sataako
+  service: name=sataako state=restarted
