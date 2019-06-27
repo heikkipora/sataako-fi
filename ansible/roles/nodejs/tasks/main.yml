@@ -7,3 +7,4 @@
     - gcc-c++
     - make
     - nodejs
+    - jemalloc
