@@ -32,19 +32,14 @@
   notify:
    - restart sataako
 
-- name: create environment file
-  template: src=sataako.env.j2 dest=/etc/sysconfig/sataako
-  notify:
-   - restart sataako
-
 - name: create unit file
   template:
     src: sataako.service.j2
     dest: /etc/systemd/system/sataako.service
-    mode: 644
+    mode: '0644'
   notify:
     - reload systemctl
     - restart sataako
 
-- name: start service
-  service: name=sataako state=started enabled=yes
+- name: enable service
+  service: name=sataako enabled=yes

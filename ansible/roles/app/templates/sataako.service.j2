@@ -4,8 +4,8 @@ Requires=network.target
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/sysconfig/sataako
-ExecStart=/bin/npm start
+Environment="NODE_ENV=production"
+ExecStart=/bin/node --optimize-for-size --max-old-space-size=64 src/app.js
 Restart=always
 RestartSec=10
 User=sataako
