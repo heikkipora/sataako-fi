@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "build": "./production-build",
-    "start": "node $NODE_OPTS src/app.js",
+    "start": "node src/app.js",
     "test": "eslint src --fix"
   },
   "dependencies": {
