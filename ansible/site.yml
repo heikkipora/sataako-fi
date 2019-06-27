@@ -1,4 +1,4 @@
-- hosts: new.sataako.fi
+- hosts: sataako.fi
   roles:
      - os
      - nginx
