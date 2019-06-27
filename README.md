@@ -13,12 +13,13 @@ I wanted to create a mobile-friendly weather service for Finland which has the s
 
 Runtime environment
 -------------------
-The node.js application runs in [Heroku](http://heroku.com) with a single [Hobby dyno](https://devcenter.heroku.com/articles/dyno-types).
+The node.js application runs in [AWS](https://aws.amazon.com) with a single ```t3.micro``` instance on ```eu-north-1``` region.
+It's deployed there with ```ansible```.
 
 It's responsible for
 
 * maintaing an up-to-date list of radar frames available from FMI
-* delivering those frames as post-processed GIF images
+* delivering those frames as post-processed PNG or WEBP images (depending on the browser)
 
 To be able to serve a decent amount of concurrent users without exceeding the FMI API request rate, the following steps are done:
 
@@ -36,7 +37,7 @@ To be able to use those images on top of the Mapbox map the following steps are 
 * change a solid gray background (0xf7f7f7) to fully transparent
 * use a [mask-image](src/radar-mask.png) to change a solid orange area outside the radars' range to fully transparent
 * use an [overlay-image](src/radar-edges.png) to draw the edge of the radars' range
-* encode image as GIF maintaining transparency
+* encode image as PNG and WEBP maintaining transparency
 
 Openlayers will then reproject those images on the fly to [EPSG:3857 projection](http://spatialreference.org/ref/sr-org/7483/) aka WGS84 Web Mercator which is used by the Mapbox tiles.
 
