@@ -24,7 +24,7 @@ async function processImage(input, targetFilename) {
 
   const {width, height, channels} = info
   const pipeline = sharp(data, {raw: {width, height, channels}})
-    .resize({width: 1280})
+    .resize({height: height / 2, kernel: 'nearest'})
     .composite([{input: `${__dirname}/radar-edges.png`}])
   const pngFile = `${targetFilename}.png`
   const webpFile = `${targetFilename}.webp`
