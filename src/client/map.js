@@ -103,10 +103,9 @@ function showRadarFrame(map, {image, lightnings}) {
       }
     }
     const lightningFeature = (new GeoJSON()).readFeature(featureObj)
-      lightningLayer.setSource(new VectorSource({
-        features: [lightningFeature]
-      }
-    ))
+    lightningLayer.setSource(new VectorSource({
+      features: [lightningFeature]
+    }))
   }
 }
 
