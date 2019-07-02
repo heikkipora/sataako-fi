@@ -47,4 +47,4 @@ Pull requests are welcome. Kindly check that your code passes ESLint checks by r
 
 ## Contributors
 
-* Lauri Kangassalo ([lakka](https://github.com/lakka)) - Lighntning implementation
+* Lauri Kangassalo ([lakka](https://github.com/lakka)) - Lightning implementation
