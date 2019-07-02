@@ -41,7 +41,7 @@ function createMap(settings) {
   })
   const map = new Map({
     controls: defaultControls({attribution: false}).extend([attribution]),
-    layers: [createMapLayer(), createRadarLayer(), createIconLayer(center), createLightningLayer()],
+    layers: [createMapLayer(), createRadarLayer(), createLightningLayer(), createIconLayer(center)],
     target: 'map',
     view
   })
@@ -93,7 +93,7 @@ function showRadarFrame(map, {image, lightnings}) {
   const radarLayer = map.getLayers().getArray()[1]
   radarLayer.setSource(radarImageSource)
   if (lightnings) {
-    const lightningLayer = map.getLayers().getArray()[3]
+    const lightningLayer = map.getLayers().getArray()[2]
     lightningLayer.setVisible(true)
     const featureObj = {
       type: 'Feature',
@@ -133,7 +133,7 @@ function createImageSource(url) {
 
 function panTo(map, lonLat) {
   const center = fromLonLat(lonLat);
-  const vectorLayer = map.getLayers().getArray()[2]
+  const vectorLayer = map.getLayers().getArray()[3]
   const vectorFeature = vectorLayer.getSource().getFeatures()[0]
   vectorFeature.setGeometry(new Point(center))
   map.getView().animate({center, duration: 1000})
