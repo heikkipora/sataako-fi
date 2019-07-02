@@ -116,7 +116,7 @@ function createLightningLayer() {
     source,
     style: new Style({
         image: new Icon({
-          scale: 0.15,
+          anchor: [0, 1.0],
           src: '/img/lightning.png'
         })
       })
