@@ -102,7 +102,7 @@ function getFrameTimestampsAsDates() {
 
 function coordinatesForLightnings(timestamp) {
   const {locations} = _.find(LIGHTNING_CACHE, {timestamp}) || {}
-  return locations || []
+  return locations || []
 }
 
 module.exports = {
