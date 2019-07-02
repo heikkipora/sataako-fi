@@ -31,9 +31,6 @@ async function loadData(frameDates) {
     return fs.readFileSync(lightningPath)
   }
   const lightningsUrl = constructLightningsUrl(frameDates)
-  if (process.env.NODE_ENV != 'production') {
-    console.log(`Fetching lightnings from: ${lightningsUrl}`)
-  }
   return (await axios.get(lightningsUrl)).data
 }
 
