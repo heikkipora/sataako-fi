@@ -41,6 +41,10 @@ To be able to use those images on top of the Mapbox map the following steps are 
 
 Openlayers will then reproject those images on the fly to [EPSG:3857 projection](http://spatialreference.org/ref/sr-org/7483/) aka WGS84 Web Mercator which is used by the Mapbox tiles.
 
-Thanks to
---------
-Runtime environment costs kindly covered by my employer <a href="https://www.reaktor.com">Reaktor</a>. We are constantly looking for talented people - <a href="https://www.reaktor.com/careers">join us!</a>
+## Contributing
+
+Pull requests are welcome. Kindly check that your code passes ESLint checks by running ```npm test``` first.
+
+## Contributors
+
+* Lauri Kangassalo ([lakka](https://github.com/lakka)) - Lighntning implementationb
