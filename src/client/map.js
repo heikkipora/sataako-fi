@@ -88,11 +88,11 @@ function createIconLayer(position) {
 
 const radarImageSourcesCache = {}
 
-function showRadarFrame(map, {image, lightnings}, displayLightnings) {
+function showRadarFrame(map, {image, lightnings}) {
   const radarImageSource = radarImageSourcesCache[image] || (radarImageSourcesCache[image] = createImageSource(image))
   const radarLayer = map.getLayers().getArray()[1]
   radarLayer.setSource(radarImageSource)
-  if (displayLightnings && lightnings) {
+  if (lightnings) {
     const lightningLayer = map.getLayers().getArray()[3]
     lightningLayer.setVisible(true)
     const featureObj = {
@@ -123,14 +123,6 @@ function createLightningLayer() {
   })
 }
 
-function showLightnings(map) {
-  map.getLayers().getArray()[3].setVisible(true)
-}
-
-function hideLightnings(map) {
-  map.getLayers().getArray()[3].setVisible(false)
-}
-
 function createImageSource(url) {
   return new ImageStatic({
     imageExtent,
@@ -150,7 +142,5 @@ function panTo(map, lonLat) {
 export {
   createMap,
   panTo,
-  showRadarFrame,
-  showLightnings,
-  hideLightnings
+  showRadarFrame
 }

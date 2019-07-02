@@ -3,7 +3,7 @@ import dateFns from 'date-fns'
 import InfoPanel from './info-panel'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {createMap, panTo, showRadarFrame, showLightnings, hideLightnings} from './map'
+import {createMap, panTo, showRadarFrame} from './map'
 
 const FRAME_DELAY_MS = 500
 const FRAME_LOOP_DELAY_MS = 5000
@@ -20,8 +20,7 @@ class SataakoApp extends React.Component {
         x: Number(localStorage.getItem('sataako-fi-x')) || 2776307.5078,
         y: Number(localStorage.getItem('sataako-fi-y')) || 8438349.32742,
         zoom: Number(localStorage.getItem('sataako-fi-zoom')) || 7
-      },
-      displayLightnings: localStorage.getItem('sataako-fi-lightnings') === 'true' || false
+      }
     }
   }
 
@@ -45,7 +44,7 @@ class SataakoApp extends React.Component {
         <div id="preload-frames">{this.renderFrameImages()}</div>
         <div className="radar-timestamp"><span>{radarFrameTimestamp}</span></div>
         <a href="http://mapbox.com/about/maps" className="mapbox-wordmark" target="_blank" rel="noopener noreferrer">Mapbox</a>
-        <InfoPanel toggleLightnings={this.toggleLightnings.bind(this)} displayLightnings={this.state.displayLightnings} />
+        <InfoPanel/>
       </div>
     )
   }
@@ -68,7 +67,7 @@ class SataakoApp extends React.Component {
         delayMs = FRAME_LOOP_DELAY_MS
       } else {
         const currentFrame = this.state.frames[this.state.currentFrameIndex];
-        showRadarFrame(this.map, currentFrame, this.state.displayLightnings)
+        showRadarFrame(this.map, currentFrame)
         this.setState({currentFrame, currentFrameIndex: this.state.currentFrameIndex + 1})
       }
     }
@@ -87,18 +86,6 @@ class SataakoApp extends React.Component {
     localStorage.setItem('sataako-fi-x', x)
     localStorage.setItem('sataako-fi-y', y)
     localStorage.setItem('sataako-fi-zoom', zoom)
-  }
-
-  toggleLightnings() {
-    if (this.state.displayLightnings) {
-      hideLightnings(this.map)
-      this.setState({displayLightnings: false})
-      localStorage.setItem('sataako-fi-lightnings', 'false')
-    } else {
-      showLightnings(this.map)
-      this.setState({displayLightnings: true})
-      localStorage.setItem('sataako-fi-lightnings', 'true')
-    }
   }
 }
 
