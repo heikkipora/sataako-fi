@@ -60,7 +60,8 @@ function extractLocationsAndTimes(queryResult) {
     .map(_.trim))
     .map(pos =>
     ({
-      location: pos.split(' ').slice(0, 2).map(parseFloat),
+      // Pos is (lat, lon) - GeoJSON in client is (lon, lat)
+      location: pos.split(' ').slice(0, 2).map(parseFloat).reverse(),
       time: new Date(parseInt(pos.split(' ')[2], 10) * 1000)
     }))
     .uniqWith(_.isEqual)

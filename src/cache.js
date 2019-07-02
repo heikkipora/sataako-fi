@@ -101,12 +101,8 @@ function getFrameTimestampsAsDates() {
 }
 
 function coordinatesForLightnings(timestamp) {
-  const lightnings = _.find(LIGHTNING_CACHE, {timestamp})
-  if (!lightnings) {
-    return []
-  }
-  // GeoJSON uses lon, lat coordinates
-  return lightnings.locations.map(([x, y]) => [y, x])
+  const {locations} = _.find(LIGHTNING_CACHE, {timestamp}) || {}
+  return locations || []
 }
 
 module.exports = {
