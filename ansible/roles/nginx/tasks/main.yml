@@ -4,6 +4,7 @@
     state: latest
     lock_timeout: 180
   with_items:
+    - nano
     - nginx
     - certbot
     - python2-certbot-nginx
