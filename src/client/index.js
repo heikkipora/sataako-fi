@@ -1,5 +1,5 @@
 import axios from 'axios'
-import dateFns from 'date-fns'
+import {format, parseISO} from 'date-fns'
 import InfoPanel from './info-panel'
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -36,7 +36,7 @@ class SataakoApp extends React.Component {
   }
 
   render() {
-    const radarFrameTimestamp = this.state.currentFrame ? dateFns.format(this.state.currentFrame.timestamp, 'D.M. HH:mm') : ''
+    const radarFrameTimestamp = this.state.currentFrame ? format(parseISO(this.state.currentFrame.timestamp), 'd.M. HH:mm') : ''
 
     return (
       <div>
