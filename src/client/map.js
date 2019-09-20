@@ -22,9 +22,6 @@ register(proj4)
 const imageProjection = new Projection({code: 'EPSG:3067'})
 const imageExtent = [-118331.366, 6335621.167, 875567.732, 7907751.537]
 
-const MAP_ID = 'mapbox.light'
-const ACCESS_TOKEN = 'pk.eyJ1IjoiZHJpbGxzb2Z0IiwiYSI6ImNpamhheThmMDAwMWJ2bGx3cTdnc2pqN3YifQ.T03pA9q2dnHo4lLHHMmrYA'
-
 function createMap(settings) {
   const {x, y, zoom} = settings
   const center = [x, y]
@@ -53,12 +50,8 @@ function createMap(settings) {
 }
 
 function createMapLayer() {
-  const attributions = [
-    '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> | ',
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | ',
-    '<a href="https://www.mapbox.com/map-feedback/" target="_blank"><strong>Improve this map</strong></a>'
-  ]
-  const source = new XYZ({url: `https://api.tiles.mapbox.com/v4/${MAP_ID}/{z}/{x}/{y}.png?access_token=${ACCESS_TOKEN}`, attributions})
+  const attributions = ['&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>']
+  const source = new XYZ({url: 'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', attributions})
   return new Tile({source})
 }
 
