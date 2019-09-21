@@ -1,2 +1,2 @@
 [sataakofi]
-sataako.fi ansible_user=ec2-user ansible_become=true
+sataako.fi ansible_user=root ansible_become=true
