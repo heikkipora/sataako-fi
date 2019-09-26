@@ -51,7 +51,7 @@ function createMap(settings) {
 
 function createMapLayer() {
   const attributions = ['&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>']
-  const source = new XYZ({url: 'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', attributions})
+  const source = new XYZ({url: '/tiles/{z}/{x}/{y}.png', attributions})
   return new Tile({source})
 }
 
