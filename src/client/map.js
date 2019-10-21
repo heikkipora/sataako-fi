@@ -56,7 +56,7 @@ function createMapLayer() {
 }
 
 function createRadarLayer() {
-  return new Image({opacity: 0.8})
+  return new Image({opacity: 0.8, visible: false})
 }
 
 function createIconLayer(position) {
@@ -85,6 +85,7 @@ function showRadarFrame(map, {image, lightnings}) {
   const radarImageSource = radarImageSourcesCache[image] || (radarImageSourcesCache[image] = createImageSource(image))
   const radarLayer = map.getLayers().getArray()[1]
   radarLayer.setSource(radarImageSource)
+  radarLayer.setVisible(true)
   if (lightnings) {
     const lightningLayer = map.getLayers().getArray()[2]
     lightningLayer.setVisible(true)
