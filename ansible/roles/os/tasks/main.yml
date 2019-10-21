@@ -27,3 +27,26 @@
 - name: set timezone
   timezone:
     name: Europe/Helsinki
+
+- name: install firewalld
+  package:
+    name: firewalld
+    state: latest
+    lock_timeout: 180
+  notify:
+    - restart firewalld
+
+- name: configure firewalld
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - http
+    - https
+    - ssh
+  notify:
+    - restart firewalld
+
+- name: ensure firewalld is running (and enable it at boot)
+  service: name=firewalld state=started enabled=yes
