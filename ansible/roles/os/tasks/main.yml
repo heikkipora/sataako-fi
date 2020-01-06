@@ -4,9 +4,9 @@
     state: present
     lock_timeout: 180
 
-- name: add node.js v10 rpm repository
+- name: add node.js v12 rpm repository
   yum:
-    name: https://rpm.nodesource.com/pub_10.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm
+    name: https://rpm.nodesource.com/pub_12.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm
     state: present
     lock_timeout: 180
 
