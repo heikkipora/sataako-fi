@@ -39,10 +39,10 @@ async function loadData(frameDates, useLocalData) {
 }
 
 function constructLightningsUrl(frameDates) {
-  const frameInterval = frameDates[1].getTime() - _.first(frameDates).getTime()
-  // Fetch lightnings before first frame
-  const starttime = new Date(_.first(frameDates).getTime() - frameInterval)
-  const endtime = _.last(frameDates)
+  const [firstDate, secondData] = frameDates
+  const frameInterval = secondData.getTime() - firstDate.getTime()
+  const starttime = new Date(firstDate.getTime() - frameInterval)
+  const endtime = frameDates[frameDates.length - 1]
   const lightningsUrl = {...FEATURE_URL}
   lightningsUrl.query.starttime = starttime.toISOString()
   lightningsUrl.query.endtime = endtime.toISOString()
