@@ -1,10 +1,13 @@
-const _ = require('lodash')
-const axios = require('axios')
-const FMI = require('./fmi-constants')
-const fs = require('fs')
-const {parseStringPromise} = require('xml2js')
-const url = require('url')
-const {firstCharLowerCase, stripPrefix} = require('xml2js/lib/processors')
+import _ from 'lodash'
+import axios from 'axios'
+import FMI from './fmi-constants.js'
+import fs from 'fs'
+import url from 'url'
+import xml2js from 'xml2js'
+import xml2jsProcessors from 'xml2js/lib/processors.js'
+
+const {parseStringPromise} = xml2js
+const {firstCharLowerCase, stripPrefix} = xml2jsProcessors
 
 const FEATURE_URL = url.parse(FMI.WFS_FEATURE_URL)
 FEATURE_URL.query = {
@@ -15,6 +18,10 @@ FEATURE_URL.query = {
 console.log(`Configured lightning URL stem: ${url.format(FEATURE_URL)}`)
 
 async function fetchLightnings(frameDates) {
+  if (frameDates.length < 2) {
+    return []
+  }
+
   const data = await loadData(frameDates)
   const wfsResponse = await xmlToObject(data)
   const lightnings = extractLocationsAndTimes(wfsResponse)
@@ -73,6 +80,6 @@ function snapLightningsToFrames(lightnings, frameDates) {
   )
 }
 
-module.exports = {
+export {
   fetchLightnings
 }
