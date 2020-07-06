@@ -29,7 +29,7 @@ function extractFrameReferences(featureQueryResult) {
   return featureQueryResult.featureCollection.member.map(member =>
     ({
       url: member.gridSeriesObservation[0].result[0].rectifiedGridCoverage[0].rangeSet[0].file[0].fileReference[0],
-      timestamp: (new Date(member.gridSeriesObservation[0].phenomenonTime[0].timeInstant[0].timePosition[0])).toISOString()
+      timestamp: new Date(member.gridSeriesObservation[0].phenomenonTime[0].timeInstant[0].timePosition[0]).toISOString()
     })
   )
 }
