@@ -70,7 +70,7 @@ function snapLightningsToFrames(lightnings, frameDates) {
       timestamp: frame.toISOString(),
       locations: _.remove(lightnings, ({time}) => time < frame).map(({location}) => location)
     })
-)
+  )
 }
 
 module.exports = {
