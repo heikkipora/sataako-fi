@@ -25,7 +25,7 @@ async function loadData(frameDates) {
   if (process.env.NODE_ENV == 'local') {
     const lightningPath = 'resources/multipointcoverage.xml'
     console.log(`Loading lightnings locally from: ${lightningPath}`)
-    return fs.readFileSync(lightningPath)
+    return fs.promises.readFile(lightningPath)
   }
   const lightningsUrl = constructLightningsUrl(frameDates)
   return (await axios.get(lightningsUrl)).data
