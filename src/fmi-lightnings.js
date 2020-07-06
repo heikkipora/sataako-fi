@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import axios from 'axios'
 import FMI from './fmi-constants.js'
 import fs from 'fs'
@@ -72,11 +71,17 @@ function extractLocationsAndTimes({featureCollection}) {
 }
 
 function snapLightningsToFrames(lightnings, frameDates) {
-  return frameDates.map(frame => ({
-      timestamp: frame.toISOString(),
-      locations: _.remove(lightnings, ({time}) => time < frame).map(({location}) => location)
+  return frameDates.map((frameDate, index) => ({
+      timestamp: frameDate.toISOString(),
+      locations: locationsAfterPreviousFrame(lightnings, frameDate, frameDates[index - 1])
     })
   )
+}
+
+function locationsAfterPreviousFrame(lightnings, currentTime, previousTime = new Date(0)) {
+  return lightnings
+    .filter(l => l.time > previousTime && l.time <= currentTime)
+    .map(f => f.location)
 }
 
 export {
