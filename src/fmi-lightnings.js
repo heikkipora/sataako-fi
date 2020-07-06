@@ -1,9 +1,9 @@
+const _ = require('lodash')
 const axios = require('axios')
 const FMI = require('./fmi-constants')
-const url = require('url')
-const _ = require('lodash')
 const fs = require('fs')
 const {parseStringPromise} = require('xml2js')
+const url = require('url')
 const {firstCharLowerCase, stripPrefix} = require('xml2js/lib/processors')
 
 const FEATURE_URL = url.parse(FMI.WFS_FEATURE_URL)
