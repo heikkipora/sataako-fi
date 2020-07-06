@@ -5,13 +5,8 @@ sharp.cache(false)
 sharp.concurrency(1)
 
 async function fetchPostProcessedRadarFrame(url, targetFilename) {
-  const data = await fetchRadarImage(url)
+  const {data} = await axios({url, method: 'get', responseType: 'arraybuffer'})
   return processImage(data, targetFilename)
-}
-
-async function fetchRadarImage(url) {
-  const response = await axios({url, method: 'get', responseType: 'arraybuffer'})
-  return Buffer.from(response.data)
 }
 
 async function processImage(input, targetFilename) {
