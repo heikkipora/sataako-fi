@@ -1,13 +1,10 @@
 const axios = require('axios')
 const FMI = require('./fmi-constants')
-const {parseString} = require('xml2js')
-const processors = require('xml2js/lib/processors')
-const Promise = require('bluebird')
 const url = require('url')
 const _ = require('lodash')
 const fs = require('fs')
-
-const parseXml = Promise.promisify(parseString)
+const {parseStringPromise} = require('xml2js')
+const {firstCharLowerCase, stripPrefix} = require('xml2js/lib/processors')
 
 const FEATURE_URL = url.parse(FMI.WFS_FEATURE_URL)
 FEATURE_URL.query = {
@@ -46,7 +43,7 @@ function constructLightningsUrl(frameDates) {
 }
 
 function xmlToObject(xml) {
-  return parseXml(xml, {tagNameProcessors: [processors.stripPrefix, processors.firstCharLowerCase]})
+  return parseStringPromise(xml, {tagNameProcessors: [stripPrefix, firstCharLowerCase]})
 }
 
 function extractLocationsAndTimes(queryResult) {

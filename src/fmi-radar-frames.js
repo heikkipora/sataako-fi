@@ -1,11 +1,8 @@
 const axios = require('axios')
 const FMI = require('./fmi-constants')
-const {parseString} = require('xml2js')
-const processors = require('xml2js/lib/processors')
-const Promise = require('bluebird')
+const {parseStringPromise} = require('xml2js')
 const url = require('url')
-
-const parseXml = Promise.promisify(parseString)
+const {firstCharLowerCase, stripPrefix} = require('xml2js/lib/processors')
 
 const featureUrl = url.parse(FMI.WFS_FEATURE_URL)
 featureUrl.query = {
@@ -25,7 +22,7 @@ async function fetchRadarImageUrls() {
 }
 
 function xmlToObject(xml) {
-  return parseXml(xml, {tagNameProcessors: [processors.stripPrefix, processors.firstCharLowerCase]})
+  return parseStringPromise(xml, {tagNameProcessors: [stripPrefix, firstCharLowerCase]})
 }
 
 function extractFrameReferences(featureQueryResult) {
