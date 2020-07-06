@@ -16,6 +16,8 @@ const IMAGE_CACHE = []
 const LIGHTNING_CACHE = []
 const REFRESH_ONE_MINUTE = 60 * 1000
 
+const USE_LOCAL_LIGHTNING_DATA = process.env.NODE_ENV == 'local'
+
 refreshCache()
 
 async function refreshCache() {
@@ -38,7 +40,7 @@ async function refreshCache() {
   async function refreshLightningCache(frameTimestamps) {
     try {
       const cacheSize = LIGHTNING_CACHE.length
-      const lightnings = await fetchLightnings(frameTimestamps)
+      const lightnings = await fetchLightnings(frameTimestamps, USE_LOCAL_LIGHTNING_DATA)
       for (const lightning of lightnings) {
         LIGHTNING_CACHE.push(lightning)
       }

@@ -17,19 +17,19 @@ FEATURE_URL.query = {
 }
 console.log(`Configured lightning URL stem: ${url.format(FEATURE_URL)}`)
 
-async function fetchLightnings(frameDates) {
+async function fetchLightnings(frameDates, useLocalData = false) {
   if (frameDates.length < 2) {
     return []
   }
 
-  const data = await loadData(frameDates)
+  const data = await loadData(frameDates, useLocalData)
   const wfsResponse = await xmlToObject(data)
   const lightnings = extractLocationsAndTimes(wfsResponse)
   return snapLightningsToFrames(lightnings, frameDates)
 }
 
-async function loadData(frameDates) {
-  if (process.env.NODE_ENV == 'local') {
+async function loadData(frameDates, useLocalData) {
+  if (useLocalData) {
     const lightningPath = 'resources/multipointcoverage.xml'
     console.log(`Loading lightnings locally from: ${lightningPath}`)
     return fs.promises.readFile(lightningPath)
