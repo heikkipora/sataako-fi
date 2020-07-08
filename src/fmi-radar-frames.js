@@ -1,8 +1,11 @@
-const axios = require('axios')
-const FMI = require('./fmi-constants')
-const {parseStringPromise} = require('xml2js')
-const url = require('url')
-const {firstCharLowerCase, stripPrefix} = require('xml2js/lib/processors')
+import axios from 'axios'
+import FMI from './fmi-constants.js'
+import url from 'url'
+import xml2js from 'xml2js'
+import xml2jsProcessors from 'xml2js/lib/processors.js'
+
+const {parseStringPromise} = xml2js
+const {firstCharLowerCase, stripPrefix} = xml2jsProcessors
 
 const featureUrl = url.parse(FMI.WFS_FEATURE_URL)
 featureUrl.query = {
@@ -50,6 +53,6 @@ function setProjectionAndCleanupUrl(frameReference) {
   }
 }
 
-module.exports = {
+export {
   fetchRadarImageUrls
 }
