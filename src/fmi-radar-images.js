@@ -1,10 +1,5 @@
 import axios from 'axios'
-import {fileURLToPath} from 'url'
-import {dirname} from 'path'
 import sharp from 'sharp'
-
-// eslint-disable-next-line no-underscore-dangle
-const __dirname = dirname(fileURLToPath(import.meta.url))
 
 sharp.cache(false)
 sharp.concurrency(1)
@@ -25,7 +20,7 @@ async function processImage(input, targetFilename) {
   const {width, height, channels} = info
   const pipeline = sharp(data, {raw: {width, height, channels}})
     .resize({height: height / 2, kernel: 'nearest'})
-    .composite([{input: `${__dirname}/radar-edges.png`}])
+    .composite([{input: 'src/radar-edges.png'}])
   const pngFile = `${targetFilename}.png`
   const webpFile = `${targetFilename}.webp`
   await pipeline.clone().png().toFile(pngFile)
