@@ -1,8 +1,8 @@
 
-import {fetchLightnings} from './fmi-lightnings'
-import {fetchPostProcessedRadarFrame} from './fmi-radar-images'
+import {fetchLightnings} from './fmi-lightnings.js'
+import {fetchPostProcessedRadarFrame} from './fmi-radar-images.js'
 import fs from 'fs'
-import {generateRadarFrameTimestamps, wmsRequestForRadar} from './fmi-radar-frames'
+import {generateRadarFrameTimestamps, wmsRequestForRadar} from './fmi-radar-frames.js'
 import os from 'os'
 import path from 'path'
 
@@ -13,25 +13,23 @@ console.log(`Radar frames cached at ${CACHE_FOLDER}`)
 
 let IMAGE_CACHE = []
 const LIGHTNING_CACHE = []
-const REFRESH_TWICE_A_MINUTE = 30 * 1000
-const RADAR_FRAMES_TO_KEEP = 24
 
 const USE_LOCAL_LIGHTNING_DATA = process.env.NODE_ENV == 'local'
 
-refreshCache()
-
-async function refreshCache() {
+export async function refreshCache(framesToKeep, refreshIntervalSeconds, once = false) {
   await refreshRadarCache()
   await refreshLightningCache(getFrameTimestampsAsDates())
 
-  setTimeout(refreshCache, REFRESH_TWICE_A_MINUTE)
+  if (!once) {
+    setTimeout(() => refreshCache(framesToKeep, refreshIntervalSeconds), refreshIntervalSeconds * 1000)
+  }
 
   async function refreshRadarCache() {
     try {
-      const timestamps = generateRadarFrameTimestamps(RADAR_FRAMES_TO_KEEP)
+      const timestamps = generateRadarFrameTimestamps(framesToKeep)
       const radarImages = requestConfigsForNonCachedFrames(timestamps)
       await fetchAndCacheImages(radarImages)
-      await pruneCache()
+      await pruneCache(timestamps)
     } catch (err) {
       console.error(`Failed to fetch radar frames list from FMI API: ${err.message}`)
     }
@@ -88,7 +86,7 @@ async function pruneCache(validTimestamps) {
   }
 }
 
-function imageFileForTimestamp(timestamp) {
+export function imageFileForTimestamp(timestamp) {
   if (!isTimestampInCache(timestamp)) {
     return null
   }
@@ -103,7 +101,7 @@ function isTimestampInCache(timestamp) {
   return IMAGE_CACHE.some(image => image.timestamp === timestamp)
 }
 
-function framesList(publicFramesRootUrl) {
+export function framesList(publicFramesRootUrl) {
   return IMAGE_CACHE
     .map(({timestamp}) => ({
       image: publicFramesRootUrl + timestamp,
@@ -126,9 +124,4 @@ function coordinatesForLightnings(timestamp) {
 
 function compareTimestamp(a, b) {
   return a.timestamp.localeCompare(b.timestamp)
-}
-
-module.exports = {
-  imageFileForTimestamp,
-  framesList
 }
