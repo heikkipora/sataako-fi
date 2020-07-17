@@ -27,6 +27,7 @@ export function wmsRequestForRadarEstimate(time) {
 function wmsRequestConfig(layerId, time) {
   return {
     url: WMS_SERVICE_URL,
+    responseType: 'arraybuffer',
     params: {
       ...DEFAULT_QUERY_PARAMS,
       layers: layerId,

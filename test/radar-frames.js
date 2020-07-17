@@ -21,6 +21,7 @@ describe('FMI rain radar wms request generator', () => {
     const config = wmsRequestForRadar('2020-07-17T16:20:00.000Z')
     expect(config).to.deep.equal({
       url: 'https://openwms.fmi.fi/geoserver/Radar/wms',
+      responseType: 'arraybuffer',
       params: {
         service: 'WMS',
         version: '1.3',
@@ -40,6 +41,7 @@ describe('FMI rain radar wms request generator', () => {
     const config = wmsRequestForRadarEstimate('2020-07-17T16:20:00.000Z')
     expect(config).to.deep.equal({
       url: 'https://openwms.fmi.fi/geoserver/Radar/wms',
+      responseType: 'arraybuffer',
       params: {
         service: 'WMS',
         version: '1.3',

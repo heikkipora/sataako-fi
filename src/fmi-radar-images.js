@@ -1,11 +1,16 @@
-const axios = require('axios')
-const sharp = require('sharp')
+import axios from 'axios'
+import {fileURLToPath} from 'url'
+import {dirname} from 'path'
+import sharp from 'sharp'
+
+// eslint-disable-next-line no-underscore-dangle
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 sharp.cache(false)
 sharp.concurrency(1)
 
-async function fetchPostProcessedRadarFrame(url, targetFilename) {
-  const {data} = await axios({url, method: 'get', responseType: 'arraybuffer'})
+export async function fetchPostProcessedRadarFrame(requestConfig, targetFilename) {
+  const {data} = await axios(requestConfig)
   return processImage(data, targetFilename)
 }
 
@@ -35,8 +40,4 @@ function applyAlphaChannel(data) {
       data[i + 3] = 0
     }
   }
-}
-
-module.exports = {
-  fetchPostProcessedRadarFrame
 }
