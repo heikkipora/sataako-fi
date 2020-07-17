@@ -43,9 +43,9 @@ async function initApp() {
     res.json(framesList(publicRootUrl))
   })
 
-  await refreshCache(10, 60 * 1000)
+  refreshCache(24, 60 * 1000)
   return new Promise(resolve => app.listen(PORT, resolve))
 }
 
 initApp()
-  .then(() => console.log(`Cache populated and server listening on port ${PORT}`))
+  .then(() => console.log(`Cache is being populated and server listening on port ${PORT}`))
