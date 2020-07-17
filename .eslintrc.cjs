@@ -8,7 +8,7 @@ module.exports = {
     "extends": ["eslint:recommended", "plugin:react/recommended"],
     "settings": {
         "react": {
-            "version": "16.5",
+            "version": "16.5"
         }
     },
     "parserOptions": {
@@ -162,7 +162,7 @@ module.exports = {
         "no-lonely-if": "error",
         "no-loop-func": "error",
         "no-magic-numbers": "off",
-        "no-mixed-operators": "error",
+        "no-mixed-operators": "off",
         "no-mixed-requires": "error",
         "no-multi-assign": "error",
         "no-multi-spaces": "error",
