@@ -35,14 +35,17 @@ function wmsRequestConfig(layerId, time) {
   }
 }
 
-export function generateRadarFrameTimestamps(framesCount) {
-  return Array(framesCount)
-    .keys()
-    .map(nthFiveMinuteDivisibleTimestamp)
+export function generateRadarFrameTimestamps(framesCount, baseDate = Date.now()) {
+  const numberSeries = new Array(framesCount).keys()
+  return Array
+    .from(numberSeries, nthFiveMinuteDivisibleTimestamp(baseDate))
+    .reverse()
 }
 
-function nthFiveMinuteDivisibleTimestamp(n) {
-  const FIVE_MINUTES = 5 * 60 * 1000
-  const nextFullFiveMinutes = (Math.floor(Date.now() / FIVE_MINUTES) + 1) * FIVE_MINUTES
-  return new Date(nextFullFiveMinutes - n * FIVE_MINUTES).toISOString()
+function nthFiveMinuteDivisibleTimestamp(baseDate) {
+  return n => {
+    const FIVE_MINUTES = 5 * 60 * 1000
+    const nextFullFiveMinutes = (Math.floor(baseDate / FIVE_MINUTES) + 1) * FIVE_MINUTES
+    return new Date(nextFullFiveMinutes - n * FIVE_MINUTES).toISOString()
+  }
 }
