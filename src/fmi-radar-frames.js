@@ -1,58 +1,48 @@
-import axios from 'axios'
-import FMI from './fmi-constants.js'
-import url from 'url'
-import xml2js from 'xml2js'
-import xml2jsProcessors from 'xml2js/lib/processors.js'
+const WMS_SERVICE_URL = 'https://openwms.fmi.fi/geoserver/Radar/wms'
+export const WMS_IMAGE_WIDTH = 1987
+export const WMS_IMAGE_HEIGHT = 3144
 
-const {parseStringPromise} = xml2js
-const {firstCharLowerCase, stripPrefix} = xml2jsProcessors
+export const EPSG_3067_BOUNDS = [-118331.366, 6335621.167, 875567.732, 7907751.537]
+export const EPSG_3067_SRS = 'EPSG:3067'
 
-const featureUrl = url.parse(FMI.WFS_FEATURE_URL)
-featureUrl.query = {
-  request: 'getFeature',
-  // eslint-disable-next-line camelcase
-  storedquery_id: 'fmi::radar::composite::rr'
+const DEFAULT_QUERY_PARAMS = {
+  service: 'WMS',
+  version: '1.3',
+  request: 'GetMap',
+  format: 'image/png',
+  bbox: EPSG_3067_BOUNDS.join(','),
+  srs: EPSG_3067_SRS,
+  width: WMS_IMAGE_WIDTH,
+  height: WMS_IMAGE_HEIGHT
 }
 
-const fmiRadarFramesRequestUrl = url.format(featureUrl)
-console.log(`Configured radar frames URL: ${fmiRadarFramesRequestUrl}`)
-
-async function fetchRadarImageUrls() {
-  const {data} = await axios.get(fmiRadarFramesRequestUrl)
-  const wfsResponse = await xmlToObject(data)
-  const frameReferences = await extractFrameReferences(wfsResponse)
-  return frameReferences.map(setProjectionAndCleanupUrl)
+export function wmsRequestForRadar(time) {
+  return wmsRequestConfig('Radar:suomi_rr_eureffin', time)
 }
 
-function xmlToObject(xml) {
-  return parseStringPromise(xml, {tagNameProcessors: [stripPrefix, firstCharLowerCase]})
+export function wmsRequestForRadarEstimate(time) {
+  return wmsRequestConfig('Radar:suomi_tuliset_rr_eureffin', time)
 }
 
-function extractFrameReferences(featureQueryResult) {
-  return featureQueryResult.featureCollection.member.map(member =>
-    ({
-      url: member.gridSeriesObservation[0].result[0].rectifiedGridCoverage[0].rangeSet[0].file[0].fileReference[0],
-      timestamp: new Date(member.gridSeriesObservation[0].phenomenonTime[0].timeInstant[0].timePosition[0]).toISOString()
-    })
-  )
-}
-
-function setProjectionAndCleanupUrl(frameReference) {
-  const radarUrl = url.parse(frameReference.url, true)
-  radarUrl.host = FMI.WMS_HOST
-  radarUrl.query.format = 'image/png'
-  radarUrl.query.width = FMI.WIDTH
-  radarUrl.query.height = FMI.HEIGHT
-  radarUrl.query.bbox = FMI.EPSG_3067_BOUNDS
-  radarUrl.query.srs = FMI.EPSG_3067_SRS
-  Reflect.deleteProperty(radarUrl.query, 'styles')
-  Reflect.deleteProperty(radarUrl, 'search')
+function wmsRequestConfig(layerId, time) {
   return {
-    url: url.format(radarUrl),
-    timestamp: frameReference.timestamp
+    url: WMS_SERVICE_URL,
+    params: {
+      ...DEFAULT_QUERY_PARAMS,
+      layers: layerId,
+      time
+    }
   }
 }
 
-export {
-  fetchRadarImageUrls
+export function generateRadarFrameTimestamps(framesCount) {
+  return Array(framesCount)
+    .keys()
+    .map(nthFiveMinuteDivisibleTimestamp)
+}
+
+function nthFiveMinuteDivisibleTimestamp(n) {
+  const FIVE_MINUTES = 5 * 60 * 1000
+  const nextFullFiveMinutes = (Math.floor(Date.now() / FIVE_MINUTES) + 1) * FIVE_MINUTES
+  return new Date(nextFullFiveMinutes - (n * FIVE_MINUTES)).toISOString()
 }

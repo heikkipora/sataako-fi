@@ -1,5 +1,4 @@
 import axios from 'axios'
-import FMI from './fmi-constants.js'
 import fs from 'fs'
 import url from 'url'
 import xml2js from 'xml2js'
@@ -8,7 +7,7 @@ import xml2jsProcessors from 'xml2js/lib/processors.js'
 const {parseStringPromise} = xml2js
 const {firstCharLowerCase, stripPrefix} = xml2jsProcessors
 
-const FEATURE_URL = url.parse(FMI.WFS_FEATURE_URL)
+const FEATURE_URL = url.parse('https://opendata.fmi.fi/wfs')
 FEATURE_URL.query = {
   request: 'getFeature',
   // eslint-disable-next-line camelcase
