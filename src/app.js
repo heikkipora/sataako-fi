@@ -1,47 +1,51 @@
-const compression = require('compression')
-const express = require('express')
-const {imageFileForTimestamp, framesList} = require('./cache')
+import compression from 'compression'
+import express from 'express'
+import {imageFileForTimestamp, framesList, refreshCache} from './cache.js'
 
 const PORT = process.env.PORT || 3000
 const PUBLIC_URL_PORT = process.env.NODE_ENV === 'production' ? '' : `:${PORT}`
 
-const app = express()
-app.disable('x-powered-by')
-if (process.env.NODE_ENV == 'production') {
-  app.enable('trust proxy')
-} else {
-  // eslint-disable-next-line global-require
-  const {bindDevAssets} = require('./dev-assets')
-  bindDevAssets(app)
-}
-app.use(compression())
-app.use(express.static(`${__dirname}/../public`))
-
-app.get('/frame/:timestamp', (req, res) => {
-  const image = imageFileForTimestamp(req.params.timestamp)
-  if (image) {
-    res.set('Cache-Control', 'public, max-age=86400');
-    res.format({
-      'image/png': () => {
-        res.set('Content-Type', 'image/png')
-        res.sendFile(image.png)
-      },
-      'image/webp': () => {
-        res.set('Content-Type', 'image/webp')
-        res.sendFile(image.webp)
-      }
-    })
+// eslint-disable-next-line max-statements
+async function initApp() {
+  const app = express()
+  app.disable('x-powered-by')
+  if (process.env.NODE_ENV == 'production') {
+    app.enable('trust proxy')
   } else {
-    res.status(404).send('Sorry, no radar image found for that timestamp')
+    const {bindDevAssets} = await import('./dev-assets.js')
+    bindDevAssets(app)
   }
-})
+  app.use(compression())
+  app.use(express.static('public'))
 
-app.get('/frames.json', (req, res) => {
-  const publicRootUrl = `${req.protocol}://${req.hostname}${PUBLIC_URL_PORT}/frame/`
-  res.set('Cache-Control', 'public, max-age=60');
-  res.json(framesList(publicRootUrl))
-})
+  app.get('/frame/:timestamp', (req, res) => {
+    const image = imageFileForTimestamp(req.params.timestamp)
+    if (image) {
+      res.set('Cache-Control', 'public, max-age=86400');
+      res.format({
+        'image/png': () => {
+          res.set('Content-Type', 'image/png')
+          res.sendFile(image.png)
+        },
+        'image/webp': () => {
+          res.set('Content-Type', 'image/webp')
+          res.sendFile(image.webp)
+        }
+      })
+    } else {
+      res.status(404).send('Sorry, no radar image found for that timestamp')
+    }
+  })
 
-const server = app.listen(PORT, () => {
-  console.log(`Server listening on port ${server.address().port}`)
-})
+  app.get('/frames.json', (req, res) => {
+    const publicRootUrl = `${req.protocol}://${req.hostname}${PUBLIC_URL_PORT}/frame/`
+    res.set('Cache-Control', 'public, max-age=60');
+    res.json(framesList(publicRootUrl))
+  })
+
+  await refreshCache(10, 60 * 1000)
+  return new Promise(resolve => app.listen(PORT, resolve))
+}
+
+initApp()
+  .then(() => console.log(`Cache populated and server listening on port ${PORT}`))

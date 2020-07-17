@@ -1,18 +1,13 @@
-const browserify = require('browserify-middleware')
-const lessMiddleware = require('less-middleware')
-const path = require('path')
+import browserify from 'browserify-middleware'
+import lessMiddleware from 'less-middleware'
 
-function bindDevAssets(app) {
-  app.use(lessMiddleware(`${__dirname}/../public`))
-  app.get('/client.js', browserify(path.join(__dirname, '/client/index.js'), {
+export function bindDevAssets(app) {
+  app.use(lessMiddleware('public'))
+  app.get('/client.js', browserify('src/client/index.js', {
     transform: [['babelify', {
       global: true,
       ignore: [/\/node_modules\/(?!ol\/)/],
       presets: ["@babel/env", "@babel/react"]
     }]]
   }))
-}
-
-module.exports = {
-  bindDevAssets
 }
