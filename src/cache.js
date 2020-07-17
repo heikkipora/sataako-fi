@@ -1,20 +1,20 @@
 
-const _ = require('lodash')
-const {fetchPostProcessedRadarFrame} = require('./fmi-radar-images')
-const {fetchRadarImageUrls} = require('./fmi-radar-frames')
-const {fetchLightnings} = require('./fmi-lightnings')
-const fs = require('fs')
-const os = require('os')
-const path = require('path')
+import {fetchLightnings} from './fmi-lightnings'
+import {fetchPostProcessedRadarFrame} from './fmi-radar-images'
+import fs from 'fs'
+import {generateRadarFrameTimestamps, wmsRequestForRadar} from './fmi-radar-frames'
+import os from 'os'
+import path from 'path'
 
 /* eslint-disable no-await-in-loop */
 
 const CACHE_FOLDER = fs.mkdtempSync(path.join(os.tmpdir(), 'sataako-frames-'))
 console.log(`Radar frames cached at ${CACHE_FOLDER}`)
 
-const IMAGE_CACHE = []
+let IMAGE_CACHE = []
 const LIGHTNING_CACHE = []
-const REFRESH_ONE_MINUTE = 60 * 1000
+const REFRESH_TWICE_A_MINUTE = 30 * 1000
+const RADAR_FRAMES_TO_KEEP = 24
 
 const USE_LOCAL_LIGHTNING_DATA = process.env.NODE_ENV == 'local'
 
@@ -24,16 +24,16 @@ async function refreshCache() {
   await refreshRadarCache()
   await refreshLightningCache(getFrameTimestampsAsDates())
 
-  setTimeout(refreshCache, REFRESH_ONE_MINUTE)
+  setTimeout(refreshCache, REFRESH_TWICE_A_MINUTE)
 
   async function refreshRadarCache() {
     try {
-      const radarImageUrls = await fetchRadarImageUrls();
-      const newImageUrls = radarImageUrls.filter(({url}) => !_.find(IMAGE_CACHE, {url}));
-      await fetchAndCacheImages(newImageUrls);
-      await pruneCache(radarImageUrls);
+      const timestamps = generateRadarFrameTimestamps(RADAR_FRAMES_TO_KEEP)
+      const radarImages = requestConfigsForNonCachedFrames(timestamps)
+      await fetchAndCacheImages(radarImages)
+      await pruneCache()
     } catch (err) {
-      console.error(`Failed to fetch radar frames list from FMI API: ${err.message}`);
+      console.error(`Failed to fetch radar frames list from FMI API: ${err.message}`)
     }
   }
 
@@ -46,34 +46,50 @@ async function refreshCache() {
       }
       LIGHTNING_CACHE.splice(0, cacheSize)
     } catch (err) {
-      console.error(`Failed to fetch lightning list from FMI API: ${err.message}`);
+      console.error(`Failed to fetch lightning list from FMI API: ${err.message}`)
     }
   }
 }
 
+function requestConfigsForNonCachedFrames(timestamps) {
+  return timestamps
+    .filter(timestampNotInCache)
+    .map(timestamp => ({
+      requestConfig: wmsRequestForRadar(timestamp),
+      timestamp
+    }))
+}
 
-async function fetchAndCacheImages(imageUrls) {
-  for (const {url, timestamp} of imageUrls) {
+function timestampNotInCache(timestamp) {
+  return IMAGE_CACHE.every(image => image.timestamp !== timestamp)
+}
+
+async function fetchAndCacheImages(requestConfigs) {
+  for (const {requestConfig, timestamp} of requestConfigs) {
     try {
-      await fetchPostProcessedRadarFrame(url, path.join(CACHE_FOLDER, timestamp))
-      IMAGE_CACHE.push({timestamp, url})
+      await fetchPostProcessedRadarFrame(requestConfig, path.join(CACHE_FOLDER, timestamp))
+      IMAGE_CACHE.push({timestamp})
     } catch (err) {
-      console.error(`Failed to fetch radar image from ${url}: ${err.message}`)
+      if (!err.response || err.response.status != 404) {
+        console.error(`Failed to fetch radar image for ${JSON.stringify(requestConfig)}: ${err.message}`)
+      }
     }
   }
 }
 
-async function pruneCache(validImageUrls) {
-  const removed = _.remove(IMAGE_CACHE, ({url}) => !_.find(validImageUrls, {url}))
-  for (const {timestamp} of removed) {
+async function pruneCache(validTimestamps) {
+  const keepInCache = IMAGE_CACHE.filter(image => validTimestamps.includes(image.timestamp))
+  const evictFromCache = IMAGE_CACHE.filter(image => !keepInCache.includes(image))
+  IMAGE_CACHE = keepInCache
+
+  for (const {timestamp} of evictFromCache) {
     await fs.promises.unlink(path.join(CACHE_FOLDER, `${timestamp}.png`))
     await fs.promises.unlink(path.join(CACHE_FOLDER, `${timestamp}.webp`))
   }
 }
 
 function imageFileForTimestamp(timestamp) {
-  const image = _.find(IMAGE_CACHE, {timestamp})
-  if (!image) {
+  if (!isTimestampInCache(timestamp)) {
     return null
   }
 
@@ -83,28 +99,33 @@ function imageFileForTimestamp(timestamp) {
   }
 }
 
+function isTimestampInCache(timestamp) {
+  return IMAGE_CACHE.some(image => image.timestamp === timestamp)
+}
+
 function framesList(publicFramesRootUrl) {
-  return _(IMAGE_CACHE)
-  .map(({timestamp}) => ({
-    image: publicFramesRootUrl + timestamp,
-    lightnings: coordinatesForLightnings(timestamp),
-    timestamp
-  }))
-  .sortBy(['timestamp'])
-  .value()
+  return IMAGE_CACHE
+    .map(({timestamp}) => ({
+      image: publicFramesRootUrl + timestamp,
+      lightnings: coordinatesForLightnings(timestamp),
+      timestamp
+    }))
+    .sort(compareTimestamp)
 }
 
 function getFrameTimestampsAsDates() {
-  return _(IMAGE_CACHE)
-    .map('timestamp')
-    .sort()
-    .map(ts => new Date(ts))
-    .value()
+  return IMAGE_CACHE
+    .sort(compareTimestamp)
+    .map(image => new Date(image.timestamp))
 }
 
 function coordinatesForLightnings(timestamp) {
-  const {locations} = _.find(LIGHTNING_CACHE, {timestamp}) || {}
+  const {locations} = LIGHTNING_CACHE.find(item => item.timestamp === timestamp) || {}
   return locations || []
+}
+
+function compareTimestamp(a, b) {
+  return a.timestamp.localeCompare(b.timestamp)
 }
 
 module.exports = {
