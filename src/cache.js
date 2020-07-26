@@ -65,8 +65,10 @@ function timestampNotInCache(timestamp) {
 async function fetchAndCacheImages(requestConfigs) {
   for (const {requestConfig, timestamp} of requestConfigs) {
     try {
-      await fetchPostProcessedRadarFrame(requestConfig, path.join(CACHE_FOLDER, timestamp))
-      IMAGE_CACHE.push({timestamp})
+      const isEmpty = await fetchPostProcessedRadarFrame(requestConfig, path.join(CACHE_FOLDER, timestamp))
+      if (!isEmpty) {
+        IMAGE_CACHE.push({timestamp})
+      }
     } catch (err) {
       if (!err.response || err.response.status != 404) {
         console.error(`Failed to fetch radar image for ${JSON.stringify(requestConfig)}: ${err.message}`)

@@ -15,16 +15,30 @@ async function processImage(input, targetFilename) {
     .raw()
     .toBuffer({resolveWithObject: true})
 
+  if (isAllWhite(data)) {
+    return true
+  }
+
   applyAlphaChannel(data)
 
   const {width, height, channels} = info
   const pipeline = sharp(data, {raw: {width, height, channels}})
     .resize({height: height / 2, kernel: 'nearest'})
     .composite([{input: 'src/radar-edges.png'}])
-  const pngFile = `${targetFilename}.png`
-  const webpFile = `${targetFilename}.webp`
-  await pipeline.clone().png().toFile(pngFile)
-  await pipeline.clone().webp({nearLossless: true}).toFile(webpFile)
+  await pipeline.clone().png().toFile(`${targetFilename}.png`)
+  await pipeline.clone().webp({nearLossless: true}).toFile(`${targetFilename}.webp`)
+  return false
+}
+
+function isAllWhite(data) {
+  for (let i = 0; i < data.length; i += 4) {
+    // eslint-disable-next-line no-bitwise, no-mixed-operators
+    const color = data[i] << 16 | data[i + 1] << 8 | data[i + 2]
+    if (color !== 0xffffff) {
+      return false
+    }
+  }
+  return true
 }
 
 function applyAlphaChannel(data) {
