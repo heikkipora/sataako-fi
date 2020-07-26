@@ -1,6 +1,6 @@
 import compression from 'compression'
 import express from 'express'
-import {imageFileForTimestamp, framesList, refreshCache} from './cache.js'
+import {framesList, imageFileForTimestamp, initializeCache, refreshCache} from './cache.js'
 
 const PORT = process.env.PORT || 3000
 const PUBLIC_URL_PORT = process.env.NODE_ENV === 'production' ? '' : `:${PORT}`
@@ -43,7 +43,8 @@ async function initApp() {
     res.json(framesList(publicRootUrl))
   })
 
-  refreshCache(24, 60 * 1000)
+  await initializeCache()
+  refreshCache(24, 30)
   return new Promise(resolve => app.listen(PORT, resolve))
 }
 

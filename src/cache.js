@@ -3,18 +3,20 @@ import {fetchLightnings} from './fmi-lightnings.js'
 import {fetchPostProcessedRadarFrame} from './fmi-radar-images.js'
 import fs from 'fs'
 import {generateRadarFrameTimestamps, wmsRequestForRadar} from './fmi-radar-frames.js'
-import os from 'os'
 import path from 'path'
 
 /* eslint-disable no-await-in-loop */
 
-const CACHE_FOLDER = fs.mkdtempSync(path.join(os.tmpdir(), 'sataako-frames-'))
-console.log(`Radar frames cached at ${CACHE_FOLDER}`)
-
 let IMAGE_CACHE = []
 const LIGHTNING_CACHE = []
+const USE_LOCAL_LIGHTNING_DATA = process.env.NODE_ENV === 'local'
+const CACHE_FOLDER = process.env.NODE_ENV === 'production' ? '/var/run/sataako' : '/tmp/sataako-cache'
 
-const USE_LOCAL_LIGHTNING_DATA = process.env.NODE_ENV == 'local'
+export async function initializeCache() {
+  await fs.promises.mkdir(CACHE_FOLDER, {recursive: true})
+  IMAGE_CACHE = await populateFromDisk(CACHE_FOLDER)
+  console.log(`Radar frames cached at ${CACHE_FOLDER} (found ${IMAGE_CACHE.length} frames cached earlier)`)
+}
 
 export async function refreshCache(framesToKeep, refreshIntervalSeconds, once = false) {
   await refreshRadarCache()
@@ -126,4 +128,16 @@ function coordinatesForLightnings(timestamp) {
 
 function compareTimestamp(a, b) {
   return a.timestamp.localeCompare(b.timestamp)
+}
+
+async function populateFromDisk() {
+  const filenames = await fs.promises.readdir(CACHE_FOLDER)
+  return filenames.map(filename => {
+      if (filename.endsWith('.png')) {
+        return filename.replace('.png', '')
+      }
+      return null
+    })
+    .filter(timestamp => timestamp)
+    .map(timestamp => ({timestamp}))
 }

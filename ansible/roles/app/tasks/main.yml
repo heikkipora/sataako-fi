@@ -26,7 +26,7 @@
     group: sataako
 
 - name: install node modules
-  shell: cd /home/sataako/app && npm i --production
+  shell: cd /home/sataako/app && npm ci
   become: yes
   become_user: sataako
   notify:
@@ -43,3 +43,10 @@
 
 - name: enable service
   service: name=sataako enabled=yes
+
+- name: create cache directory
+  file:
+    path: /var/run/sataako
+    state: directory
+    owner: sataako
+    group: sataako

@@ -7,7 +7,7 @@ import {createMap, panTo, showRadarFrame} from './map'
 
 const FRAME_DELAY_MS = 500
 const FRAME_LOOP_DELAY_MS = 5000
-const FRAME_LIST_RELOAD_MS = 2 * 60 * 1000
+const FRAME_LIST_RELOAD_MS = 30 * 1000
 
 class SataakoApp extends React.Component {
   constructor() {
