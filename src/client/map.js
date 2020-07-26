@@ -1,3 +1,4 @@
+import {defaults as defaultInteractions} from 'ol/interaction'
 import Feature from 'ol/Feature'
 import {register} from 'ol/proj/proj4'
 import Icon from 'ol/style/Icon'
@@ -37,7 +38,8 @@ function createMap(settings) {
     collapsible: false
   })
   const map = new Map({
-    controls: defaultControls({attribution: false, altShiftDragRotate: false, pinchRotate: false}).extend([attribution]),
+    controls: defaultControls({attribution: false, rotate: false}).extend([attribution]),
+    interactions: defaultInteractions({altShiftDragRotate: false, pinchRotate: false}),
     layers: [createMapLayer(), createRadarLayer(), createLightningLayer(), createIconLayer(center)],
     target: 'map',
     view
