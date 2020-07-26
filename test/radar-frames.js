@@ -8,12 +8,12 @@ describe('FMI rain radar wms request generator', () => {
   it('Should generate a set of frame timestamps in five-minute intervals', () => {
     const timestamps = generateRadarFrameTimestamps(6, new Date('2020-07-17T16:15:00.100Z'))
     expect(timestamps).to.deep.equal([
+      '2020-07-17T15:50:00.000Z',
       '2020-07-17T15:55:00.000Z',
       '2020-07-17T16:00:00.000Z',
       '2020-07-17T16:05:00.000Z',
       '2020-07-17T16:10:00.000Z',
-      '2020-07-17T16:15:00.000Z',
-      '2020-07-17T16:20:00.000Z'
+      '2020-07-17T16:15:00.000Z'
     ])
   })
 

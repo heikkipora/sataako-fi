@@ -46,7 +46,7 @@ export function generateRadarFrameTimestamps(framesCount, baseDate = Date.now())
 function nthFiveMinuteDivisibleTimestamp(baseDate) {
   return n => {
     const FIVE_MINUTES = 5 * 60 * 1000
-    const nextFullFiveMinutes = (Math.floor(baseDate / FIVE_MINUTES) + 1) * FIVE_MINUTES
-    return new Date(nextFullFiveMinutes - n * FIVE_MINUTES).toISOString()
+    const lastFullFiveMinutes = Math.floor(baseDate / FIVE_MINUTES) * FIVE_MINUTES
+    return new Date(lastFullFiveMinutes - n * FIVE_MINUTES).toISOString()
   }
 }
