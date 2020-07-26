@@ -37,7 +37,7 @@ function createMap(settings) {
     collapsible: false
   })
   const map = new Map({
-    controls: defaultControls({attribution: false}).extend([attribution]),
+    controls: defaultControls({attribution: false, altShiftDragRotate: false, pinchRotate: false}).extend([attribution]),
     layers: [createMapLayer(), createRadarLayer(), createLightningLayer(), createIconLayer(center)],
     target: 'map',
     view
