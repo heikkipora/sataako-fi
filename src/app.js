@@ -44,7 +44,7 @@ async function initApp() {
   })
 
   await initializeCache()
-  refreshCache(24, 30)
+  refreshCache(12, 30)
   return new Promise(resolve => app.listen(PORT, resolve))
 }
 
