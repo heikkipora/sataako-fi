@@ -32,6 +32,7 @@
     "eslint-plugin-react": "7.20.3",
     "less-middleware": "3.1.0",
     "mocha": "8.0.1",
+    "normalize.css": "8.0.1",
     "ol": "6.3.1",
     "proj4": "2.6.2",
     "react": "16.13.1",
