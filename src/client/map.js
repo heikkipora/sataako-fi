@@ -21,7 +21,7 @@ import GeoJSON from 'ol/format/GeoJSON'
 proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
 register(proj4)
 const imageProjection = new Projection({code: 'EPSG:3067'})
-const imageExtent = [-118331.366, 6335621.167, 875567.732, 7907751.537]
+const imageExtent = [-118331.366408, 6335621.167014, 875567.731907, 7907751.537264]
 
 function createMap(settings) {
   const {x, y, zoom} = settings

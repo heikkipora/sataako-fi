@@ -2,7 +2,7 @@ const WMS_SERVICE_URL = 'https://openwms.fmi.fi/geoserver/Radar/wms'
 export const WMS_IMAGE_WIDTH = 1987
 export const WMS_IMAGE_HEIGHT = 3144
 
-export const EPSG_3067_BOUNDS = [-118331.366, 6335621.167, 875567.732, 7907751.537]
+export const EPSG_3067_BOUNDS = [-118331.366408, 6335621.167014, 875567.731907, 7907751.537264]
 export const EPSG_3067_SRS = 'EPSG:3067'
 
 const DEFAULT_QUERY_PARAMS = {
