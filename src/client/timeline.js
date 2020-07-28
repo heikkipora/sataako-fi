@@ -5,21 +5,10 @@ import React from 'react'
 
 export class Timeline extends React.PureComponent {
   render() {
-    const {timestamps, currentTimestamp, running} = this.props
+    const {timestamps, currentTimestamp} = this.props
     return <div className="timeline">
-      {this.renderPlayPause(running)}
       {this.renderTicks(timestamps, currentTimestamp)}
     </div>
-  }
-
-  renderPlayPause(running) {
-    const className = classNames(
-      'timeline__toggle',
-      {'timeline__toggle--pause': running},
-      {'timeline__toggle--play': !running}
-    )
-    const onClickHandler = this.props.onToggle.bind(null, !running)
-    return <div className={className} onClick={onClickHandler}></div>
   }
 
   renderTicks(timestamps, currentTimestamp) {
@@ -36,9 +25,9 @@ export class Timeline extends React.PureComponent {
       {'timeline__tick--large': quarter},
       {'timeline__tick--small': !quarter}
     )
-    const onClickHandler = this.props.onSelect.bind(null, timestamp)
+    const onSelectHandler = this.props.onSelect.bind(null, timestamp)
     const onEnterHandler = this.onMouseEnter.bind(this, timestamp)
-    return <div className={className} onMouseDown={onClickHandler} onMouseEnter={onEnterHandler} key={timestamp}>
+    return <div className={className} onMouseDown={onSelectHandler} onMouseUp={this.props.onResume} onMouseEnter={onEnterHandler} key={timestamp}>
       {isCurrent && this.renderTooltip(formattedTimestamp, isForecast)}
     </div>
   }
@@ -68,9 +57,8 @@ export class Timeline extends React.PureComponent {
 
 Timeline.propTypes = {
   currentTimestamp: PropTypes.string.isRequired,
-  running: PropTypes.bool.isRequired,
   timestamps: PropTypes.array.isRequired,
-  onToggle: PropTypes.func.isRequired,
+  onResume: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired
 }
 

@@ -57,7 +57,7 @@ class SataakoApp extends React.Component {
           timestamps={this.state.frames}
           currentTimestamp={this.state.currentTimestamp}
           running={this.state.running}
-          onToggle={this.onTimelineToggleRunning.bind(this)}
+          onResume={this.onTimelineResume.bind(this)}
           onSelect={this.onTimelineSelect.bind(this)}
         />}
       </div>
@@ -128,8 +128,8 @@ class SataakoApp extends React.Component {
     this.setState({currentTimestamp: timestamp, running: false})
   }
 
-  onTimelineToggleRunning(running) {
-    this.setState({running})
+  onTimelineResume() {
+    this.setState({running: true})
   }
 }
 
