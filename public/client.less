@@ -20,12 +20,80 @@ html, body {
   }
 }
 
-.radar-timestamp {
+@brand-color: #69d2e7;
+
+.timeline {
   position: fixed;
-  top: 12px;
+  top: 40px;
   left: 54px;
-  padding: 0px 4px;
-  background-color: rgba(255,255,255,0.8);
+  background-color: white;
+  border: 1px solid grey;
+  border-radius: 4px;
+  display: flex;
+}
+
+@tick-width: 10px;
+
+.timeline__tick {
+  height: 30px;
+  width: 20px;
+  position: relative;
+  cursor: pointer;
+  &:hover {
+    background-color: @brand-color;
+  }
+}
+
+.timeline__tick--large:after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 80%;
+  left: calc((100% - 2px)/2);
+  top: 10%; 
+  background-color: grey;
+}
+
+.timeline__tick--small:after {
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 50%;
+  left: calc((100% - 1px)/2);
+  top: 25%; 
+  background-color: grey;
+}
+
+.timeline__toggle {
+  width: 40px;
+}
+
+.timeline__tooltip {
+  position: absolute;
+  width: 40px;
+  left: calc(50% - 22px);
+  top: -32px;
+  padding: 2px;
+  border-radius: 3px;
+  background-color: @brand-color;
+  color: white;
+  text-align: center;
+}
+
+.timeline__tooltip:after {
+  position: absolute;
+  content: '';
+  width: 10px;
+  height: 10px;
+  left: calc(50% - 5px);
+  bottom: -5px;
+  background-color: @brand-color;
+  transform: rotate(45deg);
+  z-index: -1;
+}
+
+.timeline__tooltip--forecast {
+  background-color: green;
 }
 
 #preload-frames {
@@ -38,7 +106,7 @@ html, body {
   right: 0;
   bottom: 0;
   width: 320px;
-  background: #69d2e7;
+  background: @brand-color;
   background: -webkit-linear-gradient(top, rgba(98,197,217, 0.95), rgba(105,210,231, 0.95));
   background: linear-gradient(to top, rgba(98,197,217, 0.95), rgba(105,210,231, 0.95));
   color: #fff;

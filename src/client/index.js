@@ -1,8 +1,8 @@
 import axios from 'axios'
-import {format, parseISO} from 'date-fns'
 import InfoPanel from './info-panel'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import {Timeline} from './timeline'
 import {createMap, panTo, showRadarFrame} from './map'
 
 const FRAME_DELAY_MS = 500
@@ -36,14 +36,18 @@ class SataakoApp extends React.Component {
   }
 
   render() {
-    const radarFrameTimestamp = this.state.currentFrame ? format(parseISO(this.state.currentFrame.timestamp), 'd.M. HH:mm') : ''
-
     return (
       <div>
         <div id="map"></div>
         <div id="preload-frames">{this.renderFrameImages()}</div>
-        <div className="radar-timestamp"><span>{radarFrameTimestamp}</span></div>
         <InfoPanel/>
+        {this.state.currentFrame && <Timeline
+          timestamps={this.state.frames}
+          currentTimestamp={this.state.currentFrame.timestamp}
+          running={true}
+          onToggle={running => console.log(running)}
+          onSelect={timestamp => console.log(timestamp)}
+        />}
       </div>
     )
   }
