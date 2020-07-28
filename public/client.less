@@ -22,76 +22,7 @@ html, body {
 
 @brand-color: #69d2e7;
 
-.timeline {
-  position: fixed;
-  top: 40px;
-  left: 54px;
-  background-color: white;
-  border: 1px solid grey;
-  border-radius: 4px;
-  display: flex;
-  user-select: none;
-}
-
-@tick-width: 10px;
-
-.timeline__tick {
-  height: 30px;
-  width: 20px;
-  position: relative;
-  cursor: pointer;
-  &:hover {
-    background-color: @brand-color;
-  }
-}
-
-.timeline__tick--large:after {
-  content: '';
-  position: absolute;
-  width: 2px;
-  height: 80%;
-  left: calc((100% - 2px)/2);
-  top: 10%; 
-  background-color: grey;
-}
-
-.timeline__tick--small:after {
-  content: '';
-  position: absolute;
-  width: 1px;
-  height: 50%;
-  left: calc((100% - 1px)/2);
-  top: 25%; 
-  background-color: grey;
-}
-
-.timeline__tooltip {
-  position: absolute;
-  width: 40px;
-  left: calc(50% - 22px);
-  top: -32px;
-  padding: 2px;
-  border-radius: 3px;
-  background-color: @brand-color;
-  color: white;
-  text-align: center;
-}
-
-.timeline__tooltip:after {
-  position: absolute;
-  content: '';
-  width: 10px;
-  height: 10px;
-  left: calc(50% - 5px);
-  bottom: -5px;
-  background-color: @brand-color;
-  transform: rotate(45deg);
-  z-index: -1;
-}
-
-.timeline__tooltip--forecast {
-  background-color: green;
-}
+@import "timeline.less";
 
 #side-info-panel-open, .side-info-panel {
   position: fixed;
