@@ -6,15 +6,14 @@ import {Timeline} from './timeline'
 import {createMap, panTo, showRadarFrame} from './map'
 
 const FRAME_DELAY_MS = 500
-const FRAME_LOOP_DELAY_MS = 5000
 const FRAME_LIST_RELOAD_MS = 30 * 1000
 
 class SataakoApp extends React.Component {
   constructor() {
     super()
     this.state = {
-      currentFrame: null,
-      currentFrameIndex: 0,
+      currentTimestamp: null,
+      running: false,
       frames: [],
       mapSettings: {
         x: Number(localStorage.getItem('sataako-fi-x')) || 2776307.5078,
@@ -28,11 +27,25 @@ class SataakoApp extends React.Component {
     this.map = createMap(this.state.mapSettings)
     this.map.on('moveend', this.onMapMove.bind(this, null))
 
-    this.reloadFramesList()
-    this.animateRadar()
+    this.loadFramesList()
+    this.loadFramesInterval = setInterval(this.loadFramesList.bind(this, null), FRAME_LIST_RELOAD_MS)
+    this.animateRadarInterval = setInterval(this.animateRadar.bind(this, null), FRAME_DELAY_MS)
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(this.onLocation.bind(this))
     }
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (this.state.currentTimestamp !== prevState.currentTimestamp) {
+      const currentFrame = this.state.frames.find(frame => frame.timestamp === this.state.currentTimestamp)
+      showRadarFrame(this.map, currentFrame)
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.animateRadarInterval)
+    clearInterval(this.loadFramesInterval)
   }
 
   render() {
@@ -40,37 +53,62 @@ class SataakoApp extends React.Component {
       <div>
         <div id="map"></div>
         <InfoPanel/>
-        {this.state.currentFrame && <Timeline
+        {this.state.currentTimestamp && <Timeline
           timestamps={this.state.frames}
-          currentTimestamp={this.state.currentFrame.timestamp}
-          running={true}
-          onToggle={running => console.log(running)}
-          onSelect={timestamp => console.log(timestamp)}
+          currentTimestamp={this.state.currentTimestamp}
+          running={this.state.running}
+          onToggle={this.onTimelineToggleRunning.bind(this)}
+          onSelect={this.onTimelineSelect.bind(this)}
         />}
       </div>
     )
   }
 
-  reloadFramesList() {
-    axios.get('/frames.json').then(({data: frames}) => this.setState({frames}))
-    window.setTimeout(this.reloadFramesList.bind(this, null), FRAME_LIST_RELOAD_MS)
+  loadFramesList() {
+    axios.get('/frames.json').then(response => {
+      const frames = response.data
+      this.setState(prevState => (
+        {frames, currentTimestamp: this.currentTimestampDefault(prevState, frames)}
+      ))
+    })
+  }
+
+  currentTimestampDefault(state, frames) {
+    if (!state.currentTimestamp) {
+      return this.newestNonForecastTimestamp(frames)
+    }
+
+    const index = frames.findIndex(frame => frame.timestamp === state.currentTimestamp)
+    if (index === -1) {
+      return frames[0].timestamp
+    }
+    return state.currentTimestamp
+  }
+
+  nextTimestamp(state) {
+    if (!state.currentTimestamp) {
+      return this.newestNonForecastTimestamp(state.frames)
+    }
+
+    const index = state.frames.findIndex(frame => frame.timestamp === state.currentTimestamp)
+    if (index === -1) {
+      return this.newestNonForecastTimestamp(state.frames)
+    }
+    if (index === state.frames.length - 1) {
+      return state.frames[0].timestamp
+    }
+    return state.frames[index + 1].timestamp
+  }
+
+  newestNonForecastTimestamp(frames) {
+    return frames.filter(frame => !frame.isForecast).pop().timestamp
   }
 
   animateRadar() {
-    let delayMs = FRAME_DELAY_MS
-
-    if (this.state.frames.length > 0) {
-      if (this.state.currentFrameIndex >= this.state.frames.length) {
-        this.setState({currentFrameIndex: 0})
-        delayMs = FRAME_LOOP_DELAY_MS
-      } else {
-        const currentFrame = this.state.frames[this.state.currentFrameIndex];
-        showRadarFrame(this.map, currentFrame)
-        this.setState({currentFrame, currentFrameIndex: this.state.currentFrameIndex + 1})
-      }
+    if (!this.state.running || !this.state.currentTimestamp) {
+      return
     }
-
-    window.setTimeout(this.animateRadar.bind(this, null), delayMs)
+    this.setState(prevState => ({currentTimestamp: this.nextTimestamp(prevState)}))
   }
 
   onLocation(geolocationResponse) {
@@ -84,6 +122,14 @@ class SataakoApp extends React.Component {
     localStorage.setItem('sataako-fi-x', x)
     localStorage.setItem('sataako-fi-y', y)
     localStorage.setItem('sataako-fi-zoom', zoom)
+  }
+
+  onTimelineSelect(timestamp) {
+    this.setState({currentTimestamp: timestamp, running: false})
+  }
+
+  onTimelineToggleRunning(running) {
+    this.setState({running})
   }
 }
 
