@@ -37,9 +37,17 @@ export class Timeline extends React.PureComponent {
       {'timeline__tick--small': !quarter}
     )
     const onClickHandler = this.props.onSelect.bind(null, timestamp)
-    return <div className={className} onClick={onClickHandler} key={timestamp}>
+    const onEnterHandler = this.onMouseEnter.bind(this, timestamp)
+    return <div className={className} onMouseDown={onClickHandler} onMouseEnter={onEnterHandler} key={timestamp}>
       {isCurrent && this.renderTooltip(formattedTimestamp, isForecast)}
     </div>
+  }
+
+  onMouseEnter(timestamp, event) {
+    const leftPressed = event.buttons === undefined ? event.which === 1 : event.buttons === 1
+    if (leftPressed) {
+      this.props.onSelect(timestamp)
+    }
   }
 
   renderTooltip = (formattedTimestamp, isForecast) => {
