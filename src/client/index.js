@@ -39,7 +39,6 @@ class SataakoApp extends React.Component {
     return (
       <div>
         <div id="map"></div>
-        <div id="preload-frames">{this.renderFrameImages()}</div>
         <InfoPanel/>
         {this.state.currentFrame && <Timeline
           timestamps={this.state.frames}
@@ -50,10 +49,6 @@ class SataakoApp extends React.Component {
         />}
       </div>
     )
-  }
-
-  renderFrameImages() {
-    return this.state.frames.map(frame => <img key={frame.image} src={frame.image}/>)
   }
 
   reloadFramesList() {
