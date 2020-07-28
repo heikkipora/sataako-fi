@@ -21,6 +21,7 @@ html, body {
 }
 
 @brand-color: #69d2e7;
+@brand-color-darker: #2fc0dd;
 
 @import "timeline.less";
 
@@ -93,6 +94,15 @@ html, body {
   }
   a, a:visited {
     color: white;
+  }
+}
+
+.ol-control button {
+  cursor: pointer;
+  background-color: @brand-color;
+  &:hover, &:focus {
+    background-color: @brand-color-darker;
+    outline: 0;
   }
 }
 
