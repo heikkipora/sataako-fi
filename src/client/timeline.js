@@ -61,4 +61,3 @@ Timeline.propTypes = {
   onResume: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired
 }
-

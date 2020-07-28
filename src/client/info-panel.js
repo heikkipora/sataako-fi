@@ -1,20 +1,14 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 
-class InfoPanel extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      collapsed: localStorage.getItem('sataako-fi-collapsed') === 'true'
-    }
-  }
-
+export class InfoPanel extends React.PureComponent {
   render() {
-    if (this.state.collapsed) {
-      return <div id="side-info-panel-open" onClick={this.expand.bind(this)}>&lt;</div>
+    if (this.props.collapsed) {
+      return <div id="side-info-panel-open" onClick={this.props.onInfoPanelToggle}>&lt;</div>
     }
 
     return <div className="side-info-panel">
-      <button id="close-side-info" onClick={this.collapse.bind(this)}>Sulje</button>
+      <button id="close-side-info" onClick={this.props.onInfoPanelToggle}>Sulje</button>
       {this.renderContent()}
     </div>
   }
@@ -33,16 +27,9 @@ class InfoPanel extends React.Component {
       </div>
     </div>
   }
-
-  collapse() {
-    this.setState({collapsed: true})
-    localStorage.setItem('sataako-fi-collapsed', 'true')
-  }
-
-  expand() {
-    this.setState({collapsed: false})
-    localStorage.setItem('sataako-fi-collapsed', 'false')
-  }
 }
 
-module.exports = InfoPanel
+InfoPanel.propTypes = {
+  collapsed: PropTypes.bool.isRequired,
+  onInfoPanelToggle: PropTypes.func.isRequired
+}

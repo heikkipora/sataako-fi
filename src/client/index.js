@@ -1,5 +1,6 @@
 import axios from 'axios'
-import InfoPanel from './info-panel'
+import classNames from 'classnames'
+import {InfoPanel} from './info-panel'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {Timeline} from './timeline'
@@ -20,7 +21,8 @@ class SataakoApp extends React.Component {
         x: Number(localStorage.getItem('sataako-fi-x')) || 2776307.5078,
         y: Number(localStorage.getItem('sataako-fi-y')) || 8438349.32742,
         zoom: Number(localStorage.getItem('sataako-fi-zoom')) || 7
-      }
+      },
+      collapsed: localStorage.getItem('sataako-fi-collapsed') === 'true'
     }
   }
 
@@ -43,6 +45,9 @@ class SataakoApp extends React.Component {
       this.setSkipUpdate(this.state.frames, currentFrame)
       showRadarFrame(this.map, currentFrame)
     }
+    if (this.state.collapsed !== prevState.collapsed) {
+      localStorage.setItem('sataako-fi-collapsed', String(this.state.collapsed))
+    }
   }
 
   componentWillUnmount() {
@@ -51,10 +56,10 @@ class SataakoApp extends React.Component {
   }
 
   render() {
-    return (
-      <div>
+    const className = classNames({'app--infopanel-expanded': !this.state.collapsed})
+    return <div className={className}>
         <div id="map"></div>
-        <InfoPanel/>
+        <InfoPanel collapsed={this.state.collapsed} onInfoPanelToggle={this.onInfoPanelToggle.bind(this)}/>
         {this.state.currentTimestamp && <Timeline
           timestamps={this.state.frames}
           currentTimestamp={this.state.currentTimestamp}
@@ -63,7 +68,6 @@ class SataakoApp extends React.Component {
           onSelect={this.onTimelineSelect.bind(this)}
         />}
       </div>
-    )
   }
 
   loadFramesList() {
@@ -147,6 +151,10 @@ class SataakoApp extends React.Component {
 
   onTimelineResume() {
     this.setState({running: true})
+  }
+
+  onInfoPanelToggle() {
+    this.setState(prevState => ({collapsed: !prevState.collapsed}))
   }
 }
 
