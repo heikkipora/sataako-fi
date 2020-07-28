@@ -45,8 +45,8 @@
   position: absolute;
   width: 40px;
   left: calc(50% - 22px);
-  top: -32px;
-  padding: 2px;
+  top: -33px;
+  padding: 3px 2px 2px 2px;
   border-radius: 3px;
   background-color: @brand-color;
   color: white;
@@ -67,4 +67,26 @@
 
 .timeline__tooltip--forecast {
   background-color: green;
+}
+
+@media screen and (orientation : landscape) {
+  .timeline {
+    transform: rotate(90deg);
+    transform-origin: left top;
+    top: 11px;
+    left: calc(100% - 42px);
+  }
+
+  .timeline__tooltip {
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    top: 83px;
+    left: calc(50% - 11px);
+  }
+
+  .timeline__tooltip:after {
+    left: auto;
+    right: -3px;
+    top: calc(50% - 5px);
+  }
 }

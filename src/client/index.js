@@ -13,7 +13,7 @@ class SataakoApp extends React.Component {
     super()
     this.state = {
       currentTimestamp: null,
-      running: false,
+      running: true,
       frames: [],
       mapSettings: {
         x: Number(localStorage.getItem('sataako-fi-x')) || 2776307.5078,
