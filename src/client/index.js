@@ -11,6 +11,7 @@ const FRAME_LIST_RELOAD_MS = 30 * 1000
 class SataakoApp extends React.Component {
   constructor() {
     super()
+    this.skipUpdate = 0
     this.state = {
       currentTimestamp: null,
       running: true,
@@ -39,6 +40,7 @@ class SataakoApp extends React.Component {
   componentDidUpdate(_, prevState) {
     if (this.state.currentTimestamp !== prevState.currentTimestamp) {
       const currentFrame = this.state.frames.find(frame => frame.timestamp === this.state.currentTimestamp)
+      this.setSkipUpdate(this.state.frames, currentFrame)
       showRadarFrame(this.map, currentFrame)
     }
   }
@@ -108,7 +110,22 @@ class SataakoApp extends React.Component {
     if (!this.state.running || !this.state.currentTimestamp) {
       return
     }
-    this.setState(prevState => ({currentTimestamp: this.nextTimestamp(prevState)}))
+    if (this.skipUpdate > 0) {
+      this.skipUpdate -= 1
+    } else {
+      this.setState(prevState => ({currentTimestamp: this.nextTimestamp(prevState)}))
+    }
+  }
+
+  setSkipUpdate(frames, currentFrame) {
+    const isLastOfList = frames[frames.length - 1] === currentFrame
+    if (isLastOfList) {
+      this.skipUpdate = 4
+    } else if (currentFrame.isForecast) {
+      this.skipUpdate = 2
+    } else {
+      this.skipUpdate = 0
+    }
   }
 
   onLocation(geolocationResponse) {
