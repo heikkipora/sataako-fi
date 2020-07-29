@@ -24,6 +24,7 @@ class SataakoApp extends React.Component {
       },
       collapsed: localStorage.getItem('sataako-fi-collapsed') === 'true'
     }
+    this.onResizeHandler = this.onResize.bind(this)
   }
 
   componentDidMount() {
@@ -33,6 +34,7 @@ class SataakoApp extends React.Component {
     this.loadFramesList()
     this.loadFramesInterval = setInterval(this.loadFramesList.bind(this, null), FRAME_LIST_RELOAD_MS)
     this.animateRadarInterval = setInterval(this.animateRadar.bind(this, null), FRAME_DELAY_MS)
+    window.addEventListener('resize', this.onResizeHandler)
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(this.onLocation.bind(this))
@@ -51,13 +53,14 @@ class SataakoApp extends React.Component {
   }
 
   componentWillUnmount() {
+    window.removeEventListener('resize', this.onResizeHandler)
     clearInterval(this.animateRadarInterval)
     clearInterval(this.loadFramesInterval)
   }
 
   render() {
     const className = classNames({'app--infopanel-expanded': !this.state.collapsed})
-    return <div className={className}>
+    return <div className={className} style={{height: window.innerHeight}}>
         <div id="map"></div>
         <InfoPanel collapsed={this.state.collapsed} onInfoPanelToggle={this.onInfoPanelToggle.bind(this)}/>
         {this.state.currentTimestamp && <Timeline
@@ -155,6 +158,10 @@ class SataakoApp extends React.Component {
 
   onInfoPanelToggle() {
     this.setState(prevState => ({collapsed: !prevState.collapsed}))
+  }
+
+  onResize() {
+    this.forceUpdate(() => this.map.updateSize())
   }
 }
 
