@@ -22,7 +22,7 @@ class SataakoApp extends React.Component {
         y: Number(localStorage.getItem('sataako-fi-y')) || 8438349.32742,
         zoom: Number(localStorage.getItem('sataako-fi-zoom')) || 7
       },
-      collapsed: localStorage.getItem('sataako-fi-collapsed') === 'true'
+      collapsed: localStorage.getItem('sataako-fi-collapsed-v2') === 'true'
     }
     this.onResizeHandler = this.onResize.bind(this)
   }
@@ -48,7 +48,7 @@ class SataakoApp extends React.Component {
       showRadarFrame(this.map, currentFrame)
     }
     if (this.state.collapsed !== prevState.collapsed) {
-      localStorage.setItem('sataako-fi-collapsed', String(this.state.collapsed))
+      localStorage.setItem('sataako-fi-collapsed-v2', String(this.state.collapsed))
     }
   }
 
