@@ -18,9 +18,11 @@
   width: 20px;
   position: relative;
   cursor: pointer;
-  &:hover {
-    background-color: @brand-color;
-  }
+  touch-action: none;
+}
+
+.timeline__tick--selected {
+  background-color: @brand-color;
 }
 
 .timeline__tick--large:after {

@@ -6,7 +6,8 @@ import React from 'react'
 export class Timeline extends React.PureComponent {
   render() {
     const {timestamps, currentTimestamp} = this.props
-    return <div className="timeline">
+    const onTouchHandler = this.onTouch.bind(this)
+    return <div className="timeline" onTouchMove={onTouchHandler} onTouchEnd={this.props.onResume} onTouchCancel={this.props.onResume}>
       {this.renderTicks(timestamps, currentTimestamp)}
     </div>
   }
@@ -23,11 +24,12 @@ export class Timeline extends React.PureComponent {
     const className = classNames(
       'timeline__tick',
       {'timeline__tick--large': quarter},
-      {'timeline__tick--small': !quarter}
+      {'timeline__tick--small': !quarter},
+      {'timeline__tick--selected': !this.props.running && isCurrent}
     )
     const onSelectHandler = this.props.onSelect.bind(null, timestamp)
     const onEnterHandler = this.onMouseEnter.bind(this, timestamp)
-    return <div className={className} onMouseDown={onSelectHandler} onMouseUp={this.props.onResume} onMouseEnter={onEnterHandler} key={timestamp}>
+    return <div className={className} onMouseDown={onSelectHandler} onMouseUp={this.props.onResume} onMouseEnter={onEnterHandler} key={timestamp} data-timestamp={timestamp}>
       {isCurrent && this.renderTooltip(formattedTimestamp, isForecast)}
     </div>
   }
@@ -36,6 +38,17 @@ export class Timeline extends React.PureComponent {
     const leftPressed = event.buttons === undefined ? event.which === 1 : event.buttons === 1
     if (leftPressed) {
       this.props.onSelect(timestamp)
+    }
+  }
+
+  onTouch(event) {
+    const {clientX, clientY} = event.touches && event.touches.length > 0 ? event.touches[0] : event
+    if (clientX && clientY) {
+      const element = document.elementFromPoint(clientX, clientY)
+      const {timestamp} = element.dataset
+      if (timestamp) {
+        this.props.onSelect(timestamp)
+      }
     }
   }
 
@@ -57,6 +70,7 @@ export class Timeline extends React.PureComponent {
 
 Timeline.propTypes = {
   currentTimestamp: PropTypes.string.isRequired,
+  running: PropTypes.bool.isRequired,
   timestamps: PropTypes.array.isRequired,
   onResume: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired
