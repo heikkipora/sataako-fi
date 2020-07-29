@@ -2,8 +2,9 @@
 
 .timeline {
   position: fixed;
-  bottom: 25px;
-  left: 20px;
+  bottom: 36px;
+  left: 50%;
+  transform: translate(-50%, 0);
   background-color: white;
   border: 1px solid grey;
   border-radius: 4px;
@@ -93,5 +94,11 @@
     left: auto;
     right: -3px;
     top: calc(50% - 5px);
+  }
+}
+
+@media screen and (orientation: portrait) {
+  .app--infopanel-expanded .timeline {
+    display: none;
   }
 }

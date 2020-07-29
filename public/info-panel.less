@@ -61,7 +61,33 @@
   }
 }
 
-@media screen and (max-height : 460px) {
+@media screen and (orientation: portrait) {
+  .info-panel {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;  
+  }
+
+  .info-panel--collapsed {
+    width: auto;
+    height: 26px;
+    .info-panel__toggle {
+      transform: rotate(0);
+      transform-origin: right bottom;
+      position: initial;
+      width: 100%;
+      margin: 4px;
+      text-align: center;
+    }
+  }
+
+  .info-panel__content {
+    width: auto;
+  }
+}
+
+@media screen and (max-height : 480px) {
   .info-panel__logo {
     display: none;
   }
