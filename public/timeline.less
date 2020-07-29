@@ -2,7 +2,7 @@
 
 .timeline {
   position: fixed;
-  bottom: 36px;
+  bottom: 40px;
   left: 50%;
   transform: translate(-50%, 0);
   background-color: white;
@@ -10,6 +10,7 @@
   border-radius: 4px;
   display: flex;
   user-select: none;
+  -webkit-user-select: none; 
 }
 
 .timeline__tick {
@@ -80,7 +81,7 @@
   }
 
   .app--infopanel-expanded .timeline {
-    left: calc(100% - 42px - 290px);
+    left: calc(100% - 42px - 310px);
   }
 
   .timeline__tooltip {

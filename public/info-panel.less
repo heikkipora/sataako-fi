@@ -9,6 +9,8 @@
   .info-panel__toggle {
     margin: 16px;
     cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
     &:hover {
       color: black;
     }
@@ -16,13 +18,13 @@
 }
 
 .info-panel--collapsed {
-  width: 26px;
+  width: 30px;
   .info-panel__toggle {
     transform: rotate(-90deg);
     transform-origin: right bottom;
     position: absolute;
-    bottom: 126px;
-    right: 4px;
+    bottom: 140px;
+    right: 6px;
     width: 110px;
     margin: 0;
   }
@@ -30,7 +32,7 @@
 
 .info-panel__content {
   padding: 0 16px;
-  width: 320px;
+  width: 340px;
   display: flex;
   flex-direction: column;
 }
@@ -71,13 +73,13 @@
 
   .info-panel--collapsed {
     width: auto;
-    height: 26px;
+    height: 30px;
     .info-panel__toggle {
       transform: rotate(0);
       transform-origin: right bottom;
       position: initial;
       width: 100%;
-      margin: 4px;
+      margin: 6px;
       text-align: center;
     }
   }
