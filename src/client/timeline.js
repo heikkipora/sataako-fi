@@ -4,10 +4,27 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 export class Timeline extends React.PureComponent {
+  constructor(props) {
+    super(props)
+    this.timelineRef = React.createRef()
+    this.onTouchHandler = this.onTouch.bind(this)
+  }
+
+  componentDidMount() {
+    this.timelineRef.current.addEventListener('touchstart', this.onTouchHandler)
+    this.timelineRef.current.addEventListener('touchmove', this.onTouchHandler)
+    this.timelineRef.current.addEventListener('touchend', this.onTouchHandler)
+  }
+
+  componentWillUnmount() {
+    this.timelineRef.current.removeEventListener('touchstart', this.onTouchHandler)
+    this.timelineRef.current.removeEventListener('touchmove', this.onTouchHandler)
+    this.timelineRef.current.removeEventListener('touchend', this.onTouchHandler)
+  }
+
   render() {
     const {timestamps, currentTimestamp} = this.props
-    const onTouchHandler = this.onTouch.bind(this)
-    return <div className="timeline" onTouchMove={onTouchHandler} onTouchEnd={this.props.onResume} onTouchCancel={this.props.onResume}>
+    return <div className="timeline" ref={this.timelineRef}>
       {this.renderTicks(timestamps, currentTimestamp)}
     </div>
   }
@@ -42,6 +59,11 @@ export class Timeline extends React.PureComponent {
   }
 
   onTouch(event) {
+    event.preventDefault()
+    if (event.type === 'touchend') {
+      this.props.onResume()
+      return
+    }
     const {clientX, clientY} = event.touches && event.touches.length > 0 ? event.touches[0] : event
     if (clientX && clientY) {
       const element = document.elementFromPoint(clientX, clientY)
