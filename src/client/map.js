@@ -34,11 +34,8 @@ function createMap(settings) {
     zoom
   })
 
-  const attribution = new Attribution({
-    collapsible: false
-  })
   const map = new Map({
-    controls: defaultControls({attribution: false, rotate: false}).extend([attribution]),
+    controls: defaultControls({attribution: false, rotate: false}),
     interactions: defaultInteractions({altShiftDragRotate: false, pinchRotate: false}),
     layers: [createMapLayer(), createRadarLayer(), createLightningLayer(), createIconLayer(center)],
     target: 'map',
@@ -52,8 +49,7 @@ function createMap(settings) {
 }
 
 function createMapLayer() {
-  const attributions = ['&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>']
-  const source = new XYZ({url: '/tiles/{z}/{x}/{y}.png', attributions})
+  const source = new XYZ({url: '/tiles/{z}/{x}/{y}.png'})
   return new Tile({source})
 }
 
