@@ -1,0 +1,93 @@
+#side-info-panel-open, .side-info-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 320px;
+  background: @brand-color;
+  background: -webkit-linear-gradient(top, rgba(98,197,217, 0.95), rgba(105,210,231, 0.95));
+  background: linear-gradient(to top, rgba(98,197,217, 0.95), rgba(105,210,231, 0.95));
+  color: #fff;
+}
+
+#side-info-panel-open {
+  width: 30px;
+  text-align: center;
+  font-size: 30px;
+  padding-top: 10%;
+  cursor: pointer;
+}
+
+.side-info-panel.side-panel-hidden {
+  right: -320px;
+}
+
+#close-side-info {
+  cursor: pointer;
+  outline: none;
+  text-transform: uppercase;
+  padding: 4px;
+  font-size: 14px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  position: absolute;
+  left: 13px;
+  top: 13px;
+  z-index: 1;
+}
+
+.logo-container {
+  min-height: 250px;
+  max-height: 30%;
+  position: relative;
+  img {
+    display: block;
+    position: absolute;
+    height: 125px;
+    width: 125px;
+    top: 50%;
+    left: 50%;
+    margin-top: -62.5px;
+    margin-left: -52px;
+  }
+}
+
+.description-container {
+  position: absolute;
+  bottom: 0;
+  padding: 20px;
+  font-size: 15px;
+  h1 {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 38px;
+    line-height: 32px;
+    margin-bottom: 0.25em;
+  }
+  a, a:visited {
+    color: white;
+  }
+}
+
+@media screen and (min-height: 800px) {
+  .logo-container {
+    min-height: 350px;
+    img {
+      height: 181px;
+      width: 150px;
+      margin-left: -75px;
+      margin-top: -90.5px;
+    }
+  }
+}
+
+@media screen and (max-height: 720px) {
+  .logo-container {
+    display: none;
+  }
+  .description-container {
+    height: 90%;
+    overflow-y: scroll;
+  }
+}
