@@ -2,6 +2,7 @@ import compression from 'compression'
 import express from 'express'
 import {framesList, imageFileForTimestamp, initializeCache, refreshCache} from './cache.js'
 
+const MAX_FRAMES = 12
 const PORT = process.env.PORT || 3000
 const PUBLIC_URL_PORT = process.env.NODE_ENV === 'production' ? '' : `:${PORT}`
 
@@ -40,11 +41,11 @@ async function initApp() {
   app.get('/frames.json', (req, res) => {
     const publicRootUrl = `${req.protocol}://${req.hostname}${PUBLIC_URL_PORT}/frame/`
     res.set('Cache-Control', 'public, max-age=60');
-    res.json(framesList(publicRootUrl))
+    res.json(framesList(MAX_FRAMES, publicRootUrl))
   })
 
   await initializeCache()
-  refreshCache(12, 30)
+  refreshCache(MAX_FRAMES + 1, 30)
   return new Promise(resolve => app.listen(PORT, resolve))
 }
 

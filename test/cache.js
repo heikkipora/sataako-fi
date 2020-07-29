@@ -10,8 +10,8 @@ describe('Radar image and lightning cache', () => {
   it('Should populate cache with latest radar images and lightning locations', async() => {
     await refreshCache(4, 120, true)
 
-    const frames = framesList('http://localhost/')
-    expect(frames).to.have.lengthOf.at.least(3)
+    const frames = framesList(3, 'http://localhost/')
+    expect(frames).to.have.lengthOf(3)
     frames.forEach(frame => {
       expect(frame).to.have.property('image')
       expect(frame.image).to.be.a('string')
@@ -28,7 +28,7 @@ describe('Radar image and lightning cache', () => {
     const nonExistent = imageFileForTimestamp(new Date().toISOString())
     expect(nonExistent).to.equal(null)
 
-    const [{timestamp}] = framesList('')
+    const [{timestamp}] = framesList(1, '')
     const imageFiles = imageFileForTimestamp(timestamp)
     expect(imageFiles).to.have.property('png')
     expect(imageFiles).to.have.property('webp')

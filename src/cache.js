@@ -105,14 +105,15 @@ function isTimestampInCache(timestamp) {
   return IMAGE_CACHE.some(image => image.timestamp === timestamp)
 }
 
-export function framesList(publicFramesRootUrl) {
-  return IMAGE_CACHE
+export function framesList(maxFrames, publicFramesRootUrl) {
+  const frames = IMAGE_CACHE
     .map(({timestamp}) => ({
       image: publicFramesRootUrl + timestamp,
       lightnings: coordinatesForLightnings(timestamp),
       timestamp
     }))
     .sort(compareTimestamp)
+  return frames.slice(Math.max(frames.length - maxFrames, 0))
 }
 
 function getFrameTimestampsAsDates() {
