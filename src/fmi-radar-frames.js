@@ -43,10 +43,24 @@ export function generateRadarFrameTimestamps(framesCount, baseDate = Date.now())
     .reverse()
 }
 
+export function generateRadarEstimateFrameTimestamps(framesCount, baseDate = Date.now()) {
+  const numberSeries = new Array(framesCount).keys()
+  return Array
+    .from(numberSeries, nthFifteenMinuteDivisibleTimestamp(baseDate))
+}
+
 function nthFiveMinuteDivisibleTimestamp(baseDate) {
   return n => {
     const FIVE_MINUTES = 5 * 60 * 1000
     const lastFullFiveMinutes = Math.floor(baseDate / FIVE_MINUTES) * FIVE_MINUTES
     return new Date(lastFullFiveMinutes - n * FIVE_MINUTES).toISOString()
+  }
+}
+
+function nthFifteenMinuteDivisibleTimestamp(baseDate) {
+  return n => {
+    const FIFTEEN_MINUTES = 15 * 60 * 1000
+    const nextFullFifteenMinutes = Math.ceil(baseDate / FIFTEEN_MINUTES) * FIFTEEN_MINUTES
+    return new Date(nextFullFifteenMinutes + n * FIFTEEN_MINUTES).toISOString()
   }
 }
