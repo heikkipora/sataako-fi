@@ -69,8 +69,20 @@
   z-index: -1;
 }
 
-.timeline__tooltip--forecast {
-  background-color: green;
+.timeline__tick--estimate {
+  background-color: @background-color-darker;
+  &.timeline__tick--selected {
+    background-color: @brand-color-darkest;
+    &:after {
+      background-color: white;
+    }
+  }
+  .timeline__tooltip {
+    background-color: @brand-color-darkest;
+    &:after {
+      background-color: @brand-color-darkest
+    }
+  }
 }
 
 @media screen and (orientation : landscape) {

@@ -110,7 +110,7 @@ class SataakoApp extends React.Component {
   }
 
   newestNonForecastTimestamp(frames) {
-    return frames.filter(frame => !frame.isForecast).pop().timestamp
+    return frames.filter(frame => !frame.isEstimate).pop().timestamp
   }
 
   animateRadar() {
@@ -128,7 +128,7 @@ class SataakoApp extends React.Component {
     const isLastOfList = frames[frames.length - 1] === currentFrame
     if (isLastOfList) {
       this.skipUpdate = 4
-    } else if (currentFrame.isForecast) {
+    } else if (currentFrame.isEstimate) {
       this.skipUpdate = 2
     } else {
       this.skipUpdate = 0

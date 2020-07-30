@@ -35,11 +35,12 @@ export class Timeline extends React.PureComponent {
     )
   }
 
-  renderTick({timestamp, isForecast}, isCurrent) {
+  renderTick({timestamp, isEstimate}, isCurrent) {
     const formattedTimestamp = this.formatTimestamp(timestamp)
     const quarter = this.isQuarter(formattedTimestamp)
     const className = classNames(
       'timeline__tick',
+      {'timeline__tick--estimate': isEstimate},
       {'timeline__tick--large': quarter},
       {'timeline__tick--small': !quarter},
       {'timeline__tick--selected': !this.props.running && isCurrent}
@@ -47,7 +48,7 @@ export class Timeline extends React.PureComponent {
     const onSelectHandler = this.props.onSelect.bind(null, timestamp)
     const onEnterHandler = this.onMouseEnter.bind(this, timestamp)
     return <div className={className} onMouseDown={onSelectHandler} onMouseUp={this.props.onResume} onMouseEnter={onEnterHandler} key={timestamp} data-timestamp={timestamp}>
-      {isCurrent && this.renderTooltip(formattedTimestamp, isForecast)}
+      {isCurrent && <div className="timeline__tooltip">{formattedTimestamp}</div>}
     </div>
   }
 
@@ -72,14 +73,6 @@ export class Timeline extends React.PureComponent {
         this.props.onSelect(timestamp)
       }
     }
-  }
-
-  renderTooltip = (formattedTimestamp, isForecast) => {
-    const className = classNames(
-      'timeline__tooltip',
-      {'timeline__tooltip--forecast': isForecast}
-    )
-    return <div className={className}>{formattedTimestamp}</div>
   }
 
   formatTimestamp = timestamp => format(parseISO(timestamp), 'HH:mm')

@@ -1,8 +1,16 @@
 import compression from 'compression'
 import express from 'express'
-import {framesList, imageFileForTimestamp, initializeCache, refreshCache} from './cache.js'
+import {
+  radarFramesList,
+  radarEstimateFramesList,
+  imageFileForRadarTimestamp,
+  imageFileForRadarEstimateTimestamp,
+  initializeCache,
+  refreshCache
+} from './cache.js'
 
-const MAX_FRAMES = 12
+const MAX_RADAR_FRAMES = 12
+const MAX_ESTIMATE_FRAMES = 4
 const PORT = process.env.PORT || 3000
 const PUBLIC_URL_PORT = process.env.NODE_ENV === 'production' ? '' : `:${PORT}`
 
@@ -19,34 +27,42 @@ async function initApp() {
   app.use(compression())
   app.use(express.static('public'))
 
-  app.get('/frame/:timestamp', (req, res) => {
-    const image = imageFileForTimestamp(req.params.timestamp)
-    if (image) {
-      res.set('Cache-Control', 'public, max-age=86400');
-      res.format({
-        'image/png': () => {
-          res.set('Content-Type', 'image/png')
-          res.sendFile(image.png)
-        },
-        'image/webp': () => {
-          res.set('Content-Type', 'image/webp')
-          res.sendFile(image.webp)
-        }
-      })
-    } else {
-      res.status(404).send('Sorry, no radar image found for that timestamp')
-    }
-  })
+  app.get('/frame/:timestamp', (req, res) =>
+    serveFrame(imageFileForRadarTimestamp(req.params.timestamp), res)
+  )
+
+  app.get('/frame/estimate/:timestamp', (req, res) =>
+    serveFrame(imageFileForRadarEstimateTimestamp(req.params.timestamp), res)
+  )
 
   app.get('/frames.json', (req, res) => {
-    const publicRootUrl = `${req.protocol}://${req.hostname}${PUBLIC_URL_PORT}/frame/`
-    res.set('Cache-Control', 'public, max-age=60');
-    res.json(framesList(MAX_FRAMES, publicRootUrl))
+    const radarFrames = radarFramesList(MAX_RADAR_FRAMES, `${req.protocol}://${req.hostname}${PUBLIC_URL_PORT}/frame/`)
+    const esimateFrames = radarEstimateFramesList(MAX_ESTIMATE_FRAMES, `${req.protocol}://${req.hostname}${PUBLIC_URL_PORT}/frame/estimate/`)
+    res.set('Cache-Control', 'public, max-age=20');
+    res.json(radarFrames.concat(esimateFrames))
   })
 
   await initializeCache()
-  refreshCache(MAX_FRAMES + 1, 30)
+  refreshCache(MAX_RADAR_FRAMES + 1, MAX_ESTIMATE_FRAMES, 30)
   return new Promise(resolve => app.listen(PORT, resolve))
+}
+
+function serveFrame(image, res) {
+  if (image) {
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.format({
+      'image/png': () => {
+        res.set('Content-Type', 'image/png')
+        res.sendFile(image.png)
+      },
+      'image/webp': () => {
+        res.set('Content-Type', 'image/webp')
+        res.sendFile(image.webp)
+      }
+    })
+  } else {
+    res.status(404).send('Sorry, no radar image found for that timestamp')
+  }
 }
 
 initApp()
