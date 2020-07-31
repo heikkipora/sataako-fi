@@ -28,11 +28,11 @@ async function initApp() {
   app.use(express.static('public'))
 
   app.get('/frame/:timestamp', (req, res) =>
-    serveFrame(imageFileForRadarTimestamp(req.params.timestamp), res)
+    serveFrame(imageFileForRadarTimestamp(req.params.timestamp), 24 * 60 * 60, res)
   )
 
   app.get('/frame/estimate/:timestamp', (req, res) =>
-    serveFrame(imageFileForRadarEstimateTimestamp(req.params.timestamp), res)
+    serveFrame(imageFileForRadarEstimateTimestamp(req.params.timestamp), 5 * 60, res)
   )
 
   app.get('/frames.json', (req, res) => {
@@ -47,9 +47,9 @@ async function initApp() {
   return new Promise(resolve => app.listen(PORT, resolve))
 }
 
-function serveFrame(image, res) {
+function serveFrame(image, cacheMaxAge, res) {
   if (image) {
-    res.set('Cache-Control', 'public, max-age=86400');
+    res.set('Cache-Control', `public, max-age=${cacheMaxAge}`)
     res.format({
       'image/png': () => {
         res.set('Content-Type', 'image/png')
