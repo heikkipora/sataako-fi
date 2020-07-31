@@ -43,7 +43,7 @@ export async function refreshCache(radarFramesToKeep, estimateFramesToKeep, refr
   async function refreshRadarCache() {
     try {
       const timestamps = generateRadarFrameTimestamps(radarFramesToKeep)
-      const radarImages = requestConfigsForNonCachedFrames(wmsRequestForRadar, RADAR_FRAME_CACHE, timestamps)
+      const radarImages = requestConfigsForRadarFrames(timestamps)
       await fetchAndCacheImages(radarImages, RADAR_FRAME_CACHE, RADAR_FRAME_CACHE_FOLDER)
       RADAR_FRAME_CACHE = await pruneCache(RADAR_FRAME_CACHE, RADAR_FRAME_CACHE_FOLDER, timestamps)
     } catch (err) {
@@ -54,7 +54,7 @@ export async function refreshCache(radarFramesToKeep, estimateFramesToKeep, refr
   async function refreshRadarEstimateCache() {
     try {
       const timestamps = generateRadarEstimateFrameTimestamps(estimateFramesToKeep)
-      const radarImages = requestConfigsForNonCachedFrames(wmsRequestForRadarEstimate, ESTIMATE_FRAME_CACHE, timestamps)
+      const radarImages = requestConfigsForRadarEstimateFrames(timestamps)
       await fetchAndCacheImages(radarImages, ESTIMATE_FRAME_CACHE, ESTIMATE_FRAME_CACHE_FOLDER)
       ESTIMATE_FRAME_CACHE = await pruneCache(ESTIMATE_FRAME_CACHE, ESTIMATE_FRAME_CACHE_FOLDER, timestamps)
     } catch (err) {
@@ -76,15 +76,23 @@ export async function refreshCache(radarFramesToKeep, estimateFramesToKeep, refr
   }
 }
 
-function requestConfigsForNonCachedFrames(wmsRequestFn, cache, timestamps) {
+function requestConfigsForRadarFrames(timestamps) {
   function timestampNotInCache(timestamp) {
-    return cache.every(image => image.timestamp !== timestamp)
+    return RADAR_FRAME_CACHE.every(image => image.timestamp !== timestamp)
   }
 
   return timestamps
     .filter(timestampNotInCache)
     .map(timestamp => ({
-      requestConfig: wmsRequestFn(timestamp),
+      requestConfig: wmsRequestForRadar(timestamp),
+      timestamp
+    }))
+}
+
+function requestConfigsForRadarEstimateFrames(timestamps) {
+  return timestamps
+    .map(timestamp => ({
+      requestConfig: wmsRequestForRadarEstimate(timestamp),
       timestamp
     }))
 }
@@ -93,7 +101,7 @@ async function fetchAndCacheImages(requestConfigs, cache, cacheFolder) {
   for (const {requestConfig, timestamp} of requestConfigs) {
     try {
       const isEmpty = await fetchPostProcessedRadarFrame(requestConfig, path.join(cacheFolder, timestamp))
-      if (!isEmpty) {
+      if (!isEmpty && !cache.some(f => f.timestamp === timestamp)) {
         cache.push({timestamp})
       }
     } catch (err) {
