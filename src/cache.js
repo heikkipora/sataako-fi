@@ -20,7 +20,7 @@ const ESTIMATE_FRAME_CACHE_FOLDER = process.env.NODE_ENV === 'production' ? '/va
 const LIGHTNING_CACHE = []
 const USE_LOCAL_LIGHTNING_DATA = process.env.NODE_ENV === 'local'
 
-export async function initializeCache() {
+export async function initializeCaches() {
   await fs.promises.mkdir(RADAR_FRAME_CACHE_FOLDER, {recursive: true})
   await fs.promises.mkdir(ESTIMATE_FRAME_CACHE_FOLDER, {recursive: true})
   RADAR_FRAME_CACHE = await populateFromDisk(RADAR_FRAME_CACHE_FOLDER)
@@ -29,50 +29,50 @@ export async function initializeCache() {
   console.log(`Radar estimate frames cached at ${ESTIMATE_FRAME_CACHE_FOLDER} (found ${ESTIMATE_FRAME_CACHE.length} frames cached earlier)`)
 }
 
-export async function refreshCache(radarFramesToKeep, estimateFramesToKeep, refreshIntervalSeconds, once = false) {
-  await Promise.allSettled([
-    refreshRadarCache(),
-    refreshRadarEstimateCache(),
-    refreshLightningCache(getRadarFrameTimestampsAsDates())
-  ])
+export async function refreshRadarCache(framesToKeep, refreshIntervalSeconds, once = false) {
+  try {
+    const timestamps = generateRadarFrameTimestamps(framesToKeep)
+    const radarImages = requestConfigsForRadarFrames(timestamps)
+    await fetchAndCacheImages(radarImages, RADAR_FRAME_CACHE, RADAR_FRAME_CACHE_FOLDER)
+    RADAR_FRAME_CACHE = await pruneCache(RADAR_FRAME_CACHE, RADAR_FRAME_CACHE_FOLDER, timestamps)
+  } catch (err) {
+    console.error(`Failed to update radar image cache: ${err.message}`)
+  }
 
   if (!once) {
-    setTimeout(() => refreshCache(radarFramesToKeep, estimateFramesToKeep, refreshIntervalSeconds), refreshIntervalSeconds * 1000)
+    setTimeout(() => refreshRadarCache(framesToKeep, refreshIntervalSeconds), refreshIntervalSeconds * 1000)
+  }
+}
+
+export async function refreshRadarEstimateCache(framesToKeep, refreshIntervalSeconds, once = false) {
+  try {
+    const timestamps = generateRadarEstimateFrameTimestamps(framesToKeep)
+    const radarImages = requestConfigsForRadarEstimateFrames(timestamps)
+    await fetchAndCacheImages(radarImages, ESTIMATE_FRAME_CACHE, ESTIMATE_FRAME_CACHE_FOLDER)
+    ESTIMATE_FRAME_CACHE = await pruneCache(ESTIMATE_FRAME_CACHE, ESTIMATE_FRAME_CACHE_FOLDER, timestamps)
+  } catch (err) {
+    console.error(`Failed to update radar estimate image cache: ${err.message}`)
   }
 
-  async function refreshRadarCache() {
-    try {
-      const timestamps = generateRadarFrameTimestamps(radarFramesToKeep)
-      const radarImages = requestConfigsForRadarFrames(timestamps)
-      await fetchAndCacheImages(radarImages, RADAR_FRAME_CACHE, RADAR_FRAME_CACHE_FOLDER)
-      RADAR_FRAME_CACHE = await pruneCache(RADAR_FRAME_CACHE, RADAR_FRAME_CACHE_FOLDER, timestamps)
-    } catch (err) {
-      console.error(`Failed to update radar image cache: ${err.message}`)
+  if (!once) {
+    setTimeout(() => refreshRadarEstimateCache(framesToKeep, refreshIntervalSeconds), refreshIntervalSeconds * 1000)
+  }
+}
+
+export async function refreshLightningCache(refreshIntervalSeconds, once = false) {
+  try {
+    const cacheSize = LIGHTNING_CACHE.length
+    const lightnings = await fetchLightnings(getRadarFrameTimestampsAsDates(), USE_LOCAL_LIGHTNING_DATA)
+    for (const lightning of lightnings) {
+      LIGHTNING_CACHE.push(lightning)
     }
+    LIGHTNING_CACHE.splice(0, cacheSize)
+  } catch (err) {
+    console.error(`Failed to fetch lightning list from FMI API: ${err.message}`)
   }
 
-  async function refreshRadarEstimateCache() {
-    try {
-      const timestamps = generateRadarEstimateFrameTimestamps(estimateFramesToKeep)
-      const radarImages = requestConfigsForRadarEstimateFrames(timestamps)
-      await fetchAndCacheImages(radarImages, ESTIMATE_FRAME_CACHE, ESTIMATE_FRAME_CACHE_FOLDER)
-      ESTIMATE_FRAME_CACHE = await pruneCache(ESTIMATE_FRAME_CACHE, ESTIMATE_FRAME_CACHE_FOLDER, timestamps)
-    } catch (err) {
-      console.error(`Failed to update radar estimate image cache: ${err.message}`)
-    }
-  }
-
-  async function refreshLightningCache(frameTimestamps) {
-    try {
-      const cacheSize = LIGHTNING_CACHE.length
-      const lightnings = await fetchLightnings(frameTimestamps, USE_LOCAL_LIGHTNING_DATA)
-      for (const lightning of lightnings) {
-        LIGHTNING_CACHE.push(lightning)
-      }
-      LIGHTNING_CACHE.splice(0, cacheSize)
-    } catch (err) {
-      console.error(`Failed to fetch lightning list from FMI API: ${err.message}`)
-    }
+  if (!once) {
+    setTimeout(() => refreshLightningCache(refreshIntervalSeconds), refreshIntervalSeconds * 1000)
   }
 }
 
@@ -151,6 +151,7 @@ export function radarFramesList(maxFrames, publicFramesRootUrl) {
   return framesList(RADAR_FRAME_CACHE, maxFrames, publicFramesRootUrl, true)
 }
 
+// TODO, OL cache bust
 export function radarEstimateFramesList(maxFrames, publicFramesRootUrl) {
   return framesList(ESTIMATE_FRAME_CACHE, maxFrames, publicFramesRootUrl, false)
     .map(frame => ({

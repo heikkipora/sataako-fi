@@ -1,12 +1,14 @@
 import compression from 'compression'
 import express from 'express'
 import {
-  radarFramesList,
-  radarEstimateFramesList,
-  imageFileForRadarTimestamp,
   imageFileForRadarEstimateTimestamp,
-  initializeCache,
-  refreshCache
+  imageFileForRadarTimestamp,
+  initializeCaches,
+  radarEstimateFramesList,
+  radarFramesList,
+  refreshLightningCache,
+  refreshRadarCache,
+  refreshRadarEstimateCache
 } from './cache.js'
 
 const MAX_RADAR_FRAMES = 12
@@ -42,8 +44,10 @@ async function initApp() {
     res.json(radarFrames.concat(esimateFrames))
   })
 
-  await initializeCache()
-  refreshCache(MAX_RADAR_FRAMES + 1, MAX_ESTIMATE_FRAMES, 30)
+  await initializeCaches()
+  await refreshRadarCache(MAX_RADAR_FRAMES + 1, 30)
+  await refreshRadarEstimateCache(MAX_ESTIMATE_FRAMES, 150)
+  await refreshLightningCache(150)
   return new Promise(resolve => app.listen(PORT, resolve))
 }
 
