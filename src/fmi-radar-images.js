@@ -24,7 +24,10 @@ async function processImage(input, targetFilename) {
   const {width, height, channels} = info
   const pipeline = sharp(data, {raw: {width, height, channels}})
     .resize({height: height / 2, kernel: 'nearest'})
-    .composite([{input: 'src/radar-edges.png'}])
+    .composite([
+      {input: 'src/radar-mask.png', blend: 'dest-out'},
+      {input: 'src/radar-edges.png', blend: 'over'}
+    ])
   await pipeline.clone().png().toFile(`${targetFilename}.png`)
   await pipeline.clone().webp({nearLossless: true}).toFile(`${targetFilename}.webp`)
   return false
