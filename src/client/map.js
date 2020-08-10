@@ -118,7 +118,8 @@ function createImageSource(url) {
   return new ImageStatic({
     imageExtent,
     projection: imageProjection,
-    url
+    url,
+    imageSmoothing: false
   })
 }
 
