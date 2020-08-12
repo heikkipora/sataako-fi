@@ -101,6 +101,14 @@ function showRadarFrame(map, {image, lightnings}) {
   }
 }
 
+function cleanupImageSourceCache(validImageUrls) {
+  Object.keys(radarImageSourcesCache).forEach(imageUrl => {
+    if (!validImageUrls.includes(imageUrl)) {
+      Reflect.deleteProperty(radarImageSourcesCache, imageUrl)
+    }
+  })
+}
+
 function createLightningLayer() {
   const source = new VectorSource()
   return new VectorLayer({
@@ -132,6 +140,7 @@ function panTo(map, lonLat) {
 }
 
 export {
+  cleanupImageSourceCache,
   createMap,
   panTo,
   showRadarFrame

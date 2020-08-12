@@ -4,7 +4,7 @@ import {InfoPanel} from './info-panel'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {Timeline} from './timeline'
-import {createMap, panTo, showRadarFrame} from './map'
+import {cleanupImageSourceCache, createMap, panTo, showRadarFrame} from './map'
 
 const FRAME_DELAY_MS = 500
 const FRAME_LIST_RELOAD_MS = 30 * 1000
@@ -46,6 +46,7 @@ class SataakoApp extends React.Component {
       const currentFrame = this.state.frames.find(frame => frame.timestamp === this.state.currentTimestamp)
       this.setSkipUpdate(this.state.frames, currentFrame)
       showRadarFrame(this.map, currentFrame)
+      cleanupImageSourceCache(this.state.frames.map(f => f.image))
     }
     if (this.state.collapsed !== prevState.collapsed) {
       localStorage.setItem('sataako-fi-collapsed-v2', String(this.state.collapsed))
