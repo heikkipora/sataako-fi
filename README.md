@@ -11,6 +11,18 @@ I wanted to create a mobile-friendly weather service for Finland which has the s
 
 [![build status](https://travis-ci.org/heikkipora/sataako-fi.svg?branch=master)](https://travis-ci.org/heikkipora/sataako-fi)
 
+Embedding 
+---------
+If you want to embed the map into another website such as a radiator or a home automation system, you
+can fix the coordinates and zoom level and automatically hide the side panel using query parameters.
+
+Available query parameters:
+* `x` & `y`: Set the coordinate the map centers on. The values should be in EPSG:3857 format.
+* `zoom`: Set the default zoom level
+* `collapsed`: Set the collapsed status of the side panel. Set as `true` to hide the side bar by default.
+
+Example: `https://www.sataako.fi?x=2776307.5078&y=8438349.32742&zoom=7&collapsed=true`
+
 Runtime environment
 -------------------
 The node.js application runs in [AWS](https://aws.amazon.com) with a single ```t3.micro``` instance on ```eu-north-1``` region.
