@@ -12,17 +12,18 @@ const FRAME_LIST_RELOAD_MS = 30 * 1000
 class SataakoApp extends React.Component {
   constructor() {
     super()
+    const params = this.parseQueryString()
     this.skipUpdate = 0
     this.state = {
       currentTimestamp: null,
       running: true,
       frames: [],
       mapSettings: {
-        x: Number(localStorage.getItem('sataako-fi-x')) || 2776307.5078,
-        y: Number(localStorage.getItem('sataako-fi-y')) || 8438349.32742,
-        zoom: Number(localStorage.getItem('sataako-fi-zoom')) || 7
+        x: Number(params.x || localStorage.getItem('sataako-fi-x')) || 2776307.5078,
+        y: Number(params.y || localStorage.getItem('sataako-fi-y')) || 8438349.32742,
+        zoom: Number(params.zoom || localStorage.getItem('sataako-fi-zoom')) || 7
       },
-      collapsed: localStorage.getItem('sataako-fi-collapsed-v2') === 'true'
+      collapsed: (params.collapsed || localStorage.getItem('sataako-fi-collapsed-v2')) === 'true'
     }
     this.onResizeHandler = this.onResize.bind(this)
   }
@@ -36,7 +37,8 @@ class SataakoApp extends React.Component {
     this.animateRadarInterval = setInterval(this.animateRadar.bind(this, null), FRAME_DELAY_MS)
     window.addEventListener('resize', this.onResizeHandler)
 
-    if (navigator.geolocation) {
+    const params = this.parseQueryString()
+    if (!params.x && !params.y && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(this.onLocation.bind(this))
     }
   }
@@ -133,6 +135,20 @@ class SataakoApp extends React.Component {
     } else {
       this.skipUpdate = 0
     }
+  }
+
+  parseQueryString = () => {
+    return document.location.search
+      .slice(1)
+      .split('&')
+      .filter(p => p)
+      .reduce((acc, parameter) => {
+        const [key, value] = parameter.split('=')
+        return {
+          ...acc,
+          [key]: decodeURIComponent(value)
+        }
+      }, {})
   }
 
   onLocation(geolocationResponse) {
