@@ -77,6 +77,9 @@ function createIconLayer(position) {
   return new VectorLayer({source})
 }
 
+// TODO show loading indicator (if doable)
+// TODO scale timeline so that it fits on portrait with estimates
+
 const radarImageSourcesCache = {}
 
 function showRadarFrame(map, {image, lightnings}) {
@@ -123,12 +126,23 @@ function createLightningLayer() {
 }
 
 function createImageSource(url) {
-  return new ImageStatic({
+  const image = new ImageStatic({
     imageExtent,
     projection: imageProjection,
     url,
     imageSmoothing: false
   })
+  image.on('imageloadend', () => {
+    radarImageSourcesCache[url].loaded = true
+  })
+  return image
+}
+
+function isFrameLoaded(image) {
+  if (!radarImageSourcesCache[image]) {
+    return false
+  }
+  return radarImageSourcesCache[image].loaded
 }
 
 function panTo(map, lonLat) {
@@ -142,6 +156,7 @@ function panTo(map, lonLat) {
 export {
   cleanupImageSourceCache,
   createMap,
+  isFrameLoaded,
   panTo,
   showRadarFrame
 }

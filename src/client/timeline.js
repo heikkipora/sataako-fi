@@ -35,7 +35,7 @@ export class Timeline extends React.PureComponent {
     )
   }
 
-  renderTick({timestamp, isEstimate}, isCurrent) {
+  renderTick({timestamp, isEstimate, isLoaded}, isCurrent) {
     const formattedTimestamp = this.formatTimestamp(timestamp)
     const quarter = this.isQuarter(formattedTimestamp)
     const className = classNames(
@@ -43,7 +43,8 @@ export class Timeline extends React.PureComponent {
       {'timeline__tick--estimate': isEstimate},
       {'timeline__tick--large': quarter},
       {'timeline__tick--small': !quarter},
-      {'timeline__tick--selected': !this.props.running && isCurrent}
+      {'timeline__tick--selected': !this.props.running && isCurrent},
+      {'timeline__tick--loaded': isLoaded}
     )
     const onSelectHandler = this.props.onSelect.bind(null, timestamp)
     const onEnterHandler = this.onMouseEnter.bind(this, timestamp)

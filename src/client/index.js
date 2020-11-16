@@ -4,7 +4,7 @@ import {InfoPanel} from './info-panel'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {Timeline} from './timeline'
-import {cleanupImageSourceCache, createMap, panTo, showRadarFrame} from './map'
+import {cleanupImageSourceCache, createMap, panTo, showRadarFrame, isFrameLoaded} from './map'
 
 const FRAME_DELAY_MS = 500
 const FRAME_LIST_RELOAD_MS = 30 * 1000
@@ -65,7 +65,7 @@ class SataakoApp extends React.Component {
         <div id="map"></div>
         <InfoPanel collapsed={this.state.collapsed} onInfoPanelToggle={this.onInfoPanelToggle.bind(this)}/>
         {this.state.currentTimestamp && <Timeline
-          timestamps={this.state.frames}
+          timestamps={this.state.frames.map(f => ({...f, isLoaded: isFrameLoaded(f.image)}))}
           currentTimestamp={this.state.currentTimestamp}
           running={this.state.running}
           onResume={this.onTimelineResume.bind(this)}

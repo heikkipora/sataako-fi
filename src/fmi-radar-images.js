@@ -9,6 +9,7 @@ export async function fetchPostProcessedRadarFrame(requestConfig, targetFilename
   return processImage(data, targetFilename)
 }
 
+// TODO compare raw with on-disk version, skip if same
 async function processImage(input, targetFilename) {
   const {data, info} = await sharp(input)
     .ensureAlpha()
