@@ -51,3 +51,4 @@ async function initApp() {
 
 initApp()
   .then(() => console.log(`Cache is being populated and server listening on port ${PORT}`))
+  .catch(console.error)
