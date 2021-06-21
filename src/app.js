@@ -45,7 +45,7 @@ async function initApp() {
   })
 
   await initializeCache()
-  refreshCache(MAX_FRAMES + 1, 30)
+  refreshCache(MAX_FRAMES + 1, 60)
   return new Promise(resolve => app.listen(PORT, resolve))
 }
 
