@@ -28,6 +28,7 @@ function wmsRequestConfig(layerId, time) {
   return {
     url: WMS_SERVICE_URL,
     responseType: 'arraybuffer',
+    timeout: 30000,
     params: {
       ...DEFAULT_QUERY_PARAMS,
       layers: layerId,
