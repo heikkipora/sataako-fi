@@ -30,6 +30,9 @@ export async function refreshCache(framesToKeep, refreshIntervalSeconds, once = 
     try {
       const timestamps = generateRadarFrameTimestamps(framesToKeep)
       const radarImages = requestConfigsForNonCachedFrames(timestamps)
+      if (radarImages.length === 0) {
+        console.log(new Date(), 'Nothing to fetch, all cached', JSON.stringify(timestamps))
+      }
       await fetchAndCacheImages(radarImages)
       await pruneCache(timestamps)
     } catch (err) {
@@ -68,12 +71,13 @@ async function fetchAndCacheImages(requestConfigs) {
   for (const {requestConfig, timestamp} of requestConfigs) {
     try {
       const isEmpty = await fetchPostProcessedRadarFrame(requestConfig, path.join(CACHE_FOLDER, timestamp))
+      console.log(new Date(), 'Fetched', timestamp, isEmpty ? ', was empty' : ', cached it')
       if (!isEmpty) {
         IMAGE_CACHE.push({timestamp})
       }
     } catch (err) {
       if (!err.response || err.response.status != 404) {
-        console.error(`Failed to fetch radar image for ${JSON.stringify(requestConfig)}: ${err.message}`)
+        console.error(new Date(), `Failed to fetch radar image for ${JSON.stringify(requestConfig)}: ${err.message}`)
       }
     }
   }
