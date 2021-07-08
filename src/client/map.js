@@ -60,11 +60,11 @@ function createRadarLayer() {
 function createIconLayer(position) {
   const style = new Style({
     image: new Icon({
-      anchor: [0.375, 0.95],
+      anchor: [0.5, 1.0],
       anchorXUnits: 'fraction',
       anchorYUnits: 'fraction',
-      scale: 0.25,
-      src: '/img/trans_pin.png'
+      scale: 0.33,
+      src: '/img/pin.png'
     })
   })
 
@@ -108,7 +108,7 @@ function createLightningLayer() {
     style: new Style({
         image: new Icon({
           anchor: [0, 1.0],
-          src: '/img/gay_lightning.png'
+          src: '/img/lightning.png'
         })
       })
   })
