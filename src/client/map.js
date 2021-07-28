@@ -15,7 +15,7 @@ import View from 'ol/View'
 import XYZ from 'ol/source/XYZ'
 import {fromLonLat} from 'ol/proj'
 import VectorSource from 'ol/source/Vector'
-import {defaults as defaultControls, Attribution} from 'ol/control'
+import {defaults as defaultControls} from 'ol/control'
 import GeoJSON from 'ol/format/GeoJSON'
 
 proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
