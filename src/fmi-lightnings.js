@@ -1,5 +1,7 @@
 import axios from 'axios'
+import {EPSG_3067_BOUNDS} from './fmi-radar-frames.js'
 import fs from 'fs'
+import proj4 from 'proj4'
 import url from 'url'
 import xml2js from 'xml2js'
 import xml2jsProcessors from 'xml2js/lib/processors.js'
@@ -7,11 +9,14 @@ import xml2jsProcessors from 'xml2js/lib/processors.js'
 const {parseStringPromise} = xml2js
 const {firstCharLowerCase, stripPrefix} = xml2jsProcessors
 
+proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
+
 const FEATURE_URL = url.parse('https://opendata.fmi.fi/wfs')
 FEATURE_URL.query = {
   request: 'getFeature',
   // eslint-disable-next-line camelcase
-  storedquery_id: 'fmi::observations::lightning::multipointcoverage'
+  storedquery_id: 'fmi::observations::lightning::multipointcoverage',
+  bbox: proj4('EPSG:3067', 'WGS84', EPSG_3067_BOUNDS).join(',')
 }
 console.log(`Configured lightning URL stem: ${url.format(FEATURE_URL)}`)
 
