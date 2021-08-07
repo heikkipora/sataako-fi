@@ -38,7 +38,7 @@ async function loadData(frameDates, useLocalData) {
     return fs.promises.readFile(lightningPath)
   }
   const lightningsUrl = constructLightningsUrl(frameDates)
-  return (await axios.get(lightningsUrl)).data
+  return (await axios.get(lightningsUrl, {timeout: 30000})).data
 }
 
 function constructLightningsUrl(frameDates) {
