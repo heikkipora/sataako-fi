@@ -9,7 +9,7 @@ import Point from 'ol/geom/Point'
 import proj4 from 'proj4'
 import Projection from 'ol/proj/Projection'
 import Style from 'ol/style/Style'
-import Tile from 'ol/layer/Tile'
+import TileLayer from 'ol/layer/WebGLTile'
 import VectorLayer from 'ol/layer/Vector'
 import View from 'ol/View'
 import XYZ from 'ol/source/XYZ'
@@ -50,7 +50,7 @@ function createMap(settings) {
 
 function createMapLayer() {
   const source = new XYZ({url: '/tiles/{z}/{x}/{y}.png'})
-  return new Tile({source})
+  return new TileLayer({source})
 }
 
 function createRadarLayer() {
