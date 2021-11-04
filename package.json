@@ -44,8 +44,8 @@
     "uglify-js": "3.14.2"
   },
   "engines": {
-    "node": "14.5.0",
-    "npm": "6.14.5"
+    "node": "16.13.0",
+    "npm": "8.1.0"
   },
   "browserify": {
     "transform": [

@@ -6,7 +6,7 @@
 
 - name: add nodesource rpm repository
   yum:
-    name: https://rpm.nodesource.com/pub_14.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm
+    name: https://rpm.nodesource.com/pub_16.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm
     state: present
     lock_timeout: 180
 
