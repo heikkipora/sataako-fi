@@ -22,6 +22,7 @@ describe('FMI rain radar wms request generator', () => {
     expect(config).to.deep.equal({
       url: 'https://openwms.fmi.fi/geoserver/Radar/wms',
       responseType: 'arraybuffer',
+      timeout: 30000,
       params: {
         service: 'WMS',
         version: '1.3',
@@ -42,6 +43,7 @@ describe('FMI rain radar wms request generator', () => {
     expect(config).to.deep.equal({
       url: 'https://openwms.fmi.fi/geoserver/Radar/wms',
       responseType: 'arraybuffer',
+      timeout: 30000,
       params: {
         service: 'WMS',
         version: '1.3',
