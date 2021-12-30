@@ -3,11 +3,7 @@ import {EPSG_3067_BOUNDS} from './fmi-radar-frames.js'
 import fs from 'fs'
 import proj4 from 'proj4'
 import url from 'url'
-import xml2js from 'xml2js'
-import xml2jsProcessors from 'xml2js/lib/processors.js'
-
-const {parseStringPromise} = xml2js
-const {firstCharLowerCase, stripPrefix} = xml2jsProcessors
+import parser from 'fast-xml-parser'
 
 proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
 
@@ -26,7 +22,7 @@ export async function fetchLightnings(frameDates, useLocalData = false) {
   }
 
   const data = await loadData(frameDates, useLocalData)
-  const wfsResponse = await xmlToObject(data)
+  const wfsResponse = xmlToObject(data)
   const lightnings = extractLocationsAndTimes(wfsResponse)
   return snapLightningsToFrames(lightnings, frameDates)
 }
@@ -53,16 +49,19 @@ function constructLightningsUrl(frameDates) {
 }
 
 function xmlToObject(xml) {
-  return parseStringPromise(xml, {tagNameProcessors: [stripPrefix, firstCharLowerCase]})
+  return parser.parse(xml.toString(), {
+    ignoreNameSpace: true,
+    parseNodeValue: false
+  })
 }
 
-function extractLocationsAndTimes({featureCollection}) {
-  if (!featureCollection.member) {
+function extractLocationsAndTimes({FeatureCollection}) {
+  if (!FeatureCollection.member) {
     // No lightnings observed in this collection period
     return []
   }
 
-  const positions = featureCollection.member[0].gridSeriesObservation[0].result[0].multiPointCoverage[0].domainSet[0].simpleMultiPoint[0].positions[0]
+  const {positions} = FeatureCollection.member.GridSeriesObservation.result.MultiPointCoverage.domainSet.SimpleMultiPoint
   return positions
     .split('\n')
     .map(pos => {

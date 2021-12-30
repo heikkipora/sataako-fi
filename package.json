@@ -12,9 +12,9 @@
     "bluebird": "3.7.2",
     "compression": "1.7.4",
     "express": "4.17.2",
+    "fast-xml-parser": "3.21.1",
     "lodash": "4.17.21",
-    "sharp": "0.29.3",
-    "xml2js": "0.4.23"
+    "sharp": "0.29.3"
   },
   "devDependencies": {
     "@babel/core": "7.16.5",
