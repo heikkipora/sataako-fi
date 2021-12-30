@@ -14,10 +14,11 @@ describe('FMI lightning data set parser', () => {
 
   it('Should parse large set of lightning locations from local FMI data', async () => {
     const frameDates = [new Date('2019-06-07T13:55:00Z'), new Date('2019-06-07T14:00:00Z')]
-    const lightningFrames = await fetchLightnings(frameDates)
+    const lightningFrames = await fetchLightnings(frameDates, true)
     verifyLightningStructure(lightningFrames, frameDates)
-    expect(lightningFrames[0].locations).to.have.lengthOf(1711)
-    expect(lightningFrames[1].locations).to.have.lengthOf(1813)
+
+    expect(lightningFrames[0].locations).to.have.lengthOf(0)
+    expect(lightningFrames[1].locations).to.have.lengthOf(1809)
   })
 
   it('Should find some lightning locations (depending on weather naturally) from FMI API', async () => {
