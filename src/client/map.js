@@ -23,7 +23,7 @@ register(proj4)
 const imageProjection = new Projection({code: 'EPSG:3067'})
 const imageExtent = [-118331.366408, 6335621.167014, 875567.731907, 7907751.537264]
 
-function createMap(settings) {
+export function createMap(settings) {
   const {x, y, zoom} = settings
   const center = [x, y]
   const view = new View({
@@ -79,7 +79,7 @@ function createIconLayer(position) {
 
 const radarImageSourcesCache = {}
 
-function showRadarFrame(map, {image, lightnings}) {
+export function showRadarFrame(map, {image, lightnings}) {
   const radarImageSource = radarImageSourcesCache[image] || (radarImageSourcesCache[image] = createImageSource(image))
   const radarLayer = map.getLayers().getArray()[1]
   radarLayer.setSource(radarImageSource)
@@ -122,16 +122,10 @@ function createImageSource(url) {
   })
 }
 
-function panTo(map, lonLat) {
+export function panTo(map, lonLat) {
   const center = fromLonLat(lonLat);
   const vectorLayer = map.getLayers().getArray()[3]
   const vectorFeature = vectorLayer.getSource().getFeatures()[0]
   vectorFeature.setGeometry(new Point(center))
   map.getView().animate({center, duration: 1000})
-}
-
-export {
-  createMap,
-  panTo,
-  showRadarFrame
 }

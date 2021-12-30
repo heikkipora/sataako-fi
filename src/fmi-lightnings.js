@@ -20,7 +20,7 @@ FEATURE_URL.query = {
 }
 console.log(`Configured lightning URL stem: ${url.format(FEATURE_URL)}`)
 
-async function fetchLightnings(frameDates, useLocalData = false) {
+export async function fetchLightnings(frameDates, useLocalData = false) {
   if (frameDates.length < 2) {
     return []
   }
@@ -86,8 +86,4 @@ function locationsAfterPreviousFrame(lightnings, currentTime, previousTime = new
   return lightnings
     .filter(l => l.time > previousTime && l.time <= currentTime)
     .map(f => f.location)
-}
-
-export {
-  fetchLightnings
 }
