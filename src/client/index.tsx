@@ -5,13 +5,29 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {Timeline} from './timeline'
 import {createMap, panTo, showRadarFrame} from './map'
+import {Frame, MapSettings} from './types'
+import Map from 'ol/Map'
 
 const FRAME_DELAY_MS = 500
 const FRAME_LIST_RELOAD_MS = 30 * 1000
 
-class SataakoApp extends React.Component {
-  constructor() {
-    super()
+interface SataakoAppState {
+  currentTimestamp: string | null
+  running: boolean
+  frames: Frame[]
+  mapSettings: MapSettings
+  collapsed: boolean
+}
+
+class SataakoApp extends React.Component<{}, SataakoAppState> {
+  public skipUpdate: number
+  public onResizeHandler: () => void
+  public map?: Map
+  public loadFramesInterval?: number
+  public animateRadarInterval?: number
+
+  constructor(props: {}) {
+    super(props)
     const params = this.parseQueryString()
     this.skipUpdate = 0
     this.state = {
@@ -33,8 +49,8 @@ class SataakoApp extends React.Component {
     this.map.on('moveend', this.onMapMove.bind(this, null))
 
     this.loadFramesList()
-    this.loadFramesInterval = setInterval(this.loadFramesList.bind(this, null), FRAME_LIST_RELOAD_MS)
-    this.animateRadarInterval = setInterval(this.animateRadar.bind(this, null), FRAME_DELAY_MS)
+    this.loadFramesInterval = setInterval(this.loadFramesList.bind(this, null), FRAME_LIST_RELOAD_MS) as unknown as number
+    this.animateRadarInterval = setInterval(this.animateRadar.bind(this, null), FRAME_DELAY_MS) as unknown as number
     window.addEventListener('resize', this.onResizeHandler)
 
     const params = this.parseQueryString()
@@ -43,11 +59,13 @@ class SataakoApp extends React.Component {
     }
   }
 
-  componentDidUpdate(_, prevState) {
-    if (this.state.currentTimestamp !== prevState.currentTimestamp) {
+  componentDidUpdate(_: unknown, prevState: SataakoAppState) {
+    if (this.map && this.state.currentTimestamp !== prevState.currentTimestamp) {
       const currentFrame = this.state.frames.find(frame => frame.timestamp === this.state.currentTimestamp)
-      this.setSkipUpdate(this.state.frames, currentFrame)
-      showRadarFrame(this.map, currentFrame)
+      if (currentFrame) {
+        this.setSkipUpdate(this.state.frames, currentFrame)
+        showRadarFrame(this.map, currentFrame)
+      }
     }
     if (this.state.collapsed !== prevState.collapsed) {
       localStorage.setItem('sataako-fi-collapsed-v2', String(this.state.collapsed))
@@ -77,14 +95,14 @@ class SataakoApp extends React.Component {
 
   loadFramesList() {
     axios.get('/frames.json').then(response => {
-      const frames = response.data
+      const frames = response.data as Frame[]
       this.setState(prevState => (
         {frames, currentTimestamp: this.currentTimestampDefault(prevState, frames)}
       ))
     })
   }
 
-  currentTimestampDefault(state, frames) {
+  currentTimestampDefault(state: SataakoAppState, frames: Frame[]) {
     if (!state.currentTimestamp) {
       return this.newestNonForecastTimestamp(frames)
     }
@@ -96,7 +114,7 @@ class SataakoApp extends React.Component {
     return state.currentTimestamp
   }
 
-  nextTimestamp(state) {
+  nextTimestamp(state: SataakoAppState) {
     if (!state.currentTimestamp) {
       return this.newestNonForecastTimestamp(state.frames)
     }
@@ -111,8 +129,8 @@ class SataakoApp extends React.Component {
     return state.frames[index + 1].timestamp
   }
 
-  newestNonForecastTimestamp(frames) {
-    return frames.filter(frame => !frame.isForecast).pop().timestamp
+  newestNonForecastTimestamp(frames: Frame[]) {
+    return frames.filter(frame => !frame.isForecast).pop()?.timestamp || null
   }
 
   animateRadar() {
@@ -126,7 +144,7 @@ class SataakoApp extends React.Component {
     }
   }
 
-  setSkipUpdate(frames, currentFrame) {
+  setSkipUpdate(frames: Frame[], currentFrame: Frame) {
     const isLastOfList = frames[frames.length - 1] === currentFrame
     if (isLastOfList) {
       this.skipUpdate = 4
@@ -138,7 +156,7 @@ class SataakoApp extends React.Component {
   }
 
   parseQueryString = () => {
-    return document.location.search
+    const parsed = document.location.search
       .slice(1)
       .split('&')
       .filter(p => p)
@@ -149,22 +167,31 @@ class SataakoApp extends React.Component {
           [key]: decodeURIComponent(value)
         }
       }, {})
+
+    const {collapsed, x, y, zoom}: {collapsed?: string, x?: string, y?: string, zoom?: string} = parsed
+    return {collapsed, x, y, zoom}
   }
 
-  onLocation(geolocationResponse) {
-    panTo(this.map, [geolocationResponse.coords.longitude, geolocationResponse.coords.latitude])
+  onLocation(geolocationResponse: GeolocationPosition) {
+    if (this.map) {
+      panTo(this.map, [geolocationResponse.coords.longitude, geolocationResponse.coords.latitude])
+    }
   }
 
   onMapMove() {
-    const [x, y] = this.map.getView().getCenter()
-    const zoom = this.map.getView().getZoom()
+    const view = this.map?.getView()
+    const center = view?.getCenter()
+    if (!view || !center) {
+      return
+    }
 
-    localStorage.setItem('sataako-fi-x', x)
-    localStorage.setItem('sataako-fi-y', y)
-    localStorage.setItem('sataako-fi-zoom', zoom)
+    const [x, y] = center
+    localStorage.setItem('sataako-fi-x', String(x))
+    localStorage.setItem('sataako-fi-y', String(y))
+    localStorage.setItem('sataako-fi-zoom', String(view.getZoom()))
   }
 
-  onTimelineSelect(timestamp) {
+  onTimelineSelect(timestamp: string) {
     this.setState({currentTimestamp: timestamp, running: false})
   }
 
@@ -177,8 +204,8 @@ class SataakoApp extends React.Component {
   }
 
   onResize() {
-    this.forceUpdate(() => this.map.updateSize())
+    this.forceUpdate(() => this.map?.updateSize())
   }
 }
 
-ReactDOM.render(<SataakoApp />, document.getElementById('app'))
+ReactDOM.render(<SataakoApp/>, document.getElementById('app'))

@@ -1,8 +1,7 @@
 import classNames from 'classnames'
-import PropTypes from 'prop-types'
 import React from 'react'
 
-export class InfoPanel extends React.PureComponent {
+export class InfoPanel extends React.PureComponent<{collapsed: boolean, onInfoPanelToggle: () => void}> {
   render() {
     const {collapsed} = this.props
     const buttonText = collapsed ? 'Tietoa palvelusta' : 'SULJE'
@@ -29,9 +28,4 @@ export class InfoPanel extends React.PureComponent {
       </div>
     </div>
   }
-}
-
-InfoPanel.propTypes = {
-  collapsed: PropTypes.bool.isRequired,
-  onInfoPanelToggle: PropTypes.func.isRequired
 }

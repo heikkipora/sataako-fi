@@ -1,41 +1,33 @@
 import classNames from 'classnames'
 import {format, parseISO} from 'date-fns'
-import PropTypes from 'prop-types'
 import React from 'react'
+import {Frame} from './types'
 
-export class Timeline extends React.PureComponent {
-  constructor(props) {
-    super(props)
-    this.timelineRef = React.createRef()
-    this.onTouchHandler = this.onTouch.bind(this)
-  }
+interface TimelineProps {
+  currentTimestamp: string
+  running: boolean
+  timestamps: Frame[]
+  onResume: () => void
+  onSelect: (timestamp: string) => void
+}
 
-  componentDidMount() {
-    this.timelineRef.current.addEventListener('touchstart', this.onTouchHandler)
-    this.timelineRef.current.addEventListener('touchmove', this.onTouchHandler)
-    this.timelineRef.current.addEventListener('touchend', this.onTouchHandler)
-  }
-
-  componentWillUnmount() {
-    this.timelineRef.current.removeEventListener('touchstart', this.onTouchHandler)
-    this.timelineRef.current.removeEventListener('touchmove', this.onTouchHandler)
-    this.timelineRef.current.removeEventListener('touchend', this.onTouchHandler)
-  }
-
+export class Timeline extends React.PureComponent<TimelineProps> {
   render() {
     const {timestamps, currentTimestamp} = this.props
-    return <div className="timeline" ref={this.timelineRef}>
+    const touchHandler = this.onTouch.bind(this)
+    const touchEndHandler = this.onTouchEnd.bind(this)
+    return <div className="timeline" onTouchStart={touchHandler} onTouchMove={touchHandler} onTouchEnd={touchEndHandler}>
       {this.renderTicks(timestamps, currentTimestamp)}
     </div>
   }
 
-  renderTicks(timestamps, currentTimestamp) {
+  renderTicks(timestamps: Frame[], currentTimestamp: string) {
     return timestamps.map(t =>
       this.renderTick(t, t.timestamp === currentTimestamp)
     )
   }
 
-  renderTick({timestamp, isForecast}, isCurrent) {
+  renderTick({timestamp, isForecast}: Frame, isCurrent: boolean) {
     const formattedTimestamp = this.formatTimestamp(timestamp)
     const quarter = this.isQuarter(formattedTimestamp)
     const className = classNames(
@@ -51,22 +43,22 @@ export class Timeline extends React.PureComponent {
     </div>
   }
 
-  onMouseEnter(timestamp, event) {
-    const leftPressed = event.buttons === undefined ? event.which === 1 : event.buttons === 1
+  onMouseEnter(timestamp: string, event: React.MouseEvent) {
+    const leftPressed = event.buttons === 1
     if (leftPressed) {
       this.props.onSelect(timestamp)
     }
   }
 
-  onTouch(event) {
+  onTouch(event: React.TouchEvent) {
     event.preventDefault()
-    if (event.type === 'touchend') {
-      this.props.onResume()
+    if (event.touches.length === 0) {
       return
     }
-    const {clientX, clientY} = event.touches && event.touches.length > 0 ? event.touches[0] : event
-    if (clientX && clientY) {
-      const element = document.elementFromPoint(clientX, clientY)
+
+    const {clientX, clientY} = event.touches.item(0)
+    const element = document.elementFromPoint(clientX, clientY)
+    if (element instanceof HTMLElement) {
       const {timestamp} = element.dataset
       if (timestamp) {
         this.props.onSelect(timestamp)
@@ -74,7 +66,12 @@ export class Timeline extends React.PureComponent {
     }
   }
 
-  renderTooltip = (formattedTimestamp, isForecast) => {
+  onTouchEnd(event: React.TouchEvent) {
+    event.preventDefault()
+    this.props.onResume()
+  }
+
+  renderTooltip = (formattedTimestamp: string, isForecast?: boolean) => {
     const className = classNames(
       'timeline__tooltip',
       {'timeline__tooltip--forecast': isForecast}
@@ -82,18 +79,10 @@ export class Timeline extends React.PureComponent {
     return <div className={className}>{formattedTimestamp}</div>
   }
 
-  formatTimestamp = timestamp => format(parseISO(timestamp), 'HH:mm')
+  formatTimestamp = (timestamp: string) => format(parseISO(timestamp), 'HH:mm')
 
-  isQuarter = formattedTimestamp => {
+  isQuarter = (formattedTimestamp: string) => {
     const [, minutes] = formattedTimestamp.split(':')
     return ['00', '15', '30', '45'].includes(minutes)
   }
-}
-
-Timeline.propTypes = {
-  currentTimestamp: PropTypes.string.isRequired,
-  running: PropTypes.bool.isRequired,
-  timestamps: PropTypes.array.isRequired,
-  onResume: PropTypes.func.isRequired,
-  onSelect: PropTypes.func.isRequired
 }
