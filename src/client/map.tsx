@@ -25,6 +25,9 @@ register(proj4)
 const imageProjection = new Projection({code: 'EPSG:3067'})
 const imageExtent = [-118331.366408, 6335621.167014, 875567.731907, 7907751.537264]
 
+// OpenLayers leaves the map distorted on some mobile browsers after screen orientation change
+window.addEventListener('orientationchange', () => location.reload())
+
 export function createMap(settings: MapSettings) {
   const {x, y, zoom} = settings
   const center = [x, y]
@@ -40,13 +43,10 @@ export function createMap(settings: MapSettings) {
     controls: defaultControls({attribution: false, rotate: false}),
     interactions: defaultInteractions({altShiftDragRotate: false, pinchRotate: false}),
     layers: [createMapLayer(), createRadarLayer(), createLightningLayer(), createIconLayer(center)],
-    target: 'map',
     view
   })
 
-  // OpenLayers leaves the map distorted on some mobile browsers after screen orientation change
-  window.addEventListener('orientationchange', () => location.reload())
-
+  window.addEventListener('resize', map.updateSize)
   return map
 }
 

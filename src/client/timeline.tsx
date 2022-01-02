@@ -2,7 +2,11 @@ import {Frame} from './types'
 import React, {useCallback} from 'react'
 import {TimelineTick} from './timeline-tick'
 
-export function Timeline({currentTimestamp, running, timestamps, onResume, onSelect}: {currentTimestamp: string, running: boolean, timestamps: Frame[], onResume: () => void, onSelect: (timestamp: string) => void}) {
+export function Timeline({currentTimestamp, running, timestamps, onResume, onSelect}: {currentTimestamp: string | null, running: boolean, timestamps: Frame[], onResume: () => void, onSelect: (timestamp: string) => void}) {
+  if (!currentTimestamp) {
+    return null
+  }
+
   const touchHandler = useCallback(event => onTouch(onSelect, event), [onSelect])
   const touchEndHandler = useCallback(event => onTouchEnd(onResume, event), [onResume])
 
