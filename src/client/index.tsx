@@ -1,5 +1,6 @@
 import axios from 'axios'
 import classNames from 'classnames'
+import {collapsedInitial, mapSettings, overrideParams, storeCollapsed, storeMapSettings} from './settings'
 import {createMap, panTo, showRadarFrame} from './map'
 import {Frame} from './types'
 import {InfoPanel} from './info-panel'
@@ -10,48 +11,12 @@ import {Timeline} from './timeline'
 const FRAME_DELAY_MS = 500
 const FRAME_LIST_RELOAD_MS = 30 * 1000
 
-const params = parseQueryString()
-function parseQueryString() {
-  const parsed = document.location.search
-    .slice(1)
-    .split('&')
-    .filter(p => p)
-    .reduce((acc, parameter) => {
-      const [key, value] = parameter.split('=')
-      return {
-        ...acc,
-        [key]: decodeURIComponent(value)
-      }
-    }, {})
-
-  const {collapsed, x, y, zoom}: {collapsed?: string, x?: string, y?: string, zoom?: string} = parsed
-  return {collapsed, x, y, zoom}
-}
-
-const collapsedInitial = (params.collapsed || localStorage.getItem('sataako-fi-collapsed-v2')) === 'true'
-const mapSettings = {
-  x: Number(params.x || localStorage.getItem('sataako-fi-x')) || 2776307.5078,
-  y: Number(params.y || localStorage.getItem('sataako-fi-y')) || 8438349.32742,
-  zoom: Number(params.zoom || localStorage.getItem('sataako-fi-zoom')) || 7
-}
-
 const map = createMap(mapSettings)
+map.on('moveend', () => storeMapSettings(map.getView().getCenter(), map.getView().getZoom()))
 
-if (!params.x && !params.y && navigator.geolocation) {
+if (!overrideParams.x && !overrideParams.y && navigator.geolocation) {
   navigator.geolocation.getCurrentPosition((position) => panTo(map, [position.coords.longitude, position.coords.latitude]))
 }
-
-map.on('moveend', () => {
-  const center = map.getView().getCenter()
-  if (!center) {
-    return
-  }
-
-  const [x, y] = center
-  localStorage.setItem('sataako-fi-x', String(x))
-  localStorage.setItem('sataako-fi-y', String(y))
-  localStorage.setItem('sataako-fi-zoom', String(map.getView().getZoom()))
-})
 
 // eslint-disable-next-line max-statements
 function SataakoApp() {
@@ -62,8 +27,7 @@ function SataakoApp() {
   const [running, setRunning] = useState<boolean>(true)
   const [frameDelay, setFrameDelay] = useState<number>(FRAME_DELAY_MS)
 
-  useEffect(() => localStorage.setItem('sataako-fi-collapsed-v2', String(collapsed)), [collapsed])
-
+  useEffect(() => storeCollapsed(collapsed), [collapsed])
   useEffect(() => map.setTarget(mapRef.current ?? undefined), [])
 
   useEffect(() => {
