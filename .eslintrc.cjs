@@ -18,7 +18,6 @@ module.exports = {
         "sourceType": "module",
         "ecmaVersion": 2020
     },
-    "parser": "@babel/eslint-parser",
     "plugins": [
         "react"
     ],
