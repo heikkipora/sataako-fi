@@ -48,8 +48,8 @@ function SataakoApp() {
     if (!running || !currentTimestamp) {
       return undefined
     }
-    const timer = setInterval(animateRadar, frameDelay)
-    return () => clearInterval(timer)
+    const timer = setTimeout(animateRadar, frameDelay)
+    return () => clearTimeout(timer)
   }, [running, currentTimestamp, frameDelay])
 
   useEffect(() => {
