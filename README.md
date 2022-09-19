@@ -7,7 +7,7 @@ Introduction
 ------------
 I wanted to create a mobile-friendly weather service for Finland which has the simplest possible user interface (in Finnish).
 
-[Sataako.fi](https://www.sataako.fi) fetches weather radar images from [Finnish Meteorological Institute](http://en.ilmatieteenlaitos.fi)'s [Open Data APIs](http://en.ilmatieteenlaitos.fi/open-data-manual) and shows them as a Openlayers v5 image layer after some post-processing. The map tiles are server from <a href="https://www.mapbox.com">Mapbox</a>. The movement of rain clouds is shown as a short animation covering the last hour.
+[Sataako.fi](https://www.sataako.fi) fetches weather radar images from [Finnish Meteorological Institute](http://en.ilmatieteenlaitos.fi)'s [Open Data APIs](http://en.ilmatieteenlaitos.fi/open-data-manual) and shows them as a Openlayers v6 image layer after some post-processing. The map tiles are served from <a href="https://www.openstreetmap.org)">OpenStreetMap</a> via a long-caching proxy. The movement of rain clouds is shown as a short animation covering the last hour.
 
 [![build status](https://travis-ci.org/heikkipora/sataako-fi.svg?branch=master)](https://travis-ci.org/heikkipora/sataako-fi)
 
