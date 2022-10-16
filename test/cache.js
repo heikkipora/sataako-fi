@@ -20,7 +20,7 @@ describe('Radar image and lightning cache', () => {
       expect(frame).to.have.property('lightnings')
       expect(frame.lightnings).to.be.an('array')
     })
-  })
+  }).timeout(30000)
 
   it('Should resolve cached files only', async() => {
     await refreshCache(2, 120, true)
