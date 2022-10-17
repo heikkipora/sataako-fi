@@ -3,9 +3,14 @@ import {EPSG_3067_BOUNDS} from './fmi-radar-frames.js'
 import fs from 'fs'
 import proj4 from 'proj4'
 import url from 'url'
-import parser from 'fast-xml-parser'
+import {XMLParser} from 'fast-xml-parser'
 
 proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
+
+const xmlParser = new XMLParser({
+  parseTagValue: false,
+  removeNSPrefix: true
+})
 
 const FEATURE_URL = url.parse('https://opendata.fmi.fi/wfs')
 FEATURE_URL.query = {
@@ -22,7 +27,7 @@ export async function fetchLightnings(frameDates, useLocalData = false) {
   }
 
   const data = await loadData(frameDates, useLocalData)
-  const wfsResponse = xmlToObject(data)
+  const wfsResponse = xmlParser.parse(data)
   const lightnings = extractLocationsAndTimes(wfsResponse)
   return snapLightningsToFrames(lightnings, frameDates)
 }
@@ -46,13 +51,6 @@ function constructLightningsUrl(frameDates) {
   lightningsUrl.query.starttime = starttime.toISOString()
   lightningsUrl.query.endtime = endtime.toISOString()
   return url.format(lightningsUrl)
-}
-
-function xmlToObject(xml) {
-  return parser.parse(xml.toString(), {
-    ignoreNameSpace: true,
-    parseNodeValue: false
-  })
 }
 
 function extractLocationsAndTimes({FeatureCollection}) {

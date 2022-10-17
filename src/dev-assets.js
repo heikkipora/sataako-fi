@@ -1,13 +1,10 @@
-import browserify from 'browserify-middleware'
-import lessMiddleware from 'less-middleware'
+import config from '../webpack.dev.js'
+import webpack from 'webpack'
+import webpackDevMiddleware from 'webpack-dev-middleware'
+import webpackHotMiddleware from 'webpack-hot-middleware'
 
 export function bindDevAssets(app) {
-  app.use(lessMiddleware('public'))
-  app.get('/client.js', browserify('src/client/index.js', {
-    transform: [['babelify', {
-      global: true,
-      ignore: [/\/node_modules\/(?!ol\/)/],
-      presets: ["@babel/env", "@babel/react"]
-    }]]
-  }))
+  const compiler = webpack(config)
+  app.use(webpackDevMiddleware(compiler))
+  app.use(webpackHotMiddleware(compiler))
 }

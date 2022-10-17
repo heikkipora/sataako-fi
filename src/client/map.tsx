@@ -2,7 +2,7 @@ import {defaults as defaultInteractions} from 'ol/interaction'
 import Feature from 'ol/Feature'
 import {register} from 'ol/proj/proj4'
 import Icon from 'ol/style/Icon'
-import Image from 'ol/layer/Image'
+import ImageLayer from 'ol/layer/Image'
 import ImageStatic from 'ol/source/ImageStatic'
 import Map from 'ol/Map'
 import Point from 'ol/geom/Point'
@@ -17,13 +17,15 @@ import {fromLonLat} from 'ol/proj'
 import VectorSource from 'ol/source/Vector'
 import {defaults as defaultControls} from 'ol/control'
 import GeoJSON from 'ol/format/GeoJSON'
+import {Frame, MapSettings} from './types'
+import Geometry from 'ol/geom/Geometry'
 
 proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
 register(proj4)
 const imageProjection = new Projection({code: 'EPSG:3067'})
 const imageExtent = [-118331.366408, 6335621.167014, 875567.731907, 7907751.537264]
 
-export function createMap(settings) {
+export function createMap(settings: MapSettings) {
   const {x, y, zoom} = settings
   const center = [x, y]
   const view = new View({
@@ -38,13 +40,15 @@ export function createMap(settings) {
     controls: defaultControls({attribution: false, rotate: false}),
     interactions: defaultInteractions({altShiftDragRotate: false, pinchRotate: false}),
     layers: [createMapLayer(), createRadarLayer(), createLightningLayer(), createIconLayer(center)],
-    target: 'map',
     view
   })
 
-  // OpenLayers leaves the map distorted on some mobile browsers after screen orientation change
-  window.addEventListener('orientationchange', () => location.reload())
+  function updateSizeLater() {
+    setTimeout(() => map.updateSize(), 1000)
+  }
 
+  window.addEventListener('resize', updateSizeLater)
+  window.addEventListener('orientationchange', updateSizeLater)
   return map
 }
 
@@ -54,10 +58,10 @@ function createMapLayer() {
 }
 
 function createRadarLayer() {
-  return new Image({opacity: 0.8, visible: false})
+  return new ImageLayer({opacity: 0.8, visible: false})
 }
 
-function createIconLayer(position) {
+function createIconLayer(position: number[]) {
   const style = new Style({
     image: new Icon({
       anchor: [0.5, 1.0],
@@ -77,15 +81,15 @@ function createIconLayer(position) {
   return new VectorLayer({source})
 }
 
-const radarImageSourcesCache = {}
+const radarImageSourcesCache: {[key: string]: ImageStatic | undefined} = {}
 
-export function showRadarFrame(map, {image, lightnings}) {
+export function showRadarFrame(map: Map, {image, lightnings}: Frame) {
   const radarImageSource = radarImageSourcesCache[image] || (radarImageSourcesCache[image] = createImageSource(image))
-  const radarLayer = map.getLayers().getArray()[1]
+  const radarLayer = map.getLayers().getArray()[1] as ImageLayer<ImageStatic>
   radarLayer.setSource(radarImageSource)
   radarLayer.setVisible(true)
   if (lightnings) {
-    const lightningLayer = map.getLayers().getArray()[2]
+    const lightningLayer = map.getLayers().getArray()[2] as VectorLayer<VectorSource<Geometry>>
     lightningLayer.setVisible(true)
     const featureObj = {
       type: 'Feature',
@@ -114,7 +118,7 @@ function createLightningLayer() {
   })
 }
 
-function createImageSource(url) {
+function createImageSource(url: string) {
   return new ImageStatic({
     imageExtent,
     projection: imageProjection,
@@ -122,10 +126,10 @@ function createImageSource(url) {
   })
 }
 
-export function panTo(map, lonLat) {
+export function panTo(map: Map, lonLat: [number, number]) {
   const center = fromLonLat(lonLat);
-  const vectorLayer = map.getLayers().getArray()[3]
-  const vectorFeature = vectorLayer.getSource().getFeatures()[0]
-  vectorFeature.setGeometry(new Point(center))
+  const vectorLayer = map.getLayers().getArray()[3] as VectorLayer<VectorSource<Geometry>>
+  const [vectorFeature] = vectorLayer.getSource()?.getFeatures() || []
+  vectorFeature?.setGeometry(new Point(center))
   map.getView().animate({center, duration: 1000})
 }

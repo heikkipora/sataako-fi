@@ -14,10 +14,4 @@ rm -fr build/src/client
 cp package*json build
 
 # Bundle and minify client JS
-npx browserify -g [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] src/client/index.js | npx uglifyjs --compress --mangle > build/public/client.js
-
-# Compile LESS to minified CSS
-npx lessc --include-path=public public/client.less | npx cleancss -o build/public/client.css
-
-# Remove LESS source
-rm build/public/*.less
+npx webpack --config webpack.prod.js
