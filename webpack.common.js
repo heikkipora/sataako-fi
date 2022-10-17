@@ -21,6 +21,9 @@ const config = {
   },
   resolve: {
     extensions: ['.js', '.ts', '.tsx']
+  },
+  performance: {
+    hints: false
   }
 }
 
