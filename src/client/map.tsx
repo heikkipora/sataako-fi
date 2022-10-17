@@ -127,7 +127,7 @@ function createImageSource(url: string) {
 export function panTo(map: Map, lonLat: [number, number]) {
   const center = fromLonLat(lonLat);
   const vectorLayer = map.getLayers().getArray()[3] as VectorLayer<VectorSource<Geometry>>
-  const vectorFeature = vectorLayer.getSource().getFeatures()[0]
-  vectorFeature.setGeometry(new Point(center))
+  const [vectorFeature] = vectorLayer.getSource()?.getFeatures() || []
+  vectorFeature?.setGeometry(new Point(center))
   map.getView().animate({center, duration: 1000})
 }

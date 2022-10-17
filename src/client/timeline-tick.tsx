@@ -12,7 +12,7 @@ export function TimelineTick({isCurrent, isForecast, running, timestamp, onResum
     {'timeline__tick--selected': !running && isCurrent}
   )
   const onSelectHandler = useCallback(() => onSelect(timestamp), [timestamp, onSelect])
-  const onEnterHandler = useCallback(event => {
+  const onEnterHandler = useCallback((event: React.MouseEvent) => {
     const leftPressed = event.buttons === 1
     if (leftPressed) {
       onSelect(timestamp)

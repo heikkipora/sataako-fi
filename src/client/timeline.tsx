@@ -7,8 +7,8 @@ export function Timeline({currentTimestamp, running, timestamps, onResume, onSel
     return null
   }
 
-  const touchHandler = useCallback(event => onTouch(onSelect, event), [onSelect])
-  const touchEndHandler = useCallback(event => onTouchEnd(onResume, event), [onResume])
+  const touchHandler = useCallback((event: React.TouchEvent) => onTouch(onSelect, event), [onSelect])
+  const touchEndHandler = useCallback((event: React.TouchEvent) => onTouchEnd(onResume, event), [onResume])
 
   return <div className="timeline" onTouchStart={touchHandler} onTouchMove={touchHandler} onTouchEnd={touchEndHandler}>
     {timestamps.map(({timestamp, isForecast}) => <TimelineTick key={timestamp} timestamp={timestamp} isCurrent={timestamp === currentTimestamp} isForecast={isForecast} running={running} onResume={onResume} onSelect={onSelect}/>)}
