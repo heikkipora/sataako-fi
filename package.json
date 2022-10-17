@@ -4,7 +4,7 @@
   "scripts": {
     "build": "./production-build",
     "start": "node src/app.js",
-    "eslint": "eslint --fix src/*.js test/*.js",
+    "eslint": "eslint --fix --ext .js,.ts,.tsx src test",
     "test": "mocha --timeout 20000 test/*.js"
   },
   "dependencies": {

@@ -32,7 +32,6 @@ async function processImage(input, targetFilename) {
 
 function isAllWhite(data) {
   for (let i = 0; i < data.length; i += 4) {
-    // eslint-disable-next-line no-bitwise, no-mixed-operators
     const color = data[i] << 16 | data[i + 1] << 8 | data[i + 2]
     if (color !== 0xffffff) {
       return false
@@ -43,7 +42,6 @@ function isAllWhite(data) {
 
 function applyAlphaChannel(data) {
   for (let i = 0; i < data.length; i += 4) {
-    // eslint-disable-next-line no-bitwise, no-mixed-operators
     const color = data[i] << 16 | data[i + 1] << 8 | data[i + 2]
     if (color === 0xffffff || color === 0xf7f7f7) {
       data[i + 3] = 0
