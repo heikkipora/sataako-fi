@@ -25,7 +25,7 @@ Example: `https://www.sataako.fi?x=2776307.5078&y=8438349.32742&zoom=7&collapsed
 
 Runtime environment
 -------------------
-The node.js application runs in [Hetzner Cloud](https://https://www.hetzner.com/cloud) with a single vCpu instance. It's deployed there with ```ansible```.
+The node.js application runs in [Hetzner Cloud](https://www.hetzner.com/cloud) with a single vCpu instance. It's deployed there with ```ansible```.
 
 It's responsible for
 
