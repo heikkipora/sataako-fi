@@ -7,7 +7,7 @@ Introduction
 ------------
 I wanted to create a mobile-friendly weather service for Finland which has the simplest possible user interface (in Finnish).
 
-[Sataako.fi](https://www.sataako.fi) fetches weather radar images from [Finnish Meteorological Institute](http://en.ilmatieteenlaitos.fi)'s [Open Data APIs](http://en.ilmatieteenlaitos.fi/open-data-manual) and shows them as a Openlayers v6 image layer after some post-processing. The map tiles are served from <a href="https://www.openstreetmap.org)">OpenStreetMap</a> via a long-caching proxy. The movement of rain clouds is shown as a short animation covering the last hour.
+[Sataako.fi](https://www.sataako.fi) fetches weather radar images from [Finnish Meteorological Institute](http://en.ilmatieteenlaitos.fi)'s [Open Data APIs](http://en.ilmatieteenlaitos.fi/open-data-manual) and shows them as a Openlayers image layer after some post-processing. The map tiles are served from <a href="https://www.openstreetmap.org)">OpenStreetMap</a> via a long-caching proxy. The movement of rain clouds is shown as a short animation covering the last hour.
 
 [![build status](https://travis-ci.org/heikkipora/sataako-fi.svg?branch=master)](https://travis-ci.org/heikkipora/sataako-fi)
 
@@ -25,8 +25,7 @@ Example: `https://www.sataako.fi?x=2776307.5078&y=8438349.32742&zoom=7&collapsed
 
 Runtime environment
 -------------------
-The node.js application runs in [AWS](https://aws.amazon.com) with a single ```t3.micro``` instance on ```eu-north-1``` region.
-It's deployed there with ```ansible```.
+The node.js application runs in [Hetzner Cloud](https://https://www.hetzner.com/cloud) with a single vCpu instance. It's deployed there with ```ansible```.
 
 It's responsible for
 
@@ -51,7 +50,7 @@ To be able to use those images on top of the Mapbox map the following steps are 
 * use an [overlay-image](src/radar-edges.png) to draw the edge of the radars' range
 * encode image as PNG and WEBP maintaining transparency
 
-Openlayers will then reproject those images on the fly to [EPSG:3857 projection](http://spatialreference.org/ref/sr-org/7483/) aka WGS84 Web Mercator which is used by the Mapbox tiles.
+OpenLayers will then reproject those images on the fly to [EPSG:3857 projection](http://spatialreference.org/ref/sr-org/7483/) aka WGS84 Web Mercator which is used by the OpenStreetMap tiles.
 
 ## Contributing
 
