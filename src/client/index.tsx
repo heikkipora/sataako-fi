@@ -2,10 +2,10 @@ import axios from 'axios'
 import classNames from 'classnames'
 import {collapsedInitial, mapSettings, overrideParams, storeCollapsed, storeMapSettings} from './settings'
 import {createMap, panTo, showRadarFrame} from './map'
+import {createRoot} from 'react-dom/client'
 import {Frame} from './types'
 import {InfoPanel} from './info-panel'
 import React, {useCallback, useEffect, useRef, useState} from 'react'
-import ReactDOM from 'react-dom'
 import {Timeline} from './timeline'
 
 const FRAME_DELAY_MS = 500
@@ -113,4 +113,6 @@ function newestNonForecastTimestamp(frames: Frame[]) {
   return frames.filter(frame => !frame.isForecast).pop()?.timestamp || null
 }
 
-ReactDOM.render(<SataakoApp/>, document.getElementById('app'))
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(document.getElementById('app')!)
+root.render(<SataakoApp/>);
