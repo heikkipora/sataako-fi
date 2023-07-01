@@ -34,7 +34,6 @@ function SataakoApp() {
     async function loadFramesList() {
       const {data}: {data: Frame[]} = await axios.get('/frames.json')
       setFrames(data)
-      setCurrentTimestamp(currentTimestampDefault(currentTimestamp, data))
     }
     loadFramesList()
     const timer = setInterval(loadFramesList, FRAME_LIST_RELOAD_MS)
@@ -45,12 +44,12 @@ function SataakoApp() {
     function animateRadar() {
       setCurrentTimestamp(nextTimestamp(currentTimestamp, frames))
     }
-    if (!running || !currentTimestamp) {
+    if (!running) {
       return undefined
     }
     const timer = setTimeout(animateRadar, frameDelay)
     return () => clearTimeout(timer)
-  }, [running, currentTimestamp, frameDelay])
+  }, [running, currentTimestamp, frameDelay, frames])
 
   useEffect(() => {
     const currentFrame = frames.find(frame => frame.timestamp === currentTimestamp)
@@ -80,18 +79,6 @@ function SataakoApp() {
     <InfoPanel collapsed={collapsed} onInfoPanelToggle={onInfoPanelToggle}/>
     <Timeline timestamps={frames} currentTimestamp={currentTimestamp} running={running} onResume={onTimelineResume} onSelect={onTimelineSelect}/>
   </div>
-}
-
-function currentTimestampDefault(currentTimestamp: string | null, frames: Frame[]) {
-  if (!currentTimestamp || frames.length === 0) {
-    return newestNonForecastTimestamp(frames)
-  }
-
-  const index = frames.findIndex(frame => frame.timestamp === currentTimestamp)
-  if (index === -1) {
-    return frames[0].timestamp
-  }
-  return currentTimestamp
 }
 
 function nextTimestamp(currentTimestamp: string | null, frames: Frame[]) {
