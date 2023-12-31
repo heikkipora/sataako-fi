@@ -1,8 +1,5 @@
-
-import chai from 'chai'
+import {expect} from 'chai'
 import {generateRadarFrameTimestamps, wmsRequestForRadar, wmsRequestForRadarEstimate} from '../src/fmi-radar-frames.js'
-
-const {expect} = chai
 
 describe('FMI rain radar wms request generator', () => {
   it('Should generate a set of frame timestamps in five-minute intervals', () => {

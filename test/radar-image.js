@@ -1,12 +1,9 @@
-
-import chai from 'chai'
+import {expect} from 'chai'
 import {fetchPostProcessedRadarFrame} from '../src/fmi-radar-images.js'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import {generateRadarFrameTimestamps, wmsRequestForRadar} from '../src/fmi-radar-frames.js'
-
-const {expect} = chai
 
 describe('FMI rain radar image fetcher', () => {
   let tmpFolder = null

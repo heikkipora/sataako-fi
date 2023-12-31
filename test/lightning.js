@@ -1,10 +1,6 @@
-
-import chai from 'chai'
+import {expect} from 'chai'
 import {fetchLightnings} from '../src/fmi-lightnings.js'
-import dateFns from 'date-fns'
-
-const {expect} = chai
-const {setMilliseconds, setMinutes, setSeconds, subMinutes} = dateFns
+import {setMilliseconds, setMinutes, setSeconds, subMinutes} from 'date-fns'
 
 describe('FMI lightning data set parser', () => {
   it('Should not fail on an empty set of frame dates', async () => {
