@@ -88,9 +88,12 @@ export function showRadarFrame(map: Map, {image, lightnings}: Frame) {
   const radarLayer = map.getLayers().getArray()[1] as ImageLayer<ImageStatic>
   radarLayer.setSource(radarImageSource)
   radarLayer.setVisible(true)
-  if (lightnings) {
+
+  const hasLightnings = lightnings.length > 0
+  const lightningLayer = map.getLayers().getArray()[2] as VectorLayer<VectorSource<Feature<Geometry>>>
+  lightningLayer.setVisible(hasLightnings)
+  if (hasLightnings) {
     const lightningLayer = map.getLayers().getArray()[2] as VectorLayer<VectorSource<Feature<Geometry>>>
-    lightningLayer.setVisible(true)
     const featureObj = {
       type: 'Feature',
       geometry: {
