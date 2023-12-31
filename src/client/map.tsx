@@ -89,7 +89,7 @@ export function showRadarFrame(map: Map, {image, lightnings}: Frame) {
   radarLayer.setSource(radarImageSource)
   radarLayer.setVisible(true)
   if (lightnings) {
-    const lightningLayer = map.getLayers().getArray()[2] as VectorLayer<VectorSource<Geometry>>
+    const lightningLayer = map.getLayers().getArray()[2] as VectorLayer<VectorSource<Feature<Geometry>>>
     lightningLayer.setVisible(true)
     const featureObj = {
       type: 'Feature',
@@ -98,8 +98,8 @@ export function showRadarFrame(map: Map, {image, lightnings}: Frame) {
         coordinates: lightnings.map(coord => fromLonLat(coord))
       }
     }
-    const lightningFeature = new GeoJSON().readFeature(featureObj)
-    lightningLayer.setSource(new VectorSource({
+    const lightningFeature = new GeoJSON().readFeature(featureObj) as Feature<Geometry>
+    lightningLayer.setSource(new VectorSource<Feature<Geometry>>({
       features: [lightningFeature]
     }))
   }
@@ -128,7 +128,7 @@ function createImageSource(url: string) {
 
 export function panTo(map: Map, lonLat: [number, number]) {
   const center = fromLonLat(lonLat);
-  const vectorLayer = map.getLayers().getArray()[3] as VectorLayer<VectorSource<Geometry>>
+  const vectorLayer = map.getLayers().getArray()[3] as VectorLayer<VectorSource<Feature<Geometry>>>
   const [vectorFeature] = vectorLayer.getSource()?.getFeatures() || []
   vectorFeature?.setGeometry(new Point(center))
   map.getView().animate({center, duration: 1000})
