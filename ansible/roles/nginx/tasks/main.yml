@@ -1,13 +1,16 @@
-- name: install packages
+- name: install nginx, and epel repository (for certbot)
   package:
-    name: "{{ item }}"
+    name:
+      - epel-release
+      - nginx
     state: latest
-    lock_timeout: 180
-  with_items:
-    - nano
-    - nginx
-    - certbot
-    - python2-certbot-nginx
+
+- name: install certbot
+  package:
+    name:
+      - certbot
+      - python3-certbot-nginx
+    state: latest
 
 - name: create nginx site configuration
   template:
@@ -19,12 +22,14 @@
   notify:
     - restart nginx
 
-- name: create cron job for renewing the SSL certificate
-  cron:
-    name: "certbot renew"
-    minute: "0"
-    hour: "0,12"
-    job: "python -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew"
+- name: enable and start nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
 
-- name: ensure nginx is running (and enable it at boot)
-  service: name=nginx state=started enabled=yes
+- name: enable and start certbot renewal timer
+  service:
+    name: certbot-renew.timer
+    state: started
+    enabled: yes

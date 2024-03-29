@@ -5,8 +5,7 @@ After=network.target
 
 [Service]
 Environment="NODE_ENV=production"
-Environment="LD_PRELOAD=/usr/lib64/libjemalloc.so.1"
-ExecStart=/bin/node --max-old-space-size=256 src/app.js
+ExecStart=/bin/node --max-old-space-size=512 src/app.js
 Restart=always
 RestartSec=10
 User=sataako

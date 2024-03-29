@@ -1,42 +1,25 @@
-- name: add epel-release rpm repository
-  yum:
-    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    state: present
-    lock_timeout: 180
-
-- name: add nodesource rpm repository
-  yum:
-    name: https://rpm.nodesource.com/pub_18.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm
-    state: present
-    lock_timeout: 180
-
-- name: add nginx rpm repository
-  yum_repository:
-    name: nginx-stable
-    description: nginx stable
-    baseurl: http://nginx.org/packages/mainline/centos/7/$basearch/
-    gpgkey: https://nginx.org/keys/nginx_signing.key
-    gpgcheck: yes
-
 - name: upgrade all packages
   yum:
     name: '*'
     state: latest
-    lock_timeout: 180
 
 - name: set timezone
   timezone:
     name: Europe/Helsinki
 
+- name: install nano
+  package:
+    name: nano
+    state: latest
+
 - name: install firewalld
   package:
     name: firewalld
     state: latest
-    lock_timeout: 180
   notify:
     - restart firewalld
 
-- name: configure firewalld
+- name: allow http, https and ssh through firewall
   firewalld:
     service: "{{ item }}"
     permanent: yes
@@ -48,5 +31,8 @@
   notify:
     - restart firewalld
 
-- name: ensure firewalld is running (and enable it at boot)
-  service: name=firewalld state=started enabled=yes
+- name: enable and start firewalld
+  service:
+    name: firewalld
+    state: started
+    enabled: yes

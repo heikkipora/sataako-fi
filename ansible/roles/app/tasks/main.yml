@@ -41,9 +41,6 @@
     - reload systemctl
     - restart sataako
 
-- name: enable service
-  service: name=sataako enabled=yes
-
 - name: create cache directory
   file:
     path: /var/run/sataako
@@ -57,3 +54,9 @@
     src: sataako.conf
     dest: /etc/tmpfiles.d/
     mode: '0644'
+
+- name: enable and starat sataako.fi app
+  service:
+    name: sataako
+    state: started
+    enabled: yes

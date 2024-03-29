@@ -1,10 +1,7 @@
-- name: install packages
+- name: enable Node.js v20 module
+  shell: dnf module enable nodejs:20
+
+- name: install Node.js
   package:
-    name: "{{ item }}"
+    name: nodejs
     state: latest
-    lock_timeout: 180
-  with_items:
-    - gcc-c++
-    - make
-    - nodejs
-    - jemalloc
