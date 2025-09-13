@@ -5,7 +5,12 @@ sharp.cache(false)
 sharp.concurrency(1)
 
 export async function fetchPostProcessedRadarFrame(requestConfig, targetFilename) {
-  const {data} = await axios(requestConfig)
+  const {data, headers} = await axios(requestConfig)
+  if (headers['content-type'] !== 'image/png') {
+    // Typically an XML error message ("Could not find a match for "time" value: "<timestamp>") for
+    // a time value that does not yet have radar data available.
+    return true
+  }
   return processImage(data, targetFilename)
 }
 
@@ -14,10 +19,6 @@ async function processImage(input, targetFilename) {
     .ensureAlpha()
     .raw()
     .toBuffer({resolveWithObject: true})
-
-  if (isAllWhite(data)) {
-    return true
-  }
 
   applyAlphaChannel(data)
 
@@ -28,16 +29,6 @@ async function processImage(input, targetFilename) {
   await pipeline.clone().png().toFile(`${targetFilename}.png`)
   await pipeline.clone().webp({nearLossless: true}).toFile(`${targetFilename}.webp`)
   return false
-}
-
-function isAllWhite(data) {
-  for (let i = 0; i < data.length; i += 4) {
-    const color = data[i] << 16 | data[i + 1] << 8 | data[i + 2]
-    if (color !== 0xffffff) {
-      return false
-    }
-  }
-  return true
 }
 
 function applyAlphaChannel(data) {
