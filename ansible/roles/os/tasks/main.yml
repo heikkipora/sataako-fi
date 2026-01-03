@@ -1,23 +1,31 @@
-- name: upgrade all packages
-  yum:
+- name: Install packages
+  package:
+    name:
+      - dnf-automatic
+      - firewalld
+      - nano
+    state: latest
+
+- name: Upgrade all packages now
+  package:
     name: '*'
     state: latest
+
+- name: Configure automatic updates to reboot if needed
+  lineinfile:
+    path: /etc/dnf/automatic.conf
+    regexp: '^reboot ='
+    line: 'reboot = when-needed'
+
+- name: Enable automatic updates
+  systemd:
+    name: dnf-automatic.timer
+    enabled: yes
+    state: started
 
 - name: set timezone
   timezone:
     name: Europe/Helsinki
-
-- name: install nano
-  package:
-    name: nano
-    state: latest
-
-- name: install firewalld
-  package:
-    name: firewalld
-    state: latest
-  notify:
-    - restart firewalld
 
 - name: allow http, https and ssh through firewall
   firewalld:
