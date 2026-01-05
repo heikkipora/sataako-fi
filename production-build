@@ -14,4 +14,4 @@ rm -fr build/src/client
 cp package*json build
 
 # Bundle and minify client JS
-npx webpack --config webpack.prod.js
+npx webpack --config webpack.prod.cjs

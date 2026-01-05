@@ -1,12 +1,12 @@
-import {expect} from 'chai'
-import {fetchPostProcessedRadarFrame} from '../src/fmi-radar-images.js'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import {generateRadarFrameTimestamps, wmsRequestForRadar} from '../src/fmi-radar-frames.js'
+import {expect} from 'chai'
+import {fetchPostProcessedRadarFrame} from '../src/fmi-radar-images.ts'
+import {generateRadarFrameTimestamps, wmsRequestForRadar} from '../src/fmi-radar-frames.ts'
 
 describe('FMI rain radar image fetcher', () => {
-  let tmpFolder = null
+  let tmpFolder: string | null = null
 
   before(async() => {
     tmpFolder = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'sataako-test-'))
@@ -16,7 +16,7 @@ describe('FMI rain radar image fetcher', () => {
     const [oldestTimestamp] = generateRadarFrameTimestamps(3)
     const config = wmsRequestForRadar(oldestTimestamp)
 
-    const filename = path.join(tmpFolder, oldestTimestamp)
+    const filename = path.join(tmpFolder!, oldestTimestamp)
     await fetchPostProcessedRadarFrame(config, filename)
     expect((await fs.promises.stat(`${filename}.png`)).size).to.be.above(0)
     expect((await fs.promises.stat(`${filename}.webp`)).size).to.be.above(0)

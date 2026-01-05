@@ -1,5 +1,5 @@
 import {expect} from 'chai'
-import {framesList, imageFileForTimestamp, initializeCache, refreshCache} from '../src/cache.js'
+import {framesList, imageFileForTimestamp, initializeCache, refreshCache} from '../src/cache.ts'
 
 describe('Radar image and lightning cache', () => {
   before(initializeCache)

@@ -3,6 +3,7 @@
 node_modules
 .DS_Store
 build
+dist
 public/client.css
 public/client.js
 .vscode
