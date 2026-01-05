@@ -1,5 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   module: {
@@ -8,6 +9,14 @@ module.exports = {
         test: /\.(js|jsx|ts|tsx)$/,
         use: 'ts-loader',
         exclude: /node_modules/,
+      },
+      {
+        test: /\.less$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'less-loader'
+        ]
       },
       {
         test: /\.(ttf|html)$/i,
@@ -21,5 +30,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.ts', '.tsx']
-  }
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'client.css'
+    })
+  ]
 }

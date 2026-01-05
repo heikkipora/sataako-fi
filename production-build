@@ -5,6 +5,7 @@ mkdir -p build/src
 
 # Copy static resources
 cp -r public build
+rm -fr build/public/*.less
 
 # Copy server sources
 cp -r src build

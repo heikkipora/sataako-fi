@@ -36,6 +36,7 @@
     "eslint-plugin-react-hooks": "7.0.1",
     "globals": "17.0.0",
     "less-loader": "12.3.0",
+    "mini-css-extract-plugin": "2.9.4",
     "mocha": "11.7.5",
     "normalize.css": "8.0.1",
     "ol": "10.7.0",
