@@ -1,8 +1,8 @@
+import fs from 'fs'
+import path from 'path'
 import {fetchLightnings} from './fmi-lightnings.ts'
 import {fetchPostProcessedRadarFrame} from './fmi-radar-images.ts'
-import fs from 'fs'
 import {generateRadarFrameTimestamps, wmsRequestForRadar} from './fmi-radar-frames.ts'
-import path from 'path'
 import type {FrameResponse, ImageCacheItem, ImageFilePaths, LightningCacheItem, RadarFrameRequest} from './types.ts'
 
 let IMAGE_CACHE: ImageCacheItem[] = []

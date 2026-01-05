@@ -1,12 +1,12 @@
 import axios from 'axios'
 import classNames from 'classnames'
+import React, {useCallback, useEffect, useRef, useState} from 'react'
 import {collapsedInitial, mapSettings, overrideParams, storeCollapsed, storeMapSettings} from './settings'
 import {createMap, panTo, showRadarFrame} from './map'
 import {createRoot} from 'react-dom/client'
-import {Frame} from './types'
 import {InfoPanel} from './info-panel'
-import React, {useCallback, useEffect, useRef, useState} from 'react'
 import {Timeline} from './timeline'
+import type {Frame} from './types'
 
 const FRAME_DELAY_MS = 500
 const FRAME_LIST_RELOAD_MS = 30 * 1000

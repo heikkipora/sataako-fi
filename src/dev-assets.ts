@@ -1,7 +1,7 @@
-import {createRequire} from 'module'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import webpackHotMiddleware from 'webpack-hot-middleware'
+import {createRequire} from 'module'
 import type {Configuration} from 'webpack'
 import type {Express} from 'express'
 

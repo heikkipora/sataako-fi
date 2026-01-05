@@ -1,7 +1,7 @@
 import axios from 'axios'
-import {EPSG_3067_BOUNDS} from './fmi-radar-frames.ts'
 import fs from 'fs'
 import proj4 from 'proj4'
+import {EPSG_3067_BOUNDS} from './fmi-radar-frames.ts'
 import {XMLParser} from 'fast-xml-parser'
 import type {Lightning, LightningCacheItem} from './types.ts'
 

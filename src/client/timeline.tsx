@@ -1,6 +1,6 @@
-import {Frame} from './types'
 import React from 'react'
 import {TimelineTick} from './timeline-tick'
+import type {Frame} from './types'
 
 export function Timeline({currentTimestamp, running, timestamps, onResume, onSelect}: {currentTimestamp: string | null, running: boolean, timestamps: Frame[], onResume: () => void, onSelect: (timestamp: string) => void}) {
   if (!currentTimestamp) {
