@@ -1,32 +1,27 @@
 import classNames from 'classnames'
 import {format, parseISO} from 'date-fns'
-import React, {useCallback} from 'react'
+import React from 'react'
 
 export function TimelineTick({isCurrent, isForecast, running, timestamp, onResume, onSelect}: {isCurrent: boolean, isForecast?: boolean, running: boolean, timestamp: string, onResume: () => void, onSelect: (timestamp: string) => void}) {
   const formattedTimestamp = format(parseISO(timestamp), 'HH:mm')
-  const quarter = isQuarter(formattedTimestamp)
+  const isQuarterHour = formattedTimestamp.endsWith(':00') || formattedTimestamp.endsWith(':15') || formattedTimestamp.endsWith(':30') || formattedTimestamp.endsWith(':45')
   const className = classNames(
     'timeline__tick',
-    {'timeline__tick--large': quarter},
-    {'timeline__tick--small': !quarter},
+    {'timeline__tick--large': isQuarterHour},
+    {'timeline__tick--small': !isQuarterHour},
     {'timeline__tick--selected': !running && isCurrent}
   )
-  const onSelectHandler = useCallback(() => onSelect(timestamp), [timestamp, onSelect])
-  const onEnterHandler = useCallback((event: React.MouseEvent) => {
-    const leftPressed = event.buttons === 1
-    if (leftPressed) {
+
+  const handleMouseDown = () => onSelect(timestamp)
+  const handleMouseEnter = (event: React.MouseEvent) => {
+    if (event.buttons === 1) {
       onSelect(timestamp)
     }
-  }, [timestamp, onSelect])
+  }
 
-  return <div className={className} onMouseDown={onSelectHandler} onMouseUp={onResume} onMouseEnter={onEnterHandler} key={timestamp} data-timestamp={timestamp}>
+  return <div className={className} onMouseDown={handleMouseDown} onMouseUp={onResume} onMouseEnter={handleMouseEnter} key={timestamp} data-timestamp={timestamp}>
     {isCurrent && renderTooltip(formattedTimestamp, isForecast)}
   </div>
-}
-
-function isQuarter(formattedTimestamp: string) {
-  const [, minutes] = formattedTimestamp.split(':')
-  return ['00', '15', '30', '45'].includes(minutes)
 }
 
 function renderTooltip(formattedTimestamp: string, isForecast?: boolean) {
