@@ -1,7 +1,7 @@
-import webpack from 'webpack'
-import {URL} from 'url'
+const path = require('path')
+const webpack = require('webpack')
 
-const config = {
+module.exports = {
   module: {
     rules: [
       {
@@ -17,14 +17,9 @@ const config = {
   },
   output: {
     filename: 'client.js',
-    path: new URL('./build/public', import.meta.url).pathname
+    path: path.resolve(__dirname, 'build/public')
   },
   resolve: {
     extensions: ['.js', '.ts', '.tsx']
-  },
-  performance: {
-    hints: false
   }
 }
-
-export default config

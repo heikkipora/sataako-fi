@@ -3,9 +3,10 @@
   "type": "module",
   "scripts": {
     "build": "./production-build",
-    "start": "node src/app.js",
+    "start": "node src/app.ts",
     "eslint": "eslint src test",
     "fix-eslint": "eslint --fix src test",
+    "typecheck": "tsc --noEmit",
     "test": "mocha --timeout 20000 test/*.js"
   },
   "dependencies": {
@@ -16,8 +17,13 @@
     "sharp": "0.34.3"
   },
   "devDependencies": {
+    "@types/compression": "1.8.1",
+    "@types/express": "5.0.6",
     "@types/react": "18.2.73",
     "@types/react-dom": "18.2.23",
+    "@types/webpack": "5.28.5",
+    "@types/webpack-dev-middleware": "5.3.0",
+    "@types/webpack-hot-middleware": "2.25.12",
     "chai": "6.0.1",
     "classnames": "2.5.1",
     "css-loader": "7.1.2",
@@ -36,11 +42,11 @@
     "react-dom": "18.2.0",
     "style-loader": "4.0.0",
     "ts-loader": "9.5.4",
-    "typescript": "5.9.2",
+    "typescript": "5.9.3",
     "typescript-eslint": "8.51.0",
-    "webpack": "5.101.3",
+    "webpack": "5.104.1",
     "webpack-cli": "6.0.1",
-    "webpack-dev-middleware": "7.4.3",
+    "webpack-dev-middleware": "7.4.5",
     "webpack-hot-middleware": "2.26.1",
     "webpack-merge": "6.0.1"
   }

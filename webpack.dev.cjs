@@ -1,8 +1,8 @@
-import common from './webpack.common.js'
-import {merge} from 'webpack-merge'
-import webpack from 'webpack'
+const common = require('./webpack.common.cjs')
+const {merge} = require('webpack-merge')
+const webpack = require('webpack')
 
-const config = merge(common, {
+module.exports = merge(common, {
   mode: 'development',
   entry: [
     './src/client/index.tsx',
@@ -11,5 +11,3 @@ const config = merge(common, {
   plugins: [new webpack.HotModuleReplacementPlugin()],
   devtool: 'inline-source-map'
 })
-
-export default config
