@@ -1,6 +1,7 @@
 import {expect} from 'chai'
-import {fetchLightnings} from '../src/fmi-lightnings.js'
+import {fetchLightnings} from '../src/fmi-lightnings.ts'
 import {setMilliseconds, setMinutes, setSeconds, subMinutes} from 'date-fns'
+import type {LightningCacheItem} from '../src/types.ts'
 
 describe('FMI lightning data set parser', () => {
   it('Should not fail on an empty set of frame dates', async () => {
@@ -26,7 +27,7 @@ describe('FMI lightning data set parser', () => {
   })
 })
 
-function verifyLightningStructure(lightningFrames, frameDates) {
+function verifyLightningStructure(lightningFrames: LightningCacheItem[], frameDates: Date[]): void {
   expect(lightningFrames).to.have.lengthOf(frameDates.length)
   lightningFrames.forEach(lightningFrame => {
     expect(lightningFrame).to.have.property('locations')
@@ -42,6 +43,6 @@ function verifyLightningStructure(lightningFrames, frameDates) {
   })
 }
 
-function closestFullHour() {
+function closestFullHour(): Date {
   return setMinutes(setSeconds(setMilliseconds(Date.now(), 0), 0), 0)
 }

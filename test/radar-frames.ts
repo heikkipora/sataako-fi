@@ -1,9 +1,9 @@
 import {expect} from 'chai'
-import {generateRadarFrameTimestamps, wmsRequestForRadar, wmsRequestForRadarEstimate} from '../src/fmi-radar-frames.js'
+import {generateRadarFrameTimestamps, wmsRequestForRadar, wmsRequestForRadarEstimate} from '../src/fmi-radar-frames.ts'
 
 describe('FMI rain radar wms request generator', () => {
   it('Should generate a set of frame timestamps in five-minute intervals', () => {
-    const timestamps = generateRadarFrameTimestamps(6, new Date('2020-07-17T16:15:00.100Z'))
+    const timestamps = generateRadarFrameTimestamps(6, new Date('2020-07-17T16:15:00.100Z').getTime())
     expect(timestamps).to.deep.equal([
       '2020-07-17T15:50:00.000Z',
       '2020-07-17T15:55:00.000Z',

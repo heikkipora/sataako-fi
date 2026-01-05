@@ -7,7 +7,7 @@
     "eslint": "eslint src test",
     "fix-eslint": "eslint --fix src test",
     "typecheck": "tsc --noEmit",
-    "test": "mocha --timeout 20000 test/*.js"
+    "test": "mocha --timeout 20000 test/*.ts"
   },
   "dependencies": {
     "axios": "1.12.1",
@@ -17,8 +17,10 @@
     "sharp": "0.34.3"
   },
   "devDependencies": {
+    "@types/chai": "5.2.3",
     "@types/compression": "1.8.1",
     "@types/express": "5.0.6",
+    "@types/mocha": "10.0.10",
     "@types/react": "18.2.73",
     "@types/react-dom": "18.2.23",
     "@types/webpack": "5.28.5",
