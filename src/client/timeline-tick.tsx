@@ -1,6 +1,6 @@
 import classNames from 'classnames'
-import {format, parseISO} from 'date-fns'
 import React from 'react'
+import {format, parseISO} from 'date-fns'
 
 export function TimelineTick({isCurrent, isForecast, running, timestamp, onResume, onSelect}: {isCurrent: boolean, isForecast?: boolean, running: boolean, timestamp: string, onResume: () => void, onSelect: (timestamp: string) => void}) {
   const formattedTimestamp = format(parseISO(timestamp), 'HH:mm')
@@ -20,11 +20,11 @@ export function TimelineTick({isCurrent, isForecast, running, timestamp, onResum
   }
 
   return <div className={className} onMouseDown={handleMouseDown} onMouseUp={onResume} onMouseEnter={handleMouseEnter} key={timestamp} data-timestamp={timestamp}>
-    {isCurrent && renderTooltip(formattedTimestamp, isForecast)}
+    {isCurrent && <TimestampTooltip isForecast={isForecast} formattedTimestamp={formattedTimestamp}/>}
   </div>
 }
 
-function renderTooltip(formattedTimestamp: string, isForecast?: boolean) {
+function TimestampTooltip({isForecast, formattedTimestamp}: {isForecast?: boolean, formattedTimestamp: string}) {
   const className = classNames(
     'timeline__tooltip',
     {'timeline__tooltip--forecast': isForecast}
