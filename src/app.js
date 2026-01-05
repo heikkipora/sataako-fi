@@ -6,7 +6,6 @@ const MAX_FRAMES = 12
 const PORT = process.env.PORT || 3000
 const PUBLIC_URL_PORT = process.env.NODE_ENV === 'production' ? '' : `:${PORT}`
 
-// eslint-disable-next-line max-statements
 async function initApp() {
   const app = express()
   app.disable('x-powered-by')

@@ -5,8 +5,6 @@ import fs from 'fs'
 import {generateRadarFrameTimestamps, wmsRequestForRadar} from './fmi-radar-frames.js'
 import path from 'path'
 
-/* eslint-disable no-await-in-loop */
-
 let IMAGE_CACHE = []
 const LIGHTNING_CACHE = []
 const USE_LOCAL_LIGHTNING_DATA = process.env.NODE_ENV === 'local'

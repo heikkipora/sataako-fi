@@ -15,7 +15,6 @@ const xmlParser = new XMLParser({
 const FEATURE_URL = url.parse('https://opendata.fmi.fi/wfs')
 FEATURE_URL.query = {
   request: 'getFeature',
-  // eslint-disable-next-line camelcase
   storedquery_id: 'fmi::observations::lightning::multipointcoverage',
   bbox: proj4('EPSG:3067', 'WGS84', EPSG_3067_BOUNDS).join(',')
 }

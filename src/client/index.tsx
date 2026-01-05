@@ -18,7 +18,6 @@ if (!overrideParams.x && !overrideParams.y && navigator.geolocation) {
   navigator.geolocation.getCurrentPosition((position) => panTo(map, [position.coords.longitude, position.coords.latitude]))
 }
 
-// eslint-disable-next-line max-statements
 function SataakoApp() {
   const mapRef = useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = useState<boolean>(collapsedInitial)
@@ -100,6 +99,5 @@ function newestNonForecastTimestamp(frames: Frame[]) {
   return frames.filter(frame => !frame.isForecast).pop()?.timestamp || null
 }
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const root = createRoot(document.getElementById('app')!)
 root.render(<SataakoApp/>);
