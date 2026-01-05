@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 Environment="NODE_ENV=production"
-ExecStart=/bin/node --max-old-space-size=512 src/app.js
+ExecStart=/bin/node --max-old-space-size=512 src/app.ts
 Restart=always
 RestartSec=10
 User=sataako
