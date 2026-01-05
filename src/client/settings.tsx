@@ -20,19 +20,12 @@ export function storeCollapsed(collapsed: boolean) {
   localStorage.setItem('sataako-fi-collapsed-v2', String(collapsed))
 }
 
-function parseQueryString() {
-  const parsed = document.location.search
-    .slice(1)
-    .split('&')
-    .filter(p => p)
-    .reduce((acc, parameter) => {
-      const [key, value] = parameter.split('=')
-      return {
-        ...acc,
-        [key]: decodeURIComponent(value)
-      }
-    }, {})
-
-  const {collapsed, x, y, zoom}: {collapsed?: string, x?: string, y?: string, zoom?: string} = parsed
-  return {collapsed, x, y, zoom}
+function parseQueryString(): {collapsed?: string, x?: string, y?: string, zoom?: string} {
+  const params = new URLSearchParams(document.location.search)
+  return {
+    collapsed: params.get('collapsed') ?? undefined,
+    x: params.get('x') ?? undefined,
+    y: params.get('y') ?? undefined,
+    zoom: params.get('zoom') ?? undefined
+  }
 }
