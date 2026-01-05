@@ -24,7 +24,6 @@ function SataakoApp() {
   const [currentTimestamp, setCurrentTimestamp] = useState<string|null>(null)
   const [frames, setFrames] = useState<Frame[]>([])
   const [running, setRunning] = useState<boolean>(true)
-  const [frameDelay, setFrameDelay] = useState<number>(FRAME_DELAY_MS)
 
   useEffect(() => storeCollapsed(collapsed), [collapsed])
   useEffect(() => map.setTarget(mapRef.current ?? undefined), [])
@@ -39,6 +38,9 @@ function SataakoApp() {
     return () => clearInterval(timer)
   }, [])
 
+  const currentFrame = frames.find(frame => frame.timestamp === currentTimestamp)
+  const frameDelay = getFrameDelay(currentFrame, frames)
+
   useEffect(() => {
     function animateRadar() {
       setCurrentTimestamp(nextTimestamp(currentTimestamp, frames))
@@ -51,19 +53,10 @@ function SataakoApp() {
   }, [running, currentTimestamp, frameDelay, frames])
 
   useEffect(() => {
-    const currentFrame = frames.find(frame => frame.timestamp === currentTimestamp)
     if (currentFrame) {
       showRadarFrame(map, currentFrame)
-      const isLastOfList = frames[frames.length - 1] === currentFrame
-      if (isLastOfList) {
-        setFrameDelay(5 * FRAME_DELAY_MS)
-      } else if (currentFrame.isForecast) {
-        setFrameDelay(3 * FRAME_DELAY_MS)
-      } else {
-        setFrameDelay(FRAME_DELAY_MS)
-      }
     }
-  }, [currentTimestamp, frames])
+  }, [currentFrame])
 
   const onTimelineResume = useCallback(() => setRunning(true), [])
   const onTimelineSelect = useCallback((value: string) => {
@@ -78,6 +71,23 @@ function SataakoApp() {
     <InfoPanel collapsed={collapsed} onInfoPanelToggle={onInfoPanelToggle}/>
     <Timeline timestamps={frames} currentTimestamp={currentTimestamp} running={running} onResume={onTimelineResume} onSelect={onTimelineSelect}/>
   </div>
+}
+
+function getFrameDelay(currentFrame: Frame | undefined, frames: Frame[]): number {
+  if (!currentFrame) {
+    return FRAME_DELAY_MS
+  }
+
+  const isLastOfList = frames[frames.length - 1] === currentFrame
+  if (isLastOfList) {
+    return 5 * FRAME_DELAY_MS
+  }
+
+  if (currentFrame.isForecast) {
+    return 3 * FRAME_DELAY_MS
+  }
+
+  return FRAME_DELAY_MS
 }
 
 function nextTimestamp(currentTimestamp: string | null, frames: Frame[]) {
