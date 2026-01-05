@@ -91,19 +91,19 @@ function getFrameDelay(currentFrame: Frame | undefined, frames: Frame[]): number
 }
 
 function nextTimestamp(currentTimestamp: string | null, frames: Frame[]) {
-    if (!currentTimestamp) {
-      return newestNonForecastTimestamp(frames)
-    }
-
-    const index = frames.findIndex(frame => frame.timestamp === currentTimestamp)
-    if (index === -1) {
-      return newestNonForecastTimestamp(frames)
-    }
-    if (index === frames.length - 1) {
-      return frames[0].timestamp
-    }
-    return frames[index + 1].timestamp
+  if (!currentTimestamp) {
+    return newestNonForecastTimestamp(frames)
   }
+
+  const index = frames.findIndex(frame => frame.timestamp === currentTimestamp)
+  if (index === -1) {
+    return newestNonForecastTimestamp(frames)
+  }
+  if (index === frames.length - 1) {
+    return frames[0].timestamp
+  }
+  return frames[index + 1].timestamp
+}
 
 function newestNonForecastTimestamp(frames: Frame[]) {
   return frames.filter(frame => !frame.isForecast).pop()?.timestamp || null
