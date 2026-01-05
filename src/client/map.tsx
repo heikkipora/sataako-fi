@@ -12,7 +12,7 @@ import Style from 'ol/style/Style'
 import TileLayer from 'ol/layer/WebGLTile'
 import VectorLayer from 'ol/layer/Vector'
 import View from 'ol/View'
-import XYZ from 'ol/source/XYZ'
+import ImageTile from 'ol/source/ImageTile'
 import {fromLonLat} from 'ol/proj'
 import VectorSource from 'ol/source/Vector'
 import {defaults as defaultControls} from 'ol/control'
@@ -53,7 +53,7 @@ export function createMap(settings: MapSettings) {
 }
 
 function createMapLayer() {
-  const source = new XYZ({url: '/tiles/{z}/{x}/{y}.png'})
+  const source = new ImageTile({url: '/tiles/{z}/{x}/{y}.png'})
   return new TileLayer({source})
 }
 
