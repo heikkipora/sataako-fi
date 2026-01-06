@@ -24,9 +24,12 @@ async function processImage(input: Buffer, targetFilename: string): Promise<bool
   applyAlphaChannel(data)
 
   const {width, height, channels} = info
+  const edgeImage = await generateEdgeImage(data, width, height)
+
   const pipeline = sharp(data, {raw: {width, height, channels}})
     .resize({height: height / 2, kernel: 'nearest'})
-    .composite([{input: 'src/radar-edges.png'}])
+    .composite([{input: edgeImage}])
+  
   await pipeline.clone().png().toFile(`${targetFilename}.png`)
   await pipeline.clone().webp({nearLossless: true}).toFile(`${targetFilename}.webp`)
   return false
@@ -39,4 +42,59 @@ function applyAlphaChannel(data: Buffer): void {
       data[i + 3] = 0
     }
   }
+}
+
+async function generateEdgeImage(data: Buffer, width: number, height: number): Promise<Buffer> {
+  const edgeData = Buffer.alloc(width * height * 4)
+
+  // Fill with transparent pixels
+  for (let i = 0; i < edgeData.length; i += 4) {
+    edgeData[i] = 0     // R
+    edgeData[i + 1] = 0 // G
+    edgeData[i + 2] = 0 // B
+    edgeData[i + 3] = 0 // A
+  }
+
+  // Detect edges by checking if a pixel is outside area and has a neighbor that isn't
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const i = (y * width + x) * 4
+      const color = data[i] << 16 | data[i + 1] << 8 | data[i + 2]
+      const isOutside = color === 0xf7f7f7
+
+      if (isOutside) {
+        // Check 8-connected neighbors
+        let hasInsideNeighbor = false
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            if (dx === 0 && dy === 0) continue
+            const nx = x + dx
+            const ny = y + dy
+            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+              const ni = (ny * width + nx) * 4
+              const neighborColor = data[ni] << 16 | data[ni + 1] << 8 | data[ni + 2]
+              if (neighborColor !== 0xf7f7f7) {
+                hasInsideNeighbor = true
+                break
+              }
+            }
+          }
+          if (hasInsideNeighbor) break
+        }
+
+        if (hasInsideNeighbor) {
+          // Draw blue edge pixel
+          edgeData[i] = 0       // R
+          edgeData[i + 1] = 127 // G
+          edgeData[i + 2] = 255 // B
+          edgeData[i + 3] = 255 // A
+        }
+      }
+    }
+  }
+
+  return sharp(edgeData, {raw: {width, height, channels: 4}})
+    .resize({height: height / 2, kernel: 'nearest'})
+    .png()
+    .toBuffer()
 }
