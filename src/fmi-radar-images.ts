@@ -5,6 +5,9 @@ import type {WMSRequestConfig} from './types.ts'
 sharp.cache(false)
 sharp.concurrency(1)
 
+const RADAR_BACKGROUND_COLOR = 0xffffff
+const RADAR_OUTSIDE_COLOR = 0xf7f7f7
+
 export async function fetchPostProcessedRadarFrame(requestConfig: WMSRequestConfig, targetFilename: string): Promise<boolean> {
   const {data, headers} = await axios(requestConfig)
   if (headers['content-type'] !== 'image/png') {
@@ -38,7 +41,7 @@ async function processImage(input: Buffer, targetFilename: string): Promise<bool
 function applyAlphaChannel(data: Buffer): void {
   for (let i = 0; i < data.length; i += 4) {
     const color = data[i] << 16 | data[i + 1] << 8 | data[i + 2]
-    if (color === 0xffffff || color === 0xf7f7f7) {
+    if (color === RADAR_BACKGROUND_COLOR || color === RADAR_OUTSIDE_COLOR) {
       data[i + 3] = 0
     }
   }
@@ -54,9 +57,8 @@ async function generateEdgeImage(data: Buffer, width: number, height: number, ed
     for (let x = 0; x < width; x++) {
       const i = (y * width + x) * 4
       const color = data[i] << 16 | data[i + 1] << 8 | data[i + 2]
-      const isOutside = color === 0xf7f7f7
 
-      if (isOutside) {
+      if (color === RADAR_OUTSIDE_COLOR) {
         // Check 8-connected neighbors
         let hasInsideNeighbor = false
         for (let dy = -1; dy <= 1; dy++) {
@@ -67,7 +69,7 @@ async function generateEdgeImage(data: Buffer, width: number, height: number, ed
             if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
               const ni = (ny * width + nx) * 4
               const neighborColor = data[ni] << 16 | data[ni + 1] << 8 | data[ni + 2]
-              if (neighborColor !== 0xf7f7f7) {
+              if (neighborColor !== RADAR_OUTSIDE_COLOR) {
                 hasInsideNeighbor = true
                 break
               }
