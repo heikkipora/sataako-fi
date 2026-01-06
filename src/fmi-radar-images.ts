@@ -44,18 +44,12 @@ function applyAlphaChannel(data: Buffer): void {
   }
 }
 
-async function generateEdgeImage(data: Buffer, width: number, height: number): Promise<Buffer> {
-  const edgeData = Buffer.alloc(width * height * 4)
+async function generateEdgeImage(data: Buffer, width: number, height: number, edgeThickness: number = 3): Promise<Buffer> {
+  const edgeData = Buffer.alloc(width * height * 4, 0)
 
-  // Fill with transparent pixels
-  for (let i = 0; i < edgeData.length; i += 4) {
-    edgeData[i] = 0     // R
-    edgeData[i + 1] = 0 // G
-    edgeData[i + 2] = 0 // B
-    edgeData[i + 3] = 0 // A
-  }
+  // First pass: detect edge pixels
+  const isEdgePixel = new Array(width * height).fill(false)
 
-  // Detect edges by checking if a pixel is outside area and has a neighbor that isn't
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const i = (y * width + x) * 4
@@ -83,11 +77,29 @@ async function generateEdgeImage(data: Buffer, width: number, height: number): P
         }
 
         if (hasInsideNeighbor) {
-          // Draw blue edge pixel
-          edgeData[i] = 0       // R
-          edgeData[i + 1] = 127 // G
-          edgeData[i + 2] = 255 // B
-          edgeData[i + 3] = 255 // A
+          isEdgePixel[y * width + x] = true
+        }
+      }
+    }
+  }
+
+  // Second pass: draw thick edges
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (isEdgePixel[y * width + x]) {
+        // Draw edge pixel and surrounding pixels within thickness radius
+        for (let dy = -(edgeThickness - 1); dy <= (edgeThickness - 1); dy++) {
+          for (let dx = -(edgeThickness - 1); dx <= (edgeThickness - 1); dx++) {
+            const nx = x + dx
+            const ny = y + dy
+            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+              const i = (ny * width + nx) * 4
+              edgeData[i] = 0       // R
+              edgeData[i + 1] = 127 // G
+              edgeData[i + 2] = 255 // B
+              edgeData[i + 3] = 255 // A
+            }
+          }
         }
       }
     }
