@@ -47,7 +47,7 @@ function applyAlphaChannel(data: Buffer): void {
   }
 }
 
-async function generateEdgeImage(data: Buffer, width: number, height: number, edgeThickness: number = 3): Promise<Buffer> {
+async function generateEdgeImage(data: Buffer, width: number, height: number, edgeThickness: number = 2): Promise<Buffer> {
   const edgeData = Buffer.alloc(width * height * 4, 0)
 
   // First pass: detect edge pixels
@@ -108,7 +108,7 @@ async function generateEdgeImage(data: Buffer, width: number, height: number, ed
   }
 
   return sharp(edgeData, {raw: {width, height, channels: 4}})
-    .resize({height: height / 2, kernel: 'nearest'})
+    .resize({height: height / 2})
     .png()
     .toBuffer()
 }
