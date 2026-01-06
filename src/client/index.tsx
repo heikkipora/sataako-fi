@@ -83,21 +83,17 @@ function getFrameDelay(currentFrame: Frame | undefined, frames: Frame[]): number
     return 5 * FRAME_DELAY_MS
   }
 
-  if (currentFrame.isForecast) {
-    return 3 * FRAME_DELAY_MS
-  }
-
   return FRAME_DELAY_MS
 }
 
 function nextTimestamp(currentTimestamp: string | null, frames: Frame[]) {
   if (!currentTimestamp) {
-    return newestNonForecastTimestamp(frames)
+    return newestTimestamp(frames)
   }
 
   const index = frames.findIndex(frame => frame.timestamp === currentTimestamp)
   if (index === -1) {
-    return newestNonForecastTimestamp(frames)
+    return newestTimestamp(frames)
   }
   if (index === frames.length - 1) {
     return frames[0].timestamp
@@ -105,8 +101,8 @@ function nextTimestamp(currentTimestamp: string | null, frames: Frame[]) {
   return frames[index + 1].timestamp
 }
 
-function newestNonForecastTimestamp(frames: Frame[]) {
-  return frames.filter(frame => !frame.isForecast).pop()?.timestamp || null
+function newestTimestamp(frames: Frame[]) {
+  return frames[frames.length - 1]?.timestamp || null
 }
 
 const root = createRoot(document.getElementById('app')!)

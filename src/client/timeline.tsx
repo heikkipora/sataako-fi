@@ -29,6 +29,6 @@ export function Timeline({currentTimestamp, running, timestamps, onResume, onSel
   }
 
   return <div className="timeline" onTouchStart={handleTouch} onTouchMove={handleTouch} onTouchEnd={handleTouchEnd}>
-    {timestamps.map(({timestamp, isForecast}) => <TimelineTick key={timestamp} timestamp={timestamp} isCurrent={timestamp === currentTimestamp} isForecast={isForecast} running={running} onResume={onResume} onSelect={onSelect}/>)}
+    {timestamps.map(({timestamp}) => <TimelineTick key={timestamp} timestamp={timestamp} isCurrent={timestamp === currentTimestamp} running={running} onResume={onResume} onSelect={onSelect}/>)}
   </div>
 }

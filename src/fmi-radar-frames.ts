@@ -22,10 +22,6 @@ export function wmsRequestForRadar(time: string): WMSRequestConfig {
   return wmsRequestConfig('Radar:suomi_rr_eureffin', time)
 }
 
-export function wmsRequestForRadarEstimate(time: string): WMSRequestConfig {
-  return wmsRequestConfig('Radar:suomi_tuliset_rr_eureffin', time)
-}
-
 function wmsRequestConfig(layerId: string, time: string): WMSRequestConfig {
   return {
     url: WMS_SERVICE_URL,
