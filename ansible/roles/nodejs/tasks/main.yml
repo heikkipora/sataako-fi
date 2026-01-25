@@ -1,5 +1,5 @@
-- name: enable Node.js v22 module
-  shell: dnf module enable nodejs:22
+- name: enable Node.js v24 module
+  shell: dnf module enable nodejs:24
 
 - name: install Node.js
   package:
