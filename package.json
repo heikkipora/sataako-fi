@@ -13,7 +13,7 @@
     "axios": "1.13.2",
     "compression": "1.8.1",
     "express": "5.2.1",
-    "fast-xml-parser": "5.3.3",
+    "fast-xml-parser": "5.3.4",
     "sharp": "0.34.5"
   },
   "devDependencies": {
