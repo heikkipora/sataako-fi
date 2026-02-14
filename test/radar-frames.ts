@@ -1,10 +1,11 @@
-import {expect} from 'chai'
+import {describe, it} from 'node:test'
+import assert from 'node:assert/strict'
 import {generateRadarFrameTimestamps, wmsRequestForRadar} from '../src/fmi-radar-frames.ts'
 
 describe('FMI rain radar wms request generator', () => {
   it('Should generate a set of frame timestamps in five-minute intervals', () => {
     const timestamps = generateRadarFrameTimestamps(6, new Date('2020-07-17T16:15:00.100Z').getTime())
-    expect(timestamps).to.deep.equal([
+    assert.deepStrictEqual(timestamps, [
       '2020-07-17T15:50:00.000Z',
       '2020-07-17T15:55:00.000Z',
       '2020-07-17T16:00:00.000Z',
@@ -16,7 +17,7 @@ describe('FMI rain radar wms request generator', () => {
 
   it('Should generate axios wms request config for a specified radar frame', () => {
     const config = wmsRequestForRadar('2020-07-17T16:20:00.000Z')
-    expect(config).to.deep.equal({
+    assert.deepStrictEqual(config, {
       url: 'https://openwms.fmi.fi/geoserver/Radar/wms',
       responseType: 'arraybuffer',
       timeout: 30000,

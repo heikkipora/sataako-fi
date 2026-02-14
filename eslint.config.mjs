@@ -1,25 +1,17 @@
 import globals from 'globals'
-import mocha from 'eslint-plugin-mocha'
 import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import tseslint from 'typescript-eslint'
 
 export default [
   ...tseslint.configs.recommended,
-  mocha.configs.recommended,
   react.configs.flat.recommended,
   reactHooks.configs.flat.recommended,
-  {
-    rules: {
-      'mocha/no-mocha-arrows': 'off'
-    }
-  },
   {
     languageOptions: {
       globals: {
         ...globals.node,
-        ...globals.browser,
-        ...globals.mocha
+        ...globals.browser
       }
     },
     settings: {

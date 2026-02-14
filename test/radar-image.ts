@@ -1,7 +1,8 @@
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import {expect} from 'chai'
+import {describe, it, before} from 'node:test'
+import assert from 'node:assert/strict'
 import {fetchPostProcessedRadarFrame} from '../src/fmi-radar-images.ts'
 import {generateRadarFrameTimestamps, wmsRequestForRadar} from '../src/fmi-radar-frames.ts'
 
@@ -18,7 +19,7 @@ describe('FMI rain radar image fetcher', () => {
 
     const filename = path.join(tmpFolder!, oldestTimestamp)
     await fetchPostProcessedRadarFrame(config, filename)
-    expect((await fs.promises.stat(`${filename}.png`)).size).to.be.above(0)
-    expect((await fs.promises.stat(`${filename}.webp`)).size).to.be.above(0)
+    assert.ok((await fs.promises.stat(`${filename}.png`)).size > 0)
+    assert.ok((await fs.promises.stat(`${filename}.webp`)).size > 0)
   })
 })

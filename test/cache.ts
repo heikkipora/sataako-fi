@@ -1,33 +1,32 @@
-import {expect} from 'chai'
+import {describe, it, before} from 'node:test'
+import assert from 'node:assert/strict'
 import {framesList, imageFileForTimestamp, initializeCache, refreshCache} from '../src/cache.ts'
 
 describe('Radar image and lightning cache', () => {
   before(initializeCache)
 
-  it('Should populate cache with latest radar images and lightning locations', async() => {
+  it('Should populate cache with latest radar images and lightning locations', {timeout: 30000}, async() => {
     await refreshCache(4, 120, true)
 
     const frames = framesList(3, 'http://localhost/')
-    expect(frames).to.have.lengthOf(3)
+    assert.equal(frames.length, 3)
     frames.forEach(frame => {
-      expect(frame).to.have.property('image')
-      expect(frame.image).to.be.a('string')
-      expect(frame).to.have.property('timestamp')
-      expect(frame.timestamp).to.be.a('string')
-      expect(frame).to.have.property('lightnings')
-      expect(frame.lightnings).to.be.an('array')
+      assert.equal(typeof frame.image, 'string')
+      assert.equal(typeof frame.timestamp, 'string')
+      assert.ok(Array.isArray(frame.lightnings))
     })
-  }).timeout(30000)
+  })
 
   it('Should resolve cached files only', async() => {
     await refreshCache(2, 120, true)
 
     const nonExistent = imageFileForTimestamp(new Date().toISOString())
-    expect(nonExistent).to.equal(null)
+    assert.equal(nonExistent, null)
 
     const [{timestamp}] = framesList(1, '')
     const imageFiles = imageFileForTimestamp(timestamp)
-    expect(imageFiles).to.have.property('png')
-    expect(imageFiles).to.have.property('webp')
+    assert.ok(imageFiles)
+    assert.ok('png' in imageFiles)
+    assert.ok('webp' in imageFiles)
   })
 })

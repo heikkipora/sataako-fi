@@ -1,4 +1,5 @@
-import {expect} from 'chai'
+import {describe, it} from 'node:test'
+import assert from 'node:assert/strict'
 import {fetchLightnings} from '../src/fmi-lightnings.ts'
 import {setMilliseconds, setMinutes, setSeconds, subMinutes} from 'date-fns'
 import type {LightningCacheItem} from '../src/types.ts'
@@ -6,7 +7,7 @@ import type {LightningCacheItem} from '../src/types.ts'
 describe('FMI lightning data set parser', () => {
   it('Should not fail on an empty set of frame dates', async () => {
     const lightnings = await fetchLightnings([])
-    expect(lightnings).to.deep.equal([])
+    assert.deepStrictEqual(lightnings, [])
   })
 
   it('Should parse large set of lightning locations from local FMI data', async () => {
@@ -14,8 +15,8 @@ describe('FMI lightning data set parser', () => {
     const lightningFrames = await fetchLightnings(frameDates, true)
     verifyLightningStructure(lightningFrames, frameDates)
 
-    expect(lightningFrames[0].locations).to.have.lengthOf(0)
-    expect(lightningFrames[1].locations).to.have.lengthOf(1809)
+    assert.equal(lightningFrames[0].locations.length, 0)
+    assert.equal(lightningFrames[1].locations.length, 1809)
   })
 
   it('Should find some lightning locations (depending on weather naturally) from FMI API', async () => {
@@ -28,18 +29,16 @@ describe('FMI lightning data set parser', () => {
 })
 
 function verifyLightningStructure(lightningFrames: LightningCacheItem[], frameDates: Date[]): void {
-  expect(lightningFrames).to.have.lengthOf(frameDates.length)
+  assert.equal(lightningFrames.length, frameDates.length)
   lightningFrames.forEach(lightningFrame => {
-    expect(lightningFrame).to.have.property('locations')
-    expect(lightningFrame.locations).to.be.an('array')
+    assert.ok(Array.isArray(lightningFrame.locations))
     lightningFrame.locations.forEach(location => {
-      expect(location).to.be.an('array')
-      expect(location).to.have.lengthOf(2)
-      expect(location[0]).to.be.a('number')
-      expect(location[1]).to.be.a('number')
+      assert.ok(Array.isArray(location))
+      assert.equal(location.length, 2)
+      assert.equal(typeof location[0], 'number')
+      assert.equal(typeof location[1], 'number')
     })
-    expect(lightningFrame).to.have.property('timestamp')
-    expect(lightningFrame.timestamp).to.be.a('string')
+    assert.equal(typeof lightningFrame.timestamp, 'string')
   })
 }
 
