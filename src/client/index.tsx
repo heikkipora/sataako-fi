@@ -14,7 +14,7 @@ const FRAME_LIST_RELOAD_MS = 30 * 1000
 const map = createMap(mapSettings)
 map.on('moveend', () => storeMapSettings(map.getView().getCenter(), map.getView().getZoom()))
 
-if (!overrideParams.x && !overrideParams.y && navigator.geolocation) {
+if (!overrideParams.x && !overrideParams.y && navigator.geolocation && document.visibilityState !== 'hidden') {
   navigator.geolocation.getCurrentPosition((position) => panTo(map, [position.coords.longitude, position.coords.latitude]))
 }
 
