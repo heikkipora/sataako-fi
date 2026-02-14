@@ -1,8 +1,4 @@
 server {
-    location /tiles/ {
-        proxy_pass {{ tile_server }};
-    }
-
     location /dashboard/live {
         proxy_pass http://localhost:3000;
         proxy_set_header Host $host;

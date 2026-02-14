@@ -2,30 +2,34 @@ export const overrideParams = parseQueryString()
 
 export const collapsedInitial = (overrideParams.collapsed || localStorage.getItem('sataako-fi-collapsed-v2')) === 'true'
 
+function readCoordinate(override: string | undefined, key: string): number | undefined {
+  const value = Number(override || localStorage.getItem(key))
+  if (!value || Math.abs(value) > 180) return undefined
+  return value
+}
+
 export const mapSettings = {
-  x: Number(overrideParams.x || localStorage.getItem('sataako-fi-x')) || 2776307.5078,
-  y: Number(overrideParams.y || localStorage.getItem('sataako-fi-y')) || 8438349.32742,
+  lng: readCoordinate(overrideParams.lng, 'sataako-fi-lng') ?? 24.94,
+  lat: readCoordinate(overrideParams.lat, 'sataako-fi-lat') ?? 60.17,
   zoom: Number(overrideParams.zoom || localStorage.getItem('sataako-fi-zoom')) || 7
 }
 
-export function storeMapSettings(center: number[] | undefined, zoom: number | undefined) {
-  if (center && zoom) {
-    localStorage.setItem('sataako-fi-x', String(center[0]))
-    localStorage.setItem('sataako-fi-y', String(center[1]))
-    localStorage.setItem('sataako-fi-zoom', String(zoom))
-  }
+export function storeMapSettings(center: {lng: number, lat: number}, zoom: number) {
+  localStorage.setItem('sataako-fi-lng', String(center.lng))
+  localStorage.setItem('sataako-fi-lat', String(center.lat))
+  localStorage.setItem('sataako-fi-zoom', String(zoom))
 }
 
 export function storeCollapsed(collapsed: boolean) {
   localStorage.setItem('sataako-fi-collapsed-v2', String(collapsed))
 }
 
-function parseQueryString(): {collapsed?: string, x?: string, y?: string, zoom?: string} {
+function parseQueryString(): {collapsed?: string, lng?: string, lat?: string, zoom?: string} {
   const params = new URLSearchParams(document.location.search)
   return {
     collapsed: params.get('collapsed') ?? undefined,
-    x: params.get('x') ?? undefined,
-    y: params.get('y') ?? undefined,
+    lng: params.get('lng') ?? params.get('x') ?? undefined,
+    lat: params.get('lat') ?? params.get('y') ?? undefined,
     zoom: params.get('zoom') ?? undefined
   }
 }

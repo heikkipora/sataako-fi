@@ -5,7 +5,7 @@ export interface Frame {
 }
 
 export interface MapSettings {
-  x: number
-  y: number
+  lng: number
+  lat: number
   zoom: number
 }

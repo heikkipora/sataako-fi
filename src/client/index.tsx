@@ -1,5 +1,6 @@
 import axios from 'axios'
 import classNames from 'classnames'
+import maplibregl from 'maplibre-gl'
 import React, {useCallback, useEffect, useRef, useState} from 'react'
 import {collapsedInitial, mapSettings, overrideParams, storeCollapsed, storeMapSettings} from './settings'
 import {createMap, panTo, showRadarFrame} from './map'
@@ -11,22 +12,29 @@ import type {Frame} from './types'
 const FRAME_DELAY_MS = 500
 const FRAME_LIST_RELOAD_MS = 30 * 1000
 
-const map = createMap(mapSettings)
-map.on('moveend', () => storeMapSettings(map.getView().getCenter(), map.getView().getZoom()))
-
-if (!overrideParams.x && !overrideParams.y && navigator.geolocation && document.visibilityState !== 'hidden') {
-  navigator.geolocation.getCurrentPosition((position) => panTo(map, [position.coords.longitude, position.coords.latitude]))
-}
-
 function SataakoApp() {
   const mapRef = useRef<HTMLDivElement>(null)
+  const mapInstanceRef = useRef<maplibregl.Map | null>(null)
   const [collapsed, setCollapsed] = useState<boolean>(collapsedInitial)
   const [currentTimestamp, setCurrentTimestamp] = useState<string|null>(null)
   const [frames, setFrames] = useState<Frame[]>([])
   const [running, setRunning] = useState<boolean>(true)
 
   useEffect(() => storeCollapsed(collapsed), [collapsed])
-  useEffect(() => map.setTarget(mapRef.current ?? undefined), [])
+
+  useEffect(() => {
+    if (!mapRef.current) return
+    const map = createMap('map', mapSettings)
+    mapInstanceRef.current = map
+
+    map.on('moveend', () => storeMapSettings(map.getCenter(), map.getZoom()))
+
+    if (!overrideParams.lng && !overrideParams.lat && navigator.geolocation && document.visibilityState !== 'hidden') {
+      navigator.geolocation.getCurrentPosition((position) => panTo(map, [position.coords.longitude, position.coords.latitude]))
+    }
+
+    return () => { map.remove() }
+  }, [])
 
   useEffect(() => {
     async function loadFramesList() {
@@ -53,8 +61,8 @@ function SataakoApp() {
   }, [running, currentTimestamp, frameDelay, frames])
 
   useEffect(() => {
-    if (currentFrame) {
-      showRadarFrame(map, currentFrame)
+    if (currentFrame && mapInstanceRef.current) {
+      showRadarFrame(mapInstanceRef.current, currentFrame)
     }
   }, [currentFrame])
 
