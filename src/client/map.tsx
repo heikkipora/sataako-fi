@@ -121,15 +121,19 @@ export function showRadarFrame(map: maplibregl.Map, {image, lightnings}: Frame) 
   }
 }
 
+function createPinElement(): HTMLElement {
+  const el = document.createElement('div')
+  el.innerHTML = '<svg viewBox="0 0 24 36" width="24" height="36" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="#4a90d9"/>' +
+    '<circle cx="12" cy="12" r="5" fill="white"/></svg>'
+  return el
+}
+
 export function panTo(map: maplibregl.Map, lonLat: [number, number]) {
   if (marker) {
     marker.setLngLat(lonLat)
   } else {
-    const el = document.createElement('img')
-    el.src = '/img/pin.png'
-    el.style.height = '40px'
-    el.style.width = 'auto'
-    marker = new maplibregl.Marker({element: el, anchor: 'bottom'})
+    marker = new maplibregl.Marker({element: createPinElement(), anchor: 'bottom'})
       .setLngLat(lonLat)
       .addTo(map)
   }
