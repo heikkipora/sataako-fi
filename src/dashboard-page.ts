@@ -8,9 +8,9 @@ export function statsPageHtml(): string {
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 24px; }
-    h1 { color: #69d2e7; margin-bottom: 24px; font-size: 24px; }
+    h1 { color: #4a90d9; margin-bottom: 24px; font-size: 24px; }
     .chart-container { max-width: 600px; background: #16213e; border-radius: 8px; padding: 16px; }
-    .chart-container h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #69d2e7; margin-bottom: 4px; }
+    .chart-container h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #4a90d9; margin-bottom: 4px; }
     .chart-container .value { font-size: 36px; font-weight: 700; color: #fff; margin-bottom: 12px; }
     canvas { width: 100%; height: 150px; display: block; }
   </style>
@@ -79,7 +79,7 @@ export function statsPageHtml(): string {
       usersHistory.shift()
 
       usersValue.textContent = activeUsers
-      drawChart(usersCanvas, usersHistory, '#69d2e7')
+      drawChart(usersCanvas, usersHistory, '#4a90d9')
     }
   </script>
 </body>
