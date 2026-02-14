@@ -3,7 +3,7 @@ import path from 'path'
 import {fetchLightnings} from './fmi-lightnings.ts'
 import {fetchPostProcessedRadarFrame} from './fmi-radar-images.ts'
 import {generateRadarFrameTimestamps, wmsRequestForRadar} from './fmi-radar-frames.ts'
-import type {FrameResponse, ImageCacheItem, ImageFilePaths, LightningCacheItem, RadarFrameRequest} from './types.ts'
+import type {FrameResponse, ImageCacheItem, LightningCacheItem, RadarFrameRequest} from './types.ts'
 
 let IMAGE_CACHE: ImageCacheItem[] = []
 const LIGHTNING_CACHE: LightningCacheItem[] = []
@@ -88,20 +88,16 @@ async function pruneCache(validTimestamps: string[]): Promise<void> {
   IMAGE_CACHE = keepInCache
 
   for (const {timestamp} of evictFromCache) {
-    await fs.promises.unlink(path.join(CACHE_FOLDER, `${timestamp}.png`))
     await fs.promises.unlink(path.join(CACHE_FOLDER, `${timestamp}.webp`))
   }
 }
 
-export function imageFileForTimestamp(timestamp: string): ImageFilePaths | null {
+export function imageFileForTimestamp(timestamp: string): string | null {
   if (!isTimestampInCache(timestamp)) {
     return null
   }
 
-  return {
-    png: path.join(CACHE_FOLDER, `${timestamp}.png`),
-    webp: path.join(CACHE_FOLDER, `${timestamp}.webp`)
-  }
+  return path.join(CACHE_FOLDER, `${timestamp}.webp`)
 }
 
 function isTimestampInCache(timestamp: string): boolean {
@@ -137,8 +133,8 @@ function compareTimestamp(a: {timestamp: string}, b: {timestamp: string}): numbe
 async function populateFromDisk(cacheFolder: string): Promise<ImageCacheItem[]> {
   const filenames = await fs.promises.readdir(cacheFolder)
   return filenames.map(filename => {
-      if (filename.endsWith('.png')) {
-        return filename.replace('.png', '')
+      if (filename.endsWith('.webp')) {
+        return filename.replace('.webp', '')
       }
       return null
     })

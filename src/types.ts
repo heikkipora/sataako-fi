@@ -33,11 +33,6 @@ export interface FrameResponse {
   timestamp: string
 }
 
-export interface ImageFilePaths {
-  png: string
-  webp: string
-}
-
 export interface Lightning {
   location: [number, number]
   time: Date

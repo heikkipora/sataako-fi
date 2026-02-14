@@ -24,9 +24,8 @@ describe('Radar image and lightning cache', () => {
     assert.equal(nonExistent, null)
 
     const [{timestamp}] = framesList(1, '')
-    const imageFiles = imageFileForTimestamp(timestamp)
-    assert.ok(imageFiles)
-    assert.ok('png' in imageFiles)
-    assert.ok('webp' in imageFiles)
+    const imageFile = imageFileForTimestamp(timestamp)
+    assert.ok(imageFile)
+    assert.ok(imageFile.endsWith('.webp'))
   })
 })

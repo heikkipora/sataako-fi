@@ -33,8 +33,7 @@ async function processImage(input: Buffer, targetFilename: string): Promise<bool
     .resize({height: height / 2, kernel: 'nearest'})
     .composite([{input: edgeImage}])
   
-  await pipeline.clone().png().toFile(`${targetFilename}.png`)
-  await pipeline.clone().webp({nearLossless: true}).toFile(`${targetFilename}.webp`)
+  await pipeline.webp({nearLossless: true}).toFile(`${targetFilename}.webp`)
   return false
 }
 
