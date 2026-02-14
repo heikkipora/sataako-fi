@@ -3,6 +3,8 @@ import express from 'express'
 import fs from 'fs'
 import http from 'http'
 import {framesList, imageFileForTimestamp, initializeCache, refreshCache} from './cache.ts'
+import {getStats, statsMiddleware} from './dashboard.ts'
+import {statsPageHtml} from './dashboard-page.ts'
 
 const MAX_FRAMES = 12
 const PORT = process.env.PORT || 3000
@@ -18,8 +20,30 @@ if (process.env.NODE_ENV !== 'production' && fs.existsSync('./src/dev-assets.ts'
 
 app.disable('x-powered-by')
 app.enable('trust proxy')
+app.use(statsMiddleware)
+
+app.get('/dashboard/live', (_req, res) => {
+  res.set({
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive'
+  })
+  res.flushHeaders()
+
+  const timer = setInterval(() => {
+    res.write(`data: ${JSON.stringify(getStats())}\n\n`)
+  }, 1000)
+
+  res.on('close', () => clearInterval(timer))
+})
+
 app.use(compression())
 app.use(express.static('public'))
+
+app.get('/dashboard', (_req, res) => {
+  res.set('Cache-Control', 'no-store')
+  res.type('html').send(statsPageHtml())
+})
 
 app.get('/frame/:timestamp', (req, res) => {
   const image = imageFileForTimestamp(req.params.timestamp)
