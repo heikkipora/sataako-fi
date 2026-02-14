@@ -2,8 +2,8 @@ import axios from 'axios'
 import classNames from 'classnames'
 import maplibregl from 'maplibre-gl'
 import React, {useCallback, useEffect, useRef, useState} from 'react'
-import {collapsedInitial, mapSettings, overrideParams, storeCollapsed, storeMapSettings} from './settings'
-import {createMap, panTo, showRadarFrame} from './map'
+import {collapsedInitial, darkModeInitial, mapSettings, overrideParams, storeCollapsed, storeDarkMode, storeMapSettings} from './settings'
+import {createMap, panTo, setMapStyle, showRadarFrame} from './map'
 import {createRoot} from 'react-dom/client'
 import {InfoPanel} from './info-panel'
 import {Timeline} from './timeline'
@@ -15,16 +15,19 @@ const FRAME_LIST_RELOAD_MS = 30 * 1000
 function SataakoApp() {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<maplibregl.Map | null>(null)
+  const darkModeInitialRef = useRef(true)
   const [collapsed, setCollapsed] = useState<boolean>(collapsedInitial)
+  const [darkMode, setDarkMode] = useState<boolean>(darkModeInitial)
   const [currentTimestamp, setCurrentTimestamp] = useState<string|null>(null)
   const [frames, setFrames] = useState<Frame[]>([])
   const [running, setRunning] = useState<boolean>(true)
 
   useEffect(() => storeCollapsed(collapsed), [collapsed])
+  useEffect(() => storeDarkMode(darkMode), [darkMode])
 
   useEffect(() => {
     if (!mapRef.current) return
-    const map = createMap('map', mapSettings)
+    const map = createMap('map', mapSettings, darkModeInitial)
     mapInstanceRef.current = map
 
     map.on('moveend', () => storeMapSettings(map.getCenter(), map.getZoom()))
@@ -66,17 +69,28 @@ function SataakoApp() {
     }
   }, [currentFrame])
 
+  useEffect(() => {
+    if (darkModeInitialRef.current) {
+      darkModeInitialRef.current = false
+      return
+    }
+    if (mapInstanceRef.current) {
+      setMapStyle(mapInstanceRef.current, darkMode)
+    }
+  }, [darkMode])
+
   const onTimelineResume = useCallback(() => setRunning(true), [])
   const onTimelineSelect = useCallback((value: string) => {
     setRunning(false)
     setCurrentTimestamp(value)
   }, [])
   const onInfoPanelToggle = useCallback(() => setCollapsed(!collapsed), [collapsed])
+  const onDarkModeToggle = useCallback(() => setDarkMode(d => !d), [])
 
-  const className = classNames({'app--infopanel-expanded': !collapsed})
+  const className = classNames({'app--infopanel-expanded': !collapsed, 'dark': darkMode})
   return <div className={className} style={{height: window.innerHeight}}>
     <div id="map" ref={mapRef}></div>
-    <InfoPanel collapsed={collapsed} onInfoPanelToggle={onInfoPanelToggle}/>
+    <InfoPanel collapsed={collapsed} darkMode={darkMode} onInfoPanelToggle={onInfoPanelToggle} onDarkModeToggle={onDarkModeToggle}/>
     <Timeline timestamps={frames} currentTimestamp={currentTimestamp} running={running} onResume={onTimelineResume} onSelect={onTimelineSelect}/>
   </div>
 }

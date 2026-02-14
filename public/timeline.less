@@ -96,6 +96,16 @@
   }
 }
 
+.dark .timeline {
+  background-color: @dark-bg;
+  border-color: @dark-border;
+}
+
+.dark .timeline__tick--large:after,
+.dark .timeline__tick--small:after {
+  background-color: #888;
+}
+
 @media screen and (orientation: portrait) {
   .app--infopanel-expanded .timeline {
     display: none;
