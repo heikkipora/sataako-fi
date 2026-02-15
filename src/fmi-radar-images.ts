@@ -30,7 +30,6 @@ async function processImage(input: Buffer, targetFilename: string): Promise<bool
   const edgeImage = await generateEdgeImage(data, width, height)
 
   const pipeline = sharp(data, {raw: {width, height, channels}})
-    .resize({height: height / 2, kernel: 'nearest'})
     .composite([{input: edgeImage}])
   
   await pipeline.webp({nearLossless: true}).toFile(`${targetFilename}.webp`)
@@ -107,7 +106,6 @@ async function generateEdgeImage(data: Buffer, width: number, height: number, ed
   }
 
   return sharp(edgeData, {raw: {width, height, channels: 4}})
-    .resize({height: height / 2})
     .png()
     .toBuffer()
 }

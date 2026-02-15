@@ -30,7 +30,7 @@ function addOverlayLayers(map: maplibregl.Map) {
     id: 'radar-layer',
     type: 'raster',
     source: 'radar',
-    paint: {'raster-opacity': 0.8}
+    paint: {'raster-opacity': 0.8, 'raster-resampling': 'nearest'}
   })
 
   map.loadImage('/img/lightning.png').then(({data}) => {
