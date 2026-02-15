@@ -6,7 +6,7 @@ import {framesList, imageFileForTimestamp, initializeCache, refreshCache} from '
 import {getStats, statsMiddleware} from './dashboard.ts'
 import {statsPageHtml} from './dashboard-page.ts'
 
-const MAX_FRAMES = 12
+const MAX_FRAMES = 16
 const PORT = process.env.PORT || 3000
 const PUBLIC_URL_PORT = process.env.NODE_ENV === 'production' ? '' : `:${PORT}`
 
