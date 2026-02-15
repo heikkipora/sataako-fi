@@ -1,7 +1,7 @@
 Sataako.fi
 ==========
 
-![screenshot](https://raw.github.com/heikkipora/sataako-fi/master/work/screenshot.jpg)
+![screenshot](https://raw.github.com/heikkipora/sataako-fi/master/work/screenshot.png)
 
 Introduction
 ------------
