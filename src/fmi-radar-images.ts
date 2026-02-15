@@ -106,6 +106,6 @@ async function generateEdgeImage(data: Buffer, width: number, height: number, ed
   }
 
   return sharp(edgeData, {raw: {width, height, channels: 4}})
-    .png()
+    .png({compressionLevel: 0})
     .toBuffer()
 }
