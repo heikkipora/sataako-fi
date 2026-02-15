@@ -28,7 +28,7 @@ The node.js application runs in [Hetzner Cloud](https://www.hetzner.com/cloud) w
 It's responsible for
 
 * maintaing an up-to-date list of radar frames available from FMI
-* delivering those frames as post-processed PNG or WEBP images (depending on the browser)
+* delivering those frames as post-processed WebP images
 
 To be able to serve a decent amount of concurrent users without exceeding the FMI API request rate, the following steps are done:
 
@@ -43,16 +43,11 @@ To be able to use those images on top of the map the following steps are taken:
 
 * request a PNG image in [EPSG:3067 projection](http://spatialreference.org/ref/epsg/3067/) which is native for FMI's radar images
 * decode PNG into raw 32bit pixel data
-* change a solid gray background (0xf7f7f7) to fully transparent
-* use a [mask-image](src/radar-mask.png) to change a solid orange area outside the radars' range to fully transparent
-* use an [overlay-image](src/radar-edges.png) to draw the edge of the radars' range
-* encode image as PNG and WEBP maintaining transparency
+* change the solid white background (0xffffff) and gray outside-range area (0xf7f7f7) to fully transparent
+* detect the boundary between the outside-range area and the radar coverage, and draw a blue edge line
+* encode as WebP maintaining transparency
 
 MapLibre GL JS reprojects those images on the fly from EPSG:3067 to the map's Web Mercator projection using precomputed corner coordinates.
-
-## Contributing
-
-Pull requests are welcome. Kindly check that your code passes ESLint checks by running ```npm test``` first.
 
 ## Contributors
 
