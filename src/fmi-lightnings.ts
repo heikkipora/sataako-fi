@@ -25,7 +25,10 @@ export async function fetchLightnings(frameDates: Date[], useLocalData: boolean 
 
   const data = await loadData(frameDates, useLocalData)
   const wfsResponse = xmlParser.parse(data)
-  const lightnings = extractLocationsAndTimes(wfsResponse)
+  let lightnings = extractLocationsAndTimes(wfsResponse)
+  if (useLocalData && lightnings.length > 0 && !lightningsOverlapFrames(lightnings, frameDates)) {
+    lightnings = shiftLightningsToFrames(lightnings, frameDates)
+  }
   return snapLightningsToFrames(lightnings, frameDates)
 }
 
@@ -84,6 +87,25 @@ function extractLocationsAndTimes(wfsResponse: WFSResponse): Lightning[] {
         time: new Date(parseInt(seconds, 10) * 1000)
       }
     })
+}
+
+function lightningsOverlapFrames(lightnings: Lightning[], frameDates: Date[]): boolean {
+  const firstFrame = frameDates[0].getTime()
+  const lastFrame = frameDates[frameDates.length - 1].getTime()
+  return lightnings.some(l => l.time.getTime() >= firstFrame && l.time.getTime() <= lastFrame)
+}
+
+function shiftLightningsToFrames(lightnings: Lightning[], frameDates: Date[]): Lightning[] {
+  const firstFrame = frameDates[0].getTime()
+  const lastFrame = frameDates[frameDates.length - 1].getTime()
+  const frameSpan = lastFrame - firstFrame
+  const minTime = lightnings.reduce((min, l) => Math.min(min, l.time.getTime()), Infinity)
+  const maxTime = lightnings.reduce((max, l) => Math.max(max, l.time.getTime()), 0)
+  const dataSpan = maxTime - minTime || 1
+  return lightnings.map(l => ({
+    location: l.location,
+    time: new Date(firstFrame + (l.time.getTime() - minTime) / dataSpan * frameSpan)
+  }))
 }
 
 function snapLightningsToFrames(lightnings: Lightning[], frameDates: Date[]): LightningCacheItem[] {
