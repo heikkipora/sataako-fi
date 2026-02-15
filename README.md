@@ -7,7 +7,7 @@ Introduction
 ------------
 I wanted to create a mobile-friendly weather service for Finland which has the simplest possible user interface (in Finnish).
 
-[Sataako.fi](https://www.sataako.fi) fetches weather radar images from [Finnish Meteorological Institute](http://en.ilmatieteenlaitos.fi)'s [Open Data APIs](http://en.ilmatieteenlaitos.fi/open-data-manual) and shows them as a MapLibre GL JS image layer after some post-processing. The vector map tiles are served from [OpenFreeMap](https://openfreemap.org/) using [OpenStreetMap](https://www.openstreetmap.org) data. The movement of rain clouds is shown as a short animation covering the last hour.
+[Sataako.fi](https://www.sataako.fi) fetches weather radar images from [Finnish Meteorological Institute](http://en.ilmatieteenlaitos.fi)'s [Open Data APIs](http://en.ilmatieteenlaitos.fi/open-data-manual) and shows them as a MapLibre GL JS image layer after some post-processing. The vector map tiles are served from [OpenFreeMap](https://openfreemap.org/) using [OpenStreetMap](https://www.openstreetmap.org) data. The movement of rain clouds is shown as a short animation covering the last 80 minutes.
 
 Embedding
 ---------
