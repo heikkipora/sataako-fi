@@ -22,12 +22,14 @@ function SataakoApp() {
   const [frames, setFrames] = useState<Frame[]>([])
   const [running, setRunning] = useState<boolean>(true)
 
+  const onDarkModeToggle = useCallback(() => setDarkMode(d => !d), [])
+
   useEffect(() => storeCollapsed(collapsed), [collapsed])
   useEffect(() => storeDarkMode(darkMode), [darkMode])
 
   useEffect(() => {
     if (!mapRef.current) return
-    const map = createMap('map', mapSettings, darkModeInitial)
+    const map = createMap('map', mapSettings, darkModeInitial, onDarkModeToggle)
     mapInstanceRef.current = map
 
     map.on('moveend', () => storeMapSettings(map.getCenter(), map.getZoom()))
@@ -37,7 +39,7 @@ function SataakoApp() {
     }
 
     return () => { map.remove() }
-  }, [])
+  }, [onDarkModeToggle])
 
   useEffect(() => {
     async function loadFramesList() {
@@ -85,12 +87,11 @@ function SataakoApp() {
     setCurrentTimestamp(value)
   }, [])
   const onInfoPanelToggle = useCallback(() => setCollapsed(!collapsed), [collapsed])
-  const onDarkModeToggle = useCallback(() => setDarkMode(d => !d), [])
 
   const className = classNames({'app--infopanel-expanded': !collapsed, 'dark': darkMode})
   return <div className={className} style={{height: window.innerHeight}}>
     <div id="map" ref={mapRef}></div>
-    <InfoPanel collapsed={collapsed} darkMode={darkMode} onInfoPanelToggle={onInfoPanelToggle} onDarkModeToggle={onDarkModeToggle}/>
+    <InfoPanel collapsed={collapsed} onInfoPanelToggle={onInfoPanelToggle}/>
     <Timeline timestamps={frames} currentTimestamp={currentTimestamp} running={running} onResume={onTimelineResume} onSelect={onTimelineSelect}/>
   </div>
 }

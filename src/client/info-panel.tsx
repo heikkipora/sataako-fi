@@ -1,23 +1,12 @@
 import classNames from 'classnames'
 import React from 'react'
 
-interface InfoPanelProps {
-  collapsed: boolean
-  darkMode: boolean
-  onInfoPanelToggle: () => void
-  onDarkModeToggle: () => void
-}
-
-export function InfoPanel({collapsed, darkMode, onInfoPanelToggle, onDarkModeToggle}: InfoPanelProps) {
+export function InfoPanel({collapsed, onInfoPanelToggle}: {collapsed: boolean, onInfoPanelToggle: () => void}) {
   const buttonText = collapsed ? 'Tietoa palvelusta' : 'SULJE'
   const className = classNames('info-panel', {'info-panel--collapsed': collapsed})
-  const darkModeLabel = darkMode ? '\u2600' : '\u263E'
 
   return <div className={className}>
-    <div className="info-panel__header">
-      <div className="info-panel__toggle" onClick={onInfoPanelToggle}>{buttonText}</div>
-      <div className="info-panel__dark-toggle" onClick={onDarkModeToggle}>{darkModeLabel}</div>
-    </div>
+    <div className="info-panel__toggle" onClick={onInfoPanelToggle}>{buttonText}</div>
     {!collapsed &&
       <div className="info-panel__content">
         <div className="info-panel__logo">
