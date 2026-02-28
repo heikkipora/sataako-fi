@@ -6,11 +6,6 @@
       - nano
     state: latest
 
-- name: Upgrade all packages now
-  package:
-    name: '*'
-    state: latest
-
 - name: Configure automatic updates to reboot if needed
   lineinfile:
     path: /etc/dnf/automatic.conf
