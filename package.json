@@ -13,7 +13,7 @@
     "axios": "1.13.6",
     "compression": "1.8.1",
     "express": "5.2.1",
-    "fast-xml-parser": "5.4.1",
+    "fast-xml-parser": "5.4.2",
     "sharp": "0.34.5"
   },
   "devDependencies": {
@@ -29,7 +29,7 @@
     "eslint": "9.39.2",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.0.1",
-    "globals": "17.3.0",
+    "globals": "17.4.0",
     "less-loader": "12.3.1",
     "maplibre-gl": "5.19.0",
     "mini-css-extract-plugin": "2.10.0",
@@ -40,7 +40,7 @@
     "ts-loader": "9.5.4",
     "typescript": "5.9.3",
     "typescript-eslint": "8.56.1",
-    "webpack": "5.105.3",
+    "webpack": "5.105.4",
     "webpack-cli": "6.0.1",
     "webpack-dev-middleware": "7.4.5",
     "webpack-hot-middleware": "2.26.1",
