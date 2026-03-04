@@ -5,12 +5,12 @@ import type {Frame, MapSettings} from './types'
 const STYLE_LIGHT = 'https://tiles.openfreemap.org/styles/positron'
 const STYLE_DARK = 'https://tiles.openfreemap.org/styles/dark'
 
-// EPSG:3067 image extent corners converted to [lng, lat]
+// Radar image extent in [lng, lat] — axis-aligned rectangle matching EPSG:3857 WMS request
 const IMAGE_COORDINATES: [[number, number], [number, number], [number, number], [number, number]] = [
-  [10.21544313101359, 70.49992323787335],   // top-left
-  [37.37165999357402, 70.98306000020692],   // top-right
-  [33.189093913539125, 57.01073319104798],  // bottom-right
-  [16.867430011086615, 56.751320001830045]  // bottom-left
+  [10.215546158022443, 71.24172567165043],  // top-left
+  [37.371658784549375, 71.24172567165043],  // top-right
+  [37.371658784549375, 56.751319918431086], // bottom-right
+  [10.215546158022443, 56.751319918431086]  // bottom-left
 ]
 
 const TRANSPARENT_PIXEL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='

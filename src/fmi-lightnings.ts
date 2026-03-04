@@ -1,11 +1,8 @@
 import axios from 'axios'
 import fs from 'fs'
-import proj4 from 'proj4'
-import {EPSG_3067_BOUNDS} from './fmi-radar-frames.ts'
+import {GEO_EXTENT} from './fmi-radar-frames.ts'
 import {XMLParser} from 'fast-xml-parser'
 import type {Lightning, LightningCacheItem} from './types.ts'
-
-proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs')
 
 const xmlParser = new XMLParser({
   parseTagValue: false,
@@ -15,7 +12,7 @@ const xmlParser = new XMLParser({
 const FEATURE_URL = new URL('https://opendata.fmi.fi/wfs')
 FEATURE_URL.searchParams.set('request', 'getFeature')
 FEATURE_URL.searchParams.set('storedquery_id', 'fmi::observations::lightning::multipointcoverage')
-FEATURE_URL.searchParams.set('bbox', proj4('EPSG:3067', 'WGS84', EPSG_3067_BOUNDS).join(','))
+FEATURE_URL.searchParams.set('bbox', [GEO_EXTENT.minLat, GEO_EXTENT.minLng, GEO_EXTENT.maxLat, GEO_EXTENT.maxLng].join(','))
 console.log(`Configured lightning URL stem: ${FEATURE_URL.toString()}`)
 
 export async function fetchLightnings(frameDates: Date[], useLocalData: boolean = false): Promise<LightningCacheItem[]> {

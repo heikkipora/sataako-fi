@@ -24,9 +24,10 @@ async function processImage(input: Buffer, targetFilename: string): Promise<bool
     .raw()
     .toBuffer({resolveWithObject: true})
 
+  const {width, height, channels} = info
+  fillBorderWhiteWithOutsideColor(data, width, height)
   applyAlphaChannel(data)
 
-  const {width, height, channels} = info
   const edgeImage = await generateEdgeImage(data, width, height)
 
   const pipeline = sharp(data, {raw: {width, height, channels}})
@@ -34,6 +35,36 @@ async function processImage(input: Buffer, targetFilename: string): Promise<bool
   
   await pipeline.webp({nearLossless: true}).toFile(`${targetFilename}.webp`)
   return false
+}
+
+function fillBorderWhiteWithOutsideColor(data: Buffer, width: number, height: number): void {
+  const visited = new Uint8Array(width * height)
+  const stack: number[] = []
+
+  function enqueue(x: number, y: number) {
+    const idx = y * width + x
+    if (visited[idx]) return
+    const i = idx * 4
+    if ((data[i] << 16 | data[i + 1] << 8 | data[i + 2]) !== RADAR_BACKGROUND_COLOR) return
+    visited[idx] = 1
+    stack.push(idx)
+  }
+
+  for (let x = 0; x < width; x++) { enqueue(x, 0); enqueue(x, height - 1) }
+  for (let y = 0; y < height; y++) { enqueue(0, y); enqueue(width - 1, y) }
+
+  while (stack.length > 0) {
+    const idx = stack.pop()!
+    const x = idx % width
+    const y = (idx - x) / width
+    const i = idx * 4
+    data[i] = 0xf7; data[i + 1] = 0xf7; data[i + 2] = 0xf7
+
+    if (x > 0) enqueue(x - 1, y)
+    if (x < width - 1) enqueue(x + 1, y)
+    if (y > 0) enqueue(x, y - 1)
+    if (y < height - 1) enqueue(x, y + 1)
+  }
 }
 
 function applyAlphaChannel(data: Buffer): void {

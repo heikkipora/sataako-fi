@@ -23,13 +23,13 @@ describe('FMI rain radar wms request generator', () => {
       timeout: 30000,
       params: {
         service: 'WMS',
-        version: '1.3',
+        version: '1.1.1',
         request: 'GetMap',
         format: 'image/png',
-        bbox: '-118331.366408,6335621.167014,875567.731907,7907751.537264',
-        srs: 'EPSG:3067',
-        width: 1987,
-        height: 3144,
+        bbox: '1137189.3964862407,7709459.565190111,4160194.0259960056,11485434.685198486',
+        srs: 'EPSG:3857',
+        width: 2236,
+        height: 2793,
         layers: 'Radar:suomi_rr_eureffin',
         time: '2020-07-17T16:20:00.000Z'
       }
