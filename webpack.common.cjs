@@ -11,6 +11,15 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
+        // MapLibre v6 loads optional scripts at runtime with import(url): the deprecated RTL text
+        // plugin and importScriptInWorkers(). Webpack cannot resolve those statically and warns;
+        // the app uses neither.
+        test: /node_modules\/maplibre-gl\/dist\/.*\.mjs$/,
+        parser: {
+          exprContextCritical: false
+        }
+      },
+      {
         test: /\.less$/,
         use: [
           MiniCssExtractPlugin.loader,
