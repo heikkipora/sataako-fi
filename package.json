@@ -14,7 +14,7 @@
     "compression": "1.8.1",
     "express": "5.2.1",
     "fast-xml-parser": "5.9.3",
-    "sharp": "0.35.2"
+    "sharp": "0.35.4"
   },
   "devDependencies": {
     "@types/compression": "1.8.1",
