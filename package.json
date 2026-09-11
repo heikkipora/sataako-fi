@@ -17,6 +17,7 @@
     "sharp": "0.35.4"
   },
   "devDependencies": {
+    "@eslint/compat": "2.1.1",
     "@types/compression": "1.8.1",
     "@types/express": "5.0.6",
     "@types/react": "19.3.0",
@@ -27,7 +28,7 @@
     "classnames": "2.5.1",
     "css-loader": "7.1.5",
     "date-fns": "4.4.0",
-    "eslint": "9.39.2",
+    "eslint": "10.10.0",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "17.12.0",
@@ -48,6 +49,9 @@
     "webpack-merge": "6.0.1"
   },
   "overrides": {
-    "serialize-javascript": "7.0.3"
+    "serialize-javascript": "7.0.3",
+    "eslint-plugin-react": {
+      "eslint": "$eslint"
+    }
   }
 }
