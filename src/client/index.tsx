@@ -1,6 +1,6 @@
 import axios from 'axios'
 import classNames from 'classnames'
-import maplibregl from 'maplibre-gl'
+import type {Map as MapLibreMap} from 'maplibre-gl'
 import React, {useCallback, useEffect, useRef, useState} from 'react'
 import {collapsedInitial, darkModeInitial, mapSettings, overrideParams, storeCollapsed, storeDarkMode, storeMapSettings} from './settings'
 import {createMap, panTo, setMapStyle, showRadarFrame} from './map'
@@ -14,7 +14,7 @@ const FRAME_LIST_RELOAD_MS = 30 * 1000
 
 function SataakoApp() {
   const mapRef = useRef<HTMLDivElement>(null)
-  const mapInstanceRef = useRef<maplibregl.Map | null>(null)
+  const mapInstanceRef = useRef<MapLibreMap | null>(null)
   const darkModeInitialRef = useRef(true)
   const [collapsed, setCollapsed] = useState<boolean>(collapsedInitial)
   const [darkMode, setDarkMode] = useState<boolean>(darkModeInitial)

@@ -1,4 +1,5 @@
-import maplibregl from 'maplibre-gl'
+import {Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl} from 'maplibre-gl'
+import type {GeoJSONSource, ImageSource} from 'maplibre-gl'
 import {DarkModeControl} from './dark-mode-control'
 import type {Frame, MapSettings} from './types'
 
@@ -13,13 +14,16 @@ const IMAGE_COORDINATES: [[number, number], [number, number], [number, number], 
   [10.215546158022443, 56.751319918431086]  // bottom-left
 ]
 
+// MapLibre v6 ships its web worker as a separate ES module; it is bundled by webpack as its own entry
+setWorkerUrl('/maplibre-gl-worker.js')
+
 const TRANSPARENT_PIXEL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
 
-let marker: maplibregl.Marker | null = null
+let marker: Marker | null = null
 let lastFrameUrl: string = TRANSPARENT_PIXEL
 let lastLightnings: [number, number][] = []
 
-function addOverlayLayers(map: maplibregl.Map) {
+function addOverlayLayers(map: MapLibreMap) {
   map.addSource('radar', {
     type: 'image',
     url: lastFrameUrl,
@@ -53,7 +57,7 @@ function addOverlayLayers(map: maplibregl.Map) {
     })
 
     if (lastLightnings.length > 0) {
-      const source = map.getSource('lightnings') as maplibregl.GeoJSONSource
+      const source = map.getSource('lightnings') as GeoJSONSource
       source.setData({
         type: 'FeatureCollection',
         features: lastLightnings.map(coord => ({
@@ -69,7 +73,7 @@ function addOverlayLayers(map: maplibregl.Map) {
 let darkModeControl: DarkModeControl | null = null
 
 export function createMap(container: string, settings: MapSettings, darkMode: boolean, onDarkModeToggle: () => void) {
-  const map = new maplibregl.Map({
+  const map = new MapLibreMap({
     container,
     style: darkMode ? STYLE_DARK : STYLE_LIGHT,
     center: [settings.lng, settings.lat],
@@ -82,7 +86,7 @@ export function createMap(container: string, settings: MapSettings, darkMode: bo
     touchPitch: false
   })
 
-  map.addControl(new maplibregl.NavigationControl({showCompass: false}), 'top-left')
+  map.addControl(new NavigationControl({showCompass: false}), 'top-left')
   darkModeControl = new DarkModeControl(darkMode, onDarkModeToggle)
   map.addControl(darkModeControl, 'top-left')
   map.touchZoomRotate.disableRotation()
@@ -92,23 +96,23 @@ export function createMap(container: string, settings: MapSettings, darkMode: bo
   return map
 }
 
-export function setMapStyle(map: maplibregl.Map, darkMode: boolean) {
+export function setMapStyle(map: MapLibreMap, darkMode: boolean) {
   const style = darkMode ? STYLE_DARK : STYLE_LIGHT
   darkModeControl?.update(darkMode)
   map.once('styledata', () => addOverlayLayers(map))
   map.setStyle(style)
 }
 
-export function showRadarFrame(map: maplibregl.Map, {image, lightnings}: Frame) {
+export function showRadarFrame(map: MapLibreMap, {image, lightnings}: Frame) {
   lastFrameUrl = image
   lastLightnings = lightnings
 
-  const radarSource = map.getSource('radar') as maplibregl.ImageSource | undefined
+  const radarSource = map.getSource('radar') as ImageSource | undefined
   if (radarSource) {
     radarSource.updateImage({url: image, coordinates: IMAGE_COORDINATES})
   }
 
-  const lightningSource = map.getSource('lightnings') as maplibregl.GeoJSONSource | undefined
+  const lightningSource = map.getSource('lightnings') as GeoJSONSource | undefined
   if (lightningSource) {
     if (lightnings.length > 0) {
       lightningSource.setData({
@@ -135,11 +139,11 @@ function createPinElement(): HTMLElement {
   return el
 }
 
-export function panTo(map: maplibregl.Map, lonLat: [number, number]) {
+export function panTo(map: MapLibreMap, lonLat: [number, number]) {
   if (marker) {
     marker.setLngLat(lonLat)
   } else {
-    marker = new maplibregl.Marker({element: createPinElement(), anchor: 'bottom'})
+    marker = new Marker({element: createPinElement(), anchor: 'bottom'})
       .setLngLat(lonLat)
       .addTo(map)
   }

@@ -1,6 +1,6 @@
-import maplibregl from 'maplibre-gl'
+import type {IControl} from 'maplibre-gl'
 
-export class DarkModeControl implements maplibregl.IControl {
+export class DarkModeControl implements IControl {
   private container: HTMLElement | null = null
   private button: HTMLButtonElement | null = null
   private darkMode: boolean

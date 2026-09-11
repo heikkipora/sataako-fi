@@ -25,7 +25,7 @@ module.exports = {
     ]
   },
   output: {
-    filename: 'client.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'build/public')
   },
   resolve: {

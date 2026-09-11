@@ -3,8 +3,11 @@ const {merge} = require('webpack-merge')
 
 module.exports = merge(common, {
   mode: 'production',
-  entry: [
-    './public/client.less',
-    './src/client/index.tsx'
-  ]
+  entry: {
+    client: [
+      './public/client.less',
+      './src/client/index.tsx'
+    ],
+    'maplibre-gl-worker': 'maplibre-gl/dist/maplibre-gl-worker.mjs'
+  }
 })

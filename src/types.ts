@@ -1,21 +1,23 @@
 import type {AxiosRequestConfig} from 'axios'
 
-export interface WMSRequestConfig extends AxiosRequestConfig {
+export interface WMSRequestParams {
+  service: string
+  version: string
+  request: string
+  format: string
+  bbox: string
+  srs: string
+  width: number
+  height: number
+  layers: string
+  time: string
+}
+
+export interface WMSRequestConfig extends AxiosRequestConfig<unknown, WMSRequestParams> {
   url: string
   responseType: 'arraybuffer'
   timeout: number
-  params: {
-    service: string
-    version: string
-    request: string
-    format: string
-    bbox: string
-    srs: string
-    width: number
-    height: number
-    layers: string
-    time: string
-  }
+  params: WMSRequestParams
 }
 
 export interface ImageCacheItem {
